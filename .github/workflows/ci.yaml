@@ -1,0 +1,42 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  # TODO: enable once code is formatted
+  # SwiftLint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: SwiftLint
+  #       uses: norio-nomura/action-swiftlint@3.1.0
+  #       with:
+  #         args: --strict
+
+  macOS:
+    runs-on: macOS-latest
+    env:
+      XCODE_VERSION: ${{ '12.2' }}
+    steps:
+      - name: Select Xcode
+        run: "sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app"
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Build and Run
+        run: swift build -c release
+      - name: Test
+        run: swift test
+      - name: Build Backend
+        run: swift build --product XCMetricsBackend -c release
+
+  linux:
+    runs-on: ubuntu-latest
+    container:
+      image: swift:5.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install zlib
+        run: apt-get update && apt-get install -y ruby zlib1g-dev libssl-dev
+      - name: Build Backend
+        run: swift build --product XCMetricsBackend -c release

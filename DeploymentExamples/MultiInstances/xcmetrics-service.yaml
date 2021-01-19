@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xcmetrics-server
+  labels:
+    app: xcmetrics-server
+    tier: frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: xcmetrics-server
+    tier: frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP

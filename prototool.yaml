@@ -1,0 +1,28 @@
+excludes:
+  - google
+lint:
+  rules:
+    remove:
+      # Don't require go package option.
+      - FILE_OPTIONS_REQUIRE_GO_PACKAGE
+      # Don't require ENUM fields to be prefixed with enum name.
+      - ENUM_FIELD_PREFIXES
+      # Don't require enum 0 to be named INVALID.
+      - ENUM_ZERO_VALUES_INVALID
+  ignores:
+    - id: FILE_OPTIONS_REQUIRE_JAVA_MULTIPLE_FILES
+      files:
+        - spotify/metadata/metadata.proto
+    - id: SYNTAX_PROTO3
+      files:
+        - spotify/metadata/metadata.proto
+        - spotify/metadata/etag/etag.proto
+    - id: FILE_OPTIONS_EQUAL_JAVA_OUTER_CLASSNAME_PROTO_SUFFIX
+      files:
+        - spotify/metadata/metadata.proto
+    - id: FILE_OPTIONS_EQUAL_JAVA_PACKAGE_COM_PREFIX
+      files:
+        - spotify/metadata/metadata.proto
+    - id: FILE_OPTIONS_EQUAL_GO_PACKAGE_PB_SUFFIX
+      files:
+        - spotify/metadata/etag/etag.proto

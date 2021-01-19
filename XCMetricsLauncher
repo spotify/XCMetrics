@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# The first argument is the directory of the XCMetrics executable.
+# The following arguments are directly forwarded to the executable.
+# We execute the command in the background and immediately close the input, output
+# and error streams in order to let Xcode and xcodebuild finish cleanly.
+# This is done to prevent Xcode and xcodebuild being stuck in waiting for all 
+# subprocesses to end before exiting.
+# One of the side effects of not using this hack is to have "Build Succeeded"
+# notifications be delayed until the post-action scheme completes, thus we recommend
+# always launching XCMetrics through this script.
+executable=$1
+shift;
+$executable "$@" <&- >&- 2>&- &

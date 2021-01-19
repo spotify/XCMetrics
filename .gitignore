@@ -1,0 +1,12 @@
+.DS_Store
+/.build
+/Packages
+/*.xcodeproj
+*xcuserdata/
+
+.swiftpm/
+releases/
+DerivedData/
+
+# Documentation temporary directory
+docs_temp/

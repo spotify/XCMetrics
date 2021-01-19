@@ -1,0 +1,17 @@
+sourcekitten_sourcefile:
+  - "docs_temp/backend_docs.json"
+  - "docs_temp/client_docs.json"
+swift_build_tool: spm
+theme: jony
+documentation: "docs/*.md"
+output: docs/generated
+github_url: https://github.com/spotify/XCMetrics
+author: Spotify
+min_acl: internal
+
+custom_categories:
+  - name: HTTP Endpoints
+    children:
+    - BuildController
+    - JobLogController
+    - UploadMetricsController

@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package spotify.xcmetrics;
+option optimize_for = SPEED;
+
+message Build {
+    string identifier = 1;
+    string project_name = 2;
+    string machine_name = 3;
+    string schema = 4;
+    int64 start_timestamp = 5;
+    int64 end_timestamp = 6;
+    double start_timestamp_microseconds = 7;
+    double end_timestamp_microseconds = 8;
+    double duration = 9;
+    string build_status = 10;
+    int32 warning_count = 11;
+    int32 error_count = 12;
+    string tag = 13;
+    bool is_ci = 14;
+    string userid = 15;
+    string userid256 = 16;
+    string category = 17;
+    int32 compiled_count = 18;
+    bool was_suspended = 19;
+    int64 compilation_end_timestamp = 20;
+    double compilation_end_timestamp_microseconds = 21;
+    double compilation_duration = 22;
+}
+
+message TargetBuild {
+    string identifier = 1;
+    string build_identifier = 2;
+    string name = 3;
+    int64 start_timestamp = 4;
+    int64 end_timestamp = 5;
+    double start_timestamp_microseconds = 6;
+    double end_timestamp_microseconds = 7;
+    double duration = 8;
+    int32 warning_count = 9;
+    int32 error_count = 10;
+    bool fetched_from_cache = 11;
+    string category = 12;
+    int32 compiled_count = 13;
+    int64 compilation_end_timestamp = 14;
+    double compilation_end_timestamp_microseconds = 15;
+    double compilation_duration = 16;
+}
+
+message StepBuild {
+    string identifier = 1;
+    string build_identifier = 2;
+    string target_identifier = 3;
+    string title = 4;
+    string signature = 5;
+    string type = 6;
+    string architecture = 7;
+    string document_url = 8;
+    int64 start_timestamp = 9;
+    int64 end_timestamp = 10;
+    double start_timestamp_microseconds = 11;
+    double end_timestamp_microseconds = 12;
+    double duration = 13;
+    int32 warning_count = 14;
+    int32 error_count = 15;
+    bool fetched_from_cache = 16;
+}
+
+message FunctionBuild {
+    string build_identifier = 1;
+    string step_identifier = 2;
+    string file = 3;
+    string signature = 4;
+    int32 starting_line = 5;
+    int32 starting_column = 6;
+    double duration = 7;
+    int32 occurrences = 8;
+}
+
+message WarningBuild {
+    string build_identifier = 1;
+    string parent_identifier = 2;
+    string parent_type = 3; // build, target, step
+    string type = 4;
+    string title = 5;
+    string document_url = 6;
+    string clang_flag = 7;
+    int32 severity = 8;
+    int32 starting_line = 9;
+    int32 ending_line = 10;
+    int32 starting_column = 11;
+    int32 ending_column = 12;
+    int32 character_range_start = 13;
+    int32 character_range_end = 14;
+}
+
+message ErrorBuild {
+    string build_identifier = 1;
+    string parent_identifier = 2;
+    string parent_type = 3; // build, target, step
+    string type = 4;
+    string title = 5;
+    string document_url = 6;
+    int32 severity = 7;
+    int32 starting_line = 8;
+    int32 ending_line = 9;
+    int32 starting_column = 10;
+    int32 ending_column = 11;
+    int32 character_range_start = 12;
+    int32 character_range_end = 13;
+}
+
+message NoteBuild {
+    string build_identifier = 1;
+    string parent_identifier = 2;
+    string parent_type = 3; // build, target, step
+    string title = 5;
+    string document_url = 6;
+    int32 severity = 7;
+    int32 starting_line = 8;
+    int32 ending_line = 9;
+    int32 starting_column = 10;
+    int32 ending_column = 11;
+    int32 character_range_start = 12;
+    int32 character_range_end = 13;
+}
+
+message SwiftTypeCheckBuild {
+    string build_identifier = 1;
+    string step_identifier = 2;
+    string file = 3;
+    int32 starting_line = 5;
+    int32 starting_column = 6;
+    double duration = 7;
+    int32 occurrences = 8;
+}
+
+message BuildHost {
+    string build_identifier = 1;
+    string host_os = 2;
+    string host_architecture = 3;
+    string host_model = 4;
+    string host_os_family = 5;
+    string host_os_version = 6;
+    string cpu_model = 7;
+    int32 cpu_count = 8;
+    float cpu_speed_ghz = 9;
+    double memory_total_mb = 10;
+    double memory_free_mb = 11;
+    double swap_total_mb = 12;
+    double swap_free_mb = 13;
+    int64 uptime_seconds = 14;
+    string timezone = 15;
+    bool is_virtual = 16;
+}
+
+message XcodeVersion {
+    string build_identifier = 1;
+    string version = 2;
+    string build_number = 3;
+}
+
+message BuildMetadata {
+    string build_identifier = 1;
+    map<string, string> metadata = 2;
+}
+
+message UploadBuildMetricsRequest {
+    int32 version = 1;
+    Build build = 2;
+    repeated TargetBuild targets = 3;
+    repeated StepBuild steps = 4;
+    repeated FunctionBuild functions = 5;
+    repeated WarningBuild warnings = 6;
+    repeated ErrorBuild errors = 7;
+    repeated NoteBuild notes = 8;
+    repeated SwiftTypeCheckBuild type_checks = 9;
+    BuildHost build_host = 10;
+    XcodeVersion xcode_version = 11;
+    BuildMetadata build_metadata = 12;
+}
+
+message UploadBuildMetricsResponse {
+    string message = 1;
+}
+
+// XCMetricsService handles XCMetrics
+service XCMetrics {
+
+    // Uploads build metrics to XCMetricsService
+   rpc UploadBuildMetrics(UploadBuildMetricsRequest) returns (UploadBuildMetricsResponse) {}
+
+}

@@ -1,0 +1,69 @@
+name: release_binaries
+on:
+  release:
+    types: created
+
+jobs:
+  macOS:
+    name: Add macOS binaries to release
+    runs-on: macOS-latest
+    env:
+      XCODE_VERSION: ${{ '12.2' }}
+    steps:
+      - name: Select Xcode
+        run: "sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app"
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set tag name
+        run: echo "TAG_NAME=$(echo $GITHUB_REF | cut -c 11-)" >> $GITHUB_ENV
+      - name: Build x86_64-apple-macosx
+        run: "swift build -c release --triple x86_64-apple-macosx"
+      - name: Save x86_64 executable to be lipo'd later
+        run: "mkdir tmp && cp .build/release/xcmetrics tmp/xcmetrics-x86_64"
+      - name: Zip release
+        run: "mkdir releases && zip -j releases/XCMetrics-macOS-x86_64-$TAG_NAME.zip XCMetricsLauncher LICENSE.md README.md .build/release/xcmetrics"
+      - name: Build arm64-apple-macosx
+        run: "swift build -c release --triple arm64-apple-macosx"
+      - name: Zip arm64-apple-macosx release
+        run: "zip -j releases/XCMetrics-macOS-arm64-$TAG_NAME.zip XCMetricsLauncher LICENSE.md README.md .build/release/xcmetrics"
+      - name: Lipo macOS executables
+        run: "lipo -create -output tmp/xcmetrics tmp/xcmetrics-x86_64 .build/release/xcmetrics"
+      - name: Zip x86_64-arm64-apple-macosx release
+        run: "zip -j releases/XCMetrics-macOS-arm64-x86_64-$TAG_NAME.zip XCMetricsLauncher LICENSE.md README.md tmp/xcmetrics"
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: releases/*
+          file_glob: true
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  linux:
+    name: Add Linux binaries to release
+    runs-on: ubuntu-latest
+    container:
+      image: swift:5.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install Ruby
+        run: apt-get update && apt-get install -y ruby zlib1g-dev
+      - name: Build
+        run: LANG=en_US.UTF-8 LC_CTYPE=UTF-8 swift build -c release
+      - name: Set tag name
+        run: echo "TAG_NAME=$(echo $GITHUB_REF | cut -c 11-)" >> $GITHUB_ENV
+      - name: Zip release
+        uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -j XCMetrics-linux-amd64.zip XCMetricsLauncher LICENSE.md README.md .build/release/xcmetrics
+      - name: Rename zip
+        run: "mkdir releases && mv XCMetrics-linux-amd64.zip releases/XCMetrics-linux-amd64-$TAG_NAME.zip"
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: releases/*
+          file_glob: true
+          tag: ${{ github.ref }}
+          overwrite: true

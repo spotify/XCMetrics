@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: xcmetrics-server
+spec:
+  replicas: 1 # Create only one instance. This version uses local storage, it can only run in one instance
+  selector:
+    matchLabels:
+      app: xcmetrics-server
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: xcmetrics-server
+        tier: frontend
+    spec:
+      volumes:
+        - name: service-account-volume
+          secret:
+            secretName: google-service-account
+
+      containers:
+      - name: cloud-sql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.17
+        command: ["/cloud_sql_proxy",
+                  "-instances=Replace with your Cloud SQL connection string=tcp:5432",
+                  "-credential_file=/secrets/service_account.json"]
+        ports:
+        - name: xcmetricsdb
+          containerPort: 5432
+          protocol: TCP
+
+        securityContext:
+          runAsNonRoot: true
+
+        volumeMounts:
+        - name: service-account-volume
+          mountPath: /secrets/
+          readOnly: true
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256M
+          limits:
+            cpu: 100m
+            memory: 256M
+
+
+      - name: xcmetrics-server
+        image: "Replace with your XCMetrics image (e.g. gcr.io/my_gcp_project/xcmetrics)"
+        env:
+        - name: XCMETRICS_START_JOBS_SAME_INSTANCE
+          value: "1" # Jobs will run in this same instance
+        - name: XCMETRICS_USE_ASYNC_LOG_PROCESSING
+          value: "1"
+        - name: XCMETRICS_REDACT_USER_DATA
+          value: "1"
+        - name: REDIS_HOST
+          value: "redis.default.svc.cluster.local"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: XCMETRICS_USE_GCS_REPOSITORY
+          value: "0"
+        - name: DB_HOST
+          value: 127.0.0.1
+        - name: DB_POST
+          value: "5432"
+        - name: DB_USER
+          value: "xcmetrics"
+        - name: DB_NAME
+          value: "xcmetrics"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: LOG_LEVEL
+          value: info
+
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+
+        readinessProbe:
+          httpGet:
+            path: /hello
+            port: http
+
+        resources:
+          requests:
+            cpu: 1
+            memory: 1G
+          limits:
+            cpu: 1
+            memory: 1G
+
