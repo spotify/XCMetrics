@@ -7,6 +7,7 @@ _XCMetrics is the easiest way to collect Xcode builds metrics and improve your d
 
 [![Build Status](https://github.com/spotify/XCMetrics/workflows/CI/badge.svg)](https://github.com/spotify/XCMetrics/workflows/CI/badge.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Slack](https://slackin.spotify.com/badge.svg)](http://slackin.spotify.com)
 
 ## Overview
 
