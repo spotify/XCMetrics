@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>BuildController Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/BuildController" class="dashAnchor"></a>
+    <a title="BuildController Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p>
+          <a href="../index.html"> Docs</a>
+          <span class="no-mobile"> (31% documented)</span>
+        </p>
+    
+        <p class="header-right">
+          <a href="https://github.com/spotify/XCMetrics">
+            <img src="../img/gh.png"/>
+            <span class="no-mobile">View on GitHub</span>
+          </a>
+        </p>
+    
+      </div>
+    </header>
+    <div id="breadcrumbs-container">
+      <div class="content-wrapper">
+        <p id="breadcrumbs">
+          <span class="no-mobile">
+            <a href="../index.html"> Reference</a>
+            <img id="carat" src="../img/carat.png" />
+          </span>
+          BuildController Structure Reference
+        </p>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="article-wrapper">
+        <article class="main-content">
+          <section>
+            <section class="section">
+              <h1>BuildController</h1>
+                <div class="declaration">
+                  <div class="language">
+                    
+                    <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">BuildController</span> <span class="p">:</span> <span class="kt">RouteCollection</span></code></pre>
+
+                  </div>
+                </div>
+              <p>Controller with endpoints that return Builds related data</p>
+
+            </section>
+            <section class="section task-group-section">
+              <div class="task-group">
+                <ul>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV4boot6routesy5Vapor13RoutesBuilder_p_tKF"></a>
+                      <a name="//apple_ref/swift/Method/boot(routes:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV4boot6routesy5Vapor13RoutesBuilder_p_tKF">boot(routes:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Returns the routes supported by this Controller.
+All the routes are in the <code>v1/build</code> path</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code>Error</code> if something goes wrong
+
+</div>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">boot</span><span class="p">(</span><span class="nv">routes</span><span class="p">:</span> <span class="kt">RoutesBuilder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                          </div>
+                        </div>
+                        <div>
+                          <h4>Parameters</h4>
+                          <table class="graybox">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>routes</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>RoutesBuilder to which the routes will be added</p>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV5index3req3NIO15EventLoopFutureCy9FluentKit4PageVyAA0D0CGG5Vapor7RequestC_tF"></a>
+                      <a name="//apple_ref/swift/Method/index(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV5index3req3NIO15EventLoopFutureCy9FluentKit4PageVyAA0D0CGG5Vapor7RequestC_tF">index(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the paginated list of <code><a href="../Classes/Build.html">Build</a></code>
+sorted by date from the most recent to the least recent.</p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build?page=1&amp;per=10</code></li>
+<li>Request parameters
+
+<ul>
+<li><code>page</code>. Optional. Page number to fetch. Default is <code>1</code></li>
+<li><code>per</code>. Optional. Number of items to fetch per page. Default is <code>10</code></li>
+</ul></li>
+<li>Response:</li>
+</ul>
+<pre class="highlight swift"><code><span class="p">{</span>
+  <span class="s">"metadata"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">"per"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+      <span class="s">"total"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+      <span class="s">"page"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">},</span>
+   <span class="s">"items"</span><span class="p">:</span> <span class="p">[</span>
+     <span class="p">{</span>
+       <span class="s">"userid"</span><span class="p">:</span> <span class="s">"tim"</span><span class="p">,</span>
+       <span class="s">"warningCount"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+       <span class="s">"duration"</span><span class="p">:</span> <span class="mf">1.10</span><span class="p">,</span>
+       <span class="s">"isCi"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+       <span class="s">"startTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:36:22Z"</span><span class="p">,</span>
+       <span class="s">"startTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604334982.5824749</span><span class="p">,</span>
+       <span class="s">"category"</span><span class="p">:</span> <span class="s">"noop"</span><span class="p">,</span>
+       <span class="s">"endTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604334993.6019359</span><span class="p">,</span>
+       <span class="s">"tag"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+       <span class="s">"compilationEndTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:36:22Z"</span><span class="p">,</span>
+       <span class="s">"compilationDuration"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+       <span class="s">"projectName"</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+       <span class="s">"compilationEndTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604334982.5824749</span><span class="p">,</span>
+       <span class="s">"errorCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+       <span class="s">"buildStatus"</span><span class="p">:</span> <span class="s">"succeeded"</span><span class="p">,</span>
+       <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+       <span class="s">"id"</span><span class="p">:</span> <span class="s">"MyMac_D682E30D-AF89-4712-A78E-85DC0AAB83C8_1"</span><span class="p">,</span>
+       <span class="s">"schema"</span><span class="p">:</span> <span class="s">"App"</span><span class="p">,</span>
+       <span class="s">"compiledCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+       <span class="s">"endTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:36:33Z"</span><span class="p">,</span>
+       <span class="s">"userid256"</span><span class="p">:</span> <span class="s">"c28b6fd9a49bd8c74767501a114784d327336f3ff861873341b5b64900125463"</span><span class="p">,</span>
+       <span class="s">"machineName"</span><span class="p">:</span> <span class="s">"MyMac"</span><span class="p">,</span>
+       <span class="s">"wasSuspended"</span><span class="p">:</span> <span class="kc">false</span>
+     <span class="p">},</span>
+     <span class="o">...</span>
+     <span class="p">]</span>
+<span class="p">}</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt">Page</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/Build.html">Build</a></span><span class="o">&gt;&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV4list3req3NIO15EventLoopFutureCy9FluentKit4PageVyAA0D0CGG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/list(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV4list3req3NIO15EventLoopFutureCy9FluentKit4PageVyAA0D0CGG5Vapor7RequestC_tKF">list(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the paginated list of <code><a href="../Classes/Build.html">Build</a></code>
+filtered by different criteria, like creation date, build status and project name</p>
+
+<ul>
+<li>Method: <code>POST</code></li>
+<li>Route: <code>/v1/build/filter</code></li>
+<li>Request body</li>
+</ul>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="s">"from"</span><span class="p">:</span> <span class="s">"2020-10-23T04:00:00Z"</span><span class="p">,</span>
+    <span class="s">"to"</span><span class="p">:</span> <span class="s">"2021-10-24T17:00:00Z"</span><span class="p">,</span>
+    <span class="s">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">"per"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s">"projectName"</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+    <span class="s">"status"</span><span class="p">:</span> <span class="s">"failed"</span>
+<span class="p">}</span>
+</code></pre>
+
+<ul>
+<li><p>Body Parameters</p>
+
+<ul>
+<li><code>from</code>. Optional. Lower limit creation date of the <code><a href="../Classes/Build.html">Build</a></code></li>
+<li><code>to</code>. Optional. Upper limit creation date of the <code><a href="../Classes/Build.html">Build</a></code></li>
+<li><code>projectName</code>. Optional. Name of the project that was built</li>
+<li><code>status</code>. Optional. Status of the <code><a href="../Classes/Build.html">Build</a></code>. Possible values: <code>succeeded</code>, <code>failed</code> or <code>stopped</code></li>
+<li><code>page</code>. Optional. Page number to fetch. Default is <code>1</code></li>
+<li><code>per</code>. Optional. Number of items to fetch per page. Default is <code>10</code></li>
+<li>Response:</li>
+</ul></li>
+</ul>
+<pre class="highlight swift"><code><span class="p">{</span>
+  <span class="s">"metadata"</span><span class="p">:</span> <span class="p">{</span>
+     <span class="s">"per"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+      <span class="s">"total"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+      <span class="s">"page"</span><span class="p">:</span> <span class="mi">1</span>
+   <span class="p">},</span>
+   <span class="s">"items"</span><span class="p">:</span> <span class="p">[</span>
+     <span class="p">{</span>
+       <span class="s">"userid"</span><span class="p">:</span> <span class="s">"tim"</span><span class="p">,</span>
+       <span class="s">"warningCount"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+       <span class="s">"duration"</span><span class="p">:</span> <span class="mf">1.4963999999999999e-05</span><span class="p">,</span>
+       <span class="s">"startTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:38:40Z"</span><span class="p">,</span>
+       <span class="s">"isCi"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+       <span class="s">"startTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604335120.279242</span><span class="p">,</span>
+       <span class="s">"category"</span><span class="p">:</span> <span class="s">"incremental"</span><span class="p">,</span>
+       <span class="s">"endTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604335135.242979</span><span class="p">,</span>
+       <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+       <span class="s">"compilationEndTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:38:55Z"</span><span class="p">,</span>
+       <span class="s">"compilationDuration"</span><span class="p">:</span> <span class="mf">1.4849e-05</span><span class="p">,</span>
+       <span class="s">"projectName"</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+       <span class="s">"compilationEndTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604335135.128335</span><span class="p">,</span>
+       <span class="s">"buildStatus"</span><span class="p">:</span> <span class="s">"failed"</span><span class="p">,</span>
+       <span class="s">"id"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+       <span class="s">"tag"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+       <span class="s">"errorCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+       <span class="s">"schema"</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+       <span class="s">"compiledCount"</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+       <span class="s">"endTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:38:55Z"</span><span class="p">,</span>
+       <span class="s">"userid256"</span><span class="p">:</span> <span class="s">"c28b6fd9a49bd8c74767501a114784d327336f3ff861873341b5b64900125463"</span><span class="p">,</span>
+       <span class="s">"machineName"</span><span class="p">:</span> <span class="s">"MyMac"</span><span class="p">,</span>
+       <span class="s">"wasSuspended"</span><span class="p">:</span> <span class="kc">false</span>
+     <span class="p">},</span>
+   <span class="o">...</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">list</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt">Page</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/Build.html">Build</a></span><span class="o">&gt;&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV5build3req3NIO15EventLoopFutureCyAA0D8ResponseVG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/build(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV5build3req3NIO15EventLoopFutureCyAA0D8ResponseVG5Vapor7RequestC_tKF">build(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the most relevant information of a <code><a href="../Classes/Build.html">Build</a></code>:
+<code><a href="../Classes/Build.html">Build</a></code> data, Xcode used and list of <code><a href="../Classes/Target.html">Target</a></code> that were built.</p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/&lt;buildId&gt;</code></li>
+<li><p>Path parameters</p>
+
+<ul>
+<li><code>buildId</code>. Mandatory. <code><a href="../Classes/Build.html">Build</a></code>&lsquo;s identifier</li>
+</ul></li>
+<li><p>Response:</p></li>
+</ul>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="s">"build"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">"userid"</span><span class="p">:</span> <span class="s">"tim"</span><span class="p">,</span>
+      <span class="s">"warningCount"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="s">"duration"</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span>
+      <span class="s">"startTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:38:40Z"</span><span class="p">,</span>
+      <span class="s">"isCi"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="s">"startTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604335120.279242</span><span class="p">,</span>
+      <span class="s">"category"</span><span class="p">:</span> <span class="s">"incremental"</span><span class="p">,</span>
+      <span class="s">"endTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604335135.242979</span><span class="p">,</span>
+      <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+      <span class="s">"compilationEndTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:38:55Z"</span><span class="p">,</span>
+      <span class="s">"compilationDuration"</span><span class="p">:</span> <span class="mf">1.48</span><span class="p">,</span>
+      <span class="s">"projectName"</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+      <span class="s">"compilationEndTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604335135.128335</span><span class="p">,</span>
+      <span class="s">"buildStatus"</span><span class="p">:</span> <span class="s">"failed"</span><span class="p">,</span>
+      <span class="s">"id"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+      <span class="s">"tag"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+      <span class="s">"errorCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s">"schema"</span><span class="p">:</span> <span class="s">"App"</span><span class="p">,</span>
+      <span class="s">"compiledCount"</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+      <span class="s">"endTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T16:38:55Z"</span><span class="p">,</span>
+      <span class="s">"userid256"</span><span class="p">:</span> <span class="s">"c28b6fd9a49bd8c74767501a114784d327336f3ff861873341b5b64900125463"</span><span class="p">,</span>
+      <span class="s">"machineName"</span><span class="p">:</span> <span class="s">"MyMac"</span><span class="p">,</span>
+      <span class="s">"wasSuspended"</span><span class="p">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+    <span class="s">"xcode"</span><span class="p">:</span> <span class="p">{</span>
+       <span class="s">"buildNumber"</span><span class="p">:</span> <span class="s">"12A7209"</span><span class="p">,</span>
+       <span class="s">"id"</span><span class="p">:</span> <span class="s">"6354C87F-0ADC-4354-929C-02EBE545E099"</span><span class="p">,</span>
+       <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+       <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+       <span class="s">"version"</span><span class="p">:</span> <span class="s">"1200"</span>
+    <span class="p">},</span>
+    <span class="s">"targets"</span><span class="p">:</span> <span class="p">[</span>
+       <span class="p">{</span>
+         <span class="s">"id"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1992"</span><span class="p">,</span>
+         <span class="s">"category"</span><span class="p">:</span> <span class="s">"noop"</span><span class="p">,</span>
+         <span class="s">"startTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T10:59:09Z"</span><span class="p">,</span>
+         <span class="s">"compilationEndTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604314749.2909288</span><span class="p">,</span>
+         <span class="s">"endTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604314982.298002</span><span class="p">,</span>
+         <span class="s">"endTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T11:03:02Z"</span><span class="p">,</span>
+         <span class="s">"fetchedFromCache"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+         <span class="s">"errorCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+         <span class="s">"warningCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s">"compilationEndTimestamp"</span><span class="p">:</span> <span class="s">"2020-11-02T10:59:09Z"</span><span class="p">,</span>
+         <span class="s">"compilationDuration"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s">"compiledCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s">"duration"</span><span class="p">:</span> <span class="mf">0.000233007</span><span class="p">,</span>
+         <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+         <span class="s">"name"</span><span class="p">:</span> <span class="s">"Model"</span><span class="p">,</span>
+         <span class="s">"startTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1604314749.2909288</span>
+       <span class="p">},</span>
+     <span class="o">...</span>
+     <span class="p">]</span>
+  <span class="p">}</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">build</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/BuildResponse.html">BuildResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV11buildErrors3req3NIO15EventLoopFutureCySayAA0D5ErrorCGG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/buildErrors(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV11buildErrors3req3NIO15EventLoopFutureCySayAA0D5ErrorCGG5Vapor7RequestC_tKF">buildErrors(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the list of errors of the given <code><a href="../Classes/Build.html">Build</a></code></p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/error/&lt;buildId&gt;</code></li>
+<li><p>Path parameters</p>
+
+<ul>
+<li><code>buildId</code>. Mandatory. <code><a href="../Classes/Build.html">Build</a></code>&lsquo;s identifier</li>
+</ul></li>
+<li><p>Response:</p></li>
+</ul>
+<pre class="highlight swift"><code><span class="p">[</span>
+  <span class="p">{</span>
+     <span class="s">"detail"</span><span class="p">:</span> <span class="s">"</span><span class="err">\</span><span class="s">/Users</span><span class="err">\</span><span class="s">/&lt;redacted&gt;</span><span class="err">\</span><span class="s">/myproject</span><span class="err">\</span><span class="s">/Sources</span><span class="err">\</span><span class="s">/MyClass.m:241:97:// /  error: instance method 'fetch' not found ; did you mean 'fetchIt'?</span><span class="se">\r</span><span class="s">
+     myclass:[self.myService fetch]</span><span class="se">\r</span><span class="s">                                                                                                ^~~~~~~~~~~~~~</span><span class="se">\r</span><span class="s">                                                                                                fetch</span><span class="se">\r</span><span class="s">
+     1 error generated.</span><span class="se">\r</span><span class="s">"</span><span class="p">,</span>
+     <span class="s">"characterRangeEnd"</span><span class="p">:</span> <span class="mi">13815</span><span class="p">,</span>
+     <span class="s">"id"</span><span class="p">:</span> <span class="s">"3E6EF185-6AC1-4E95-87E8-E305F41916E9"</span><span class="p">,</span>
+     <span class="s">"endingColumn"</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span>
+     <span class="s">"parentIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_8860"</span><span class="p">,</span>
+     <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+     <span class="s">"type"</span><span class="p">:</span> <span class="s">"clangError"</span><span class="p">,</span>
+     <span class="s">"title"</span><span class="p">:</span> <span class="s">"Instance method 'fetch' not found ; did you mean 'fetchIt'?"</span><span class="p">,</span>
+     <span class="s">"endingLine"</span><span class="p">:</span> <span class="mi">241</span><span class="p">,</span>
+     <span class="s">"severity"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+     <span class="s">"startingLine"</span><span class="p">:</span> <span class="mi">241</span><span class="p">,</span>
+     <span class="s">"parentType"</span><span class="p">:</span> <span class="s">"step"</span><span class="p">,</span>
+     <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+     <span class="s">"startingColumn"</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span>
+     <span class="s">"characterRangeStart"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s">"documentURL"</span><span class="p">:</span> <span class="s">"file:</span><span class="err">\</span><span class="s">/</span><span class="err">\</span><span class="s">/</span><span class="err">\</span><span class="s">/Users</span><span class="err">\</span><span class="s">/&lt;redacted&gt;</span><span class="err">\</span><span class="s">/myproject</span><span class="err">\</span><span class="s">/Sources</span><span class="err">\</span><span class="s">/MyClass.m"</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">buildErrors</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Classes/BuildError.html">BuildError</a></span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV13buildWarnings3req3NIO15EventLoopFutureCySayAA0D7WarningCGG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/buildWarnings(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV13buildWarnings3req3NIO15EventLoopFutureCySayAA0D7WarningCGG5Vapor7RequestC_tKF">buildWarnings(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the list of warnings of the given <code><a href="../Classes/Build.html">Build</a></code></p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/warning/&lt;buildId&gt;</code></li>
+<li><p>Path parameters</p>
+
+<ul>
+<li><code>buildId</code>. Mandatory. <code><a href="../Classes/Build.html">Build</a></code>&lsquo;s identifier</li>
+</ul></li>
+<li><p>Response:</p></li>
+</ul>
+<pre class="highlight swift"><code><span class="p">[</span>
+   <span class="p">{</span>
+    <span class="s">"detail"</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s">"characterRangeEnd"</span><span class="p">:</span> <span class="mi">9817</span><span class="p">,</span>
+    <span class="s">"documentURL"</span><span class="p">:</span> <span class="s">"file:</span><span class="err">\</span><span class="s">/</span><span class="err">\</span><span class="s">/</span><span class="err">\</span><span class="s">/Users</span><span class="err">\</span><span class="s">/&lt;redacted&gt;</span><span class="err">\</span><span class="s">/myproject</span><span class="err">\</span><span class="s">/Sources</span><span class="err">\</span><span class="s">/MyViewController.m"</span><span class="p">,</span>
+    <span class="s">"endingColumn"</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="s">"id"</span><span class="p">:</span> <span class="s">"5F2011AC-F87F-4EDC-BBC6-2BBA3D789EB3"</span><span class="p">,</span>
+    <span class="s">"parentIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1845"</span><span class="p">,</span>
+    <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+    <span class="s">"type"</span><span class="p">:</span> <span class="s">"deprecatedWarning"</span><span class="p">,</span>
+    <span class="s">"title"</span><span class="p">:</span> <span class="s">"'dimsBackgroundDuringPresentation' is deprecated: first deprecated in iOS 12.0"</span><span class="p">,</span>
+    <span class="s">"endingLine"</span><span class="p">:</span> <span class="mi">235</span><span class="p">,</span>
+    <span class="s">"severity"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">"startingLine"</span><span class="p">:</span> <span class="mi">235</span><span class="p">,</span>
+    <span class="s">"parentType"</span><span class="p">:</span> <span class="s">"step"</span><span class="p">,</span>
+    <span class="s">"clangFlag"</span><span class="p">:</span> <span class="s">"[-Wdeprecated-declarations]"</span><span class="p">,</span>
+    <span class="s">"startingColumn"</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+    <span class="s">"characterRangeStart"</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">buildWarnings</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Classes/BuildWarning.html">BuildWarning</a></span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV9buildHost3req3NIO15EventLoopFutureCyAA0dG0CG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/buildHost(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV9buildHost3req3NIO15EventLoopFutureCyAA0dG0CG5Vapor7RequestC_tKF">buildHost(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the data of the host used in the given <code><a href="../Classes/Build.html">Build</a></code></p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/host/&lt;buildId&gt;</code></li>
+<li><p>Path parameters</p>
+
+<ul>
+<li><code>buildId</code>. Mandatory. <code><a href="../Classes/Build.html">Build</a></code>&lsquo;s identifier</li>
+</ul></li>
+<li><p>Response:</p></li>
+</ul>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="s">"id"</span><span class="p">:</span> <span class="s">"9DD5508D-4AD9-4C1C-AB7C-45BC2183EC51"</span><span class="p">,</span>
+    <span class="s">"swapFreeMb"</span><span class="p">:</span> <span class="mf">1615.25</span><span class="p">,</span>
+    <span class="s">"hostOsFamily"</span><span class="p">:</span> <span class="s">"Darwin"</span><span class="p">,</span>
+    <span class="s">"isVirtual"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="s">"uptimeSeconds"</span><span class="p">:</span> <span class="mi">1602055187</span><span class="p">,</span>
+    <span class="s">"hostModel"</span><span class="p">:</span> <span class="s">"MacBookPro14,2"</span><span class="p">,</span>
+    <span class="s">"hostOsVersion"</span><span class="p">:</span> <span class="s">"10.15.7"</span><span class="p">,</span>
+    <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-10-26T00:00:00Z"</span><span class="p">,</span>
+    <span class="s">"cpuCount"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s">"swapTotalMb"</span><span class="p">:</span> <span class="mi">7168</span><span class="p">,</span>
+    <span class="s">"hostOs"</span><span class="p">:</span> <span class="s">"Mac OS X"</span><span class="p">,</span>
+    <span class="s">"hostArchitecture"</span><span class="p">:</span> <span class="s">"x86_64"</span><span class="p">,</span>
+    <span class="s">"memoryTotalMb"</span><span class="p">:</span> <span class="mi">16384</span><span class="p">,</span>
+    <span class="s">"timezone"</span><span class="p">:</span> <span class="s">"CET"</span><span class="p">,</span>
+    <span class="s">"cpuModel"</span><span class="p">:</span> <span class="s">"Intel(R) Core(TM) i7-7567U CPU @ 3.50GHz"</span><span class="p">,</span>
+    <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_1FE14870-EDF1-4E8C-B1AA-2C2DF484842B_1"</span><span class="p">,</span>
+    <span class="s">"memoryFreeMb"</span><span class="p">:</span> <span class="mf">24.5234375</span><span class="p">,</span>
+    <span class="s">"cpuSpeedGhz"</span><span class="p">:</span> <span class="mf">3.5</span>
+<span class="p">}</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">buildHost</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/BuildHost.html">BuildHost</a></span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV8metadata3req3NIO15EventLoopFutureCyAA0D8MetadataCG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/metadata(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV8metadata3req3NIO15EventLoopFutureCyAA0D8MetadataCG5Vapor7RequestC_tKF">metadata(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the metadata sent using XCMetrics plugins for the given <code><a href="../Classes/Build.html">Build</a></code>.
+The metadata is returned as a JSON object where each data is a key-value pair of <code>String</code>s</p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/metadata/&lt;buildId&gt;</code></li>
+<li><p>Path parameters</p>
+
+<ul>
+<li><code>buildId</code>. Mandatory. <code><a href="../Classes/Build.html">Build</a></code>&lsquo;s identifier</li>
+</ul></li>
+<li><p>Response:</p></li>
+</ul>
+<pre class="highlight swift"><code><span class="p">{</span>
+    <span class="s">"metadata"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">"anotherKey"</span><span class="p">:</span> <span class="s">"42"</span><span class="p">,</span>
+      <span class="s">"thirdKey"</span><span class="p">:</span> <span class="s">"Third value"</span><span class="p">,</span>
+      <span class="s">"aKey"</span><span class="p">:</span> <span class="s">"value1"</span>
+    <span class="p">},</span>
+    <span class="s">"id"</span><span class="p">:</span> <span class="s">"C1CDF2CE-0CC2-49C3-B8A2-481E67020CB8"</span><span class="p">,</span>
+    <span class="s">"day"</span><span class="p">:</span> <span class="s">"2020-11-02T00:00:00Z"</span><span class="p">,</span>
+    <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"MyMac_0B9294B4-7E5A-4D40-91AB-5953A5075785_1"</span>
+<span class="p">}</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">metadata</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/BuildMetadata.html">BuildMetadata</a></span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV8projects3req3NIO15EventLoopFutureCySaySSGG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/projects(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV8projects3req3NIO15EventLoopFutureCySaySSGG5Vapor7RequestC_tKF">projects(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the list of projects from which there are <code><a href="../Classes/Build.html">Build</a></code> on the database.
+Useful if you want the list to filter the build per project using the endpoint
+<code>/v1/build/list</code></p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/project</code></li>
+<li>Response:</li>
+</ul>
+<pre class="highlight swift"><code><span class="p">[</span>
+    <span class="s">"Project1"</span><span class="p">,</span>
+    <span class="s">"MyProject"</span>
+<span class="p">]</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">projects</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">String</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </section>
+        </article>
+      </div>
+      <div class="nav-wrapper">
+        <nav class="nav-bottom">
+          <ul class="nav-groups">
+            <li class="nav-group-name">
+              <a href="../HTTP%20Endpoints.html">HTTP Endpoints</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Structs/BuildController.html">BuildController</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/JobLogController.html">JobLogController</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/UploadMetricsController.html">UploadMetricsController</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Guides.html">Other Guides</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../getting-started.html">Getting Started</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../how-to-deploy-backend.html">How to Deploy Backend</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../log-management-deep-dive.html">Log Management Deep Dive</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../run-the-backend-locally.html">Run the Backend Locally</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Classes.html">Other Classes</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Classes/Build.html">Build</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildBuilder.html">BuildBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildError.html">BuildError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildHost.html">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildMetadata.html">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildMetrics.html">BuildMetrics</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildNote.html">BuildNote</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/BuildWarning.html">BuildWarning</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/Configuration.html">Configuration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/ErrorBuilder.html">ErrorBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/ExtraInfo.html">ExtraInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/ExtraInfo.html">ExtraInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/FileManagerAccessor.html">FileManagerAccessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/FunctionBuilder.html">FunctionBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/HardwareFactsFetcherImplementation.html">HardwareFactsFetcherImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/HashedMacOSMachineNameReader.html">HashedMacOSMachineNameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/JSONMetricsParserFactory.html">JSONMetricsParserFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/JobLogEntry.html">JobLogEntry</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/LogManagerImplementation.html">LogManagerImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/LogParserImplementation.html">LogParserImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/LogParserImplementation/NoteType.html">– NoteType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/LogParserImplementation/BuildCategoryType.html">– BuildCategoryType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/LogParserImplementation/BuildCategorisation.html">– BuildCategorisation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/MacOSUsernameReader.html">MacOSUsernameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/MetricsPublisherServiceHTTP.html">MetricsPublisherServiceHTTP</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/MetricsUploaderLogger.html">MetricsUploaderLogger</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/MultipartRequestBuilder.html">MultipartRequestBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/NoteBuilder.html">NoteBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/ProcessMetricsJob.html">ProcessMetricsJob</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/Step.html">Step</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/StepBuilder.html">StepBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/SwiftFunction.html">SwiftFunction</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/SwiftTypeCheckBuilder.html">SwiftTypeCheckBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/SwiftTypeChecks.html">SwiftTypeChecks</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/Target.html">Target</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/TargetBuilder.html">TargetBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/UploadMetricsPayload.html">UploadMetricsPayload</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/UploadMetricsRequest.html">UploadMetricsRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/WarningBuilder.html">WarningBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/XCMetricsBuilder.html">XCMetricsBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/XCMetricsConfiguration.html">XCMetricsConfiguration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/XCMetricsLoop.html">XCMetricsLoop</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/XcodeVersion.html">XcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/ZipValidatorLogCopier.html">ZipValidatorLogCopier</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Enums.html">Other Enumerations</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Enums/Constants.html">Constants</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/ControllerFactory.html">ControllerFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/EnvironmentVariable.html">EnvironmentVariable</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/HardwareFactsFetcherError.html">HardwareFactsFetcherError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/JSONValue.html">JSONValue</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/JobLogStatus.html">JobLogStatus</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/LogCopierError.html">LogCopierError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/LogManagerError.html">LogManagerError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/LogParserError.html">LogParserError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/MetricsParserError.html">MetricsParserError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/MetricsUploaderEffect.html">MetricsUploaderEffect</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/MetricsUploaderEvent.html">MetricsUploaderEvent</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/MetricsUploaderLogType.html">MetricsUploaderLogType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/MetricsUploaderLogic.html">MetricsUploaderLogic</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/RepositoryError.html">RepositoryError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/SysctlProperty.html">SysctlProperty</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Enums/UploadError.html">UploadError</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Extensions.html">Other Extensions</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Extensions/Array.html">Array</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Bool.html">Bool</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/BuildHost.html">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/BuildHost/CodingKeys.html">– CodingKeys</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/BuildMetadata.html">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/BuildMetadata/CodingKeys.html">– CodingKeys</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/BuildStep.html">BuildStep</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/ByteBuffer.html">ByteBuffer</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Data.html">Data</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Dictionary.html">Dictionary</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Double.html">Double</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/FileManager.html">FileManager</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Float.html">Float</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Int.html">Int</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Int32.html">Int32</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Int64.html">Int64</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/JobEventData.html">JobEventData</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/NSNotification.html">NSNotification</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/NSNotification/Name.html">– Name</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/Notice.html">Notice</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/ObjCBool.html">ObjCBool</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/ProcessInfo.html">ProcessInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/String.html">String</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/UInt64.html">UInt64</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/URL.html">URL</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/XcodeVersion.html">XcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Extensions/XcodeVersion/CodingKeys.html">– CodingKeys</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Functions.html">Other Functions</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Other%20Functions.html#/s:19XCMetricsBackendLib9configureyy5Vapor11ApplicationCKF">configure(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Functions.html#/s:15XCMetricsClient4exitys5NeverOs5Int32V_SStF">exit(_:_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Functions.html#/s:15XCMetricsClient3logyySSF">log(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Functions.html#/s:15XCMetricsClient8logErroryySSF">logError(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Functions.html#/s:19XCMetricsBackendLib16logWithTimestamp_3msgy7Logging6LoggerV_SStF">logWithTimestamp(_:msg:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Functions.html#/s:19XCMetricsBackendLib6routesyy5Vapor11ApplicationCKF">routes(_:)</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Protocols.html">Other Protocols</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Protocols/Defaultable.html">Defaultable</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/FileAccessor.html">FileAccessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/HardwareFactsFetcher.html">HardwareFactsFetcher</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/JobLogRepository.html">JobLogRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/LogCopier.html">LogCopier</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/LogFileRepository.html">LogFileRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/LogManager.html">LogManager</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/LogParser.html">LogParser</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/MachineNameReader.html">MachineNameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/MetricsParserFactory.html">MetricsParserFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/MetricsPublisherService.html">MetricsPublisherService</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/MetricsRepository.html">MetricsRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/PartitionedByDay.html">PartitionedByDay</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Protocols/UsernameReader.html">UsernameReader</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Structs.html">Other Structures</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Structs/AddBuildStatusIndex.html">AddBuildStatusIndex</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/AddDetailsToErrors.html">AddDetailsToErrors</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/AddDetailsToNotes.html">AddDetailsToNotes</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/AddDetailsToWarnings.html">AddDetailsToWarnings</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/AddMetadataEffectHandler.html">AddMetadataEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/AddProjectNameIndex.html">AddProjectNameIndex</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/BuildInfo.html">BuildInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/BuildListParams.html">BuildListParams</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/BuildResponse.html">BuildResponse</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CacheLogsEffectHandler.html">CacheLogsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/ChartTimeSeries.html">ChartTimeSeries</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/Command.html">Command</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateBuild.html">CreateBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateBuildError.html">CreateBuildError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateBuildHosts.html">CreateBuildHosts</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateBuildMetadata.html">CreateBuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateBuildNotes.html">CreateBuildNotes</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateBuildWarning.html">CreateBuildWarning</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateStep.html">CreateStep</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateSwiftFunction.html">CreateSwiftFunction</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateSwiftTypeCheck.html">CreateSwiftTypeCheck</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateTarget.html">CreateTarget</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/CreateXcodeVersion.html">CreateXcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/ExecutePluginsEffectHandler.html">ExecutePluginsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/FileEntry.html">FileEntry</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/JobDashboard.html">JobDashboard</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/JobListRequest.html">JobListRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/JobLogEntryMigration.html">JobLogEntryMigration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/JobLogEventDelegate.html">JobLogEventDelegate</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LocalLogFileRepository.html">LocalLogFileRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogFileGCSRepository.html">LogFileGCSRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogFileRepositoryFactory.html">LogFileRepositoryFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogFileS3Repository.html">LogFileS3Repository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogParser.html">LogParser</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogParser/NoteType.html">– NoteType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogParser/BuildCategoryType.html">– BuildCategoryType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogParser/BuildCategorisation.html">– BuildCategorisation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogUploadError.html">LogUploadError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogsFinderEffectHandler.html">LogsFinderEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/LogsTaggerEffectHandler.html">LogsTaggerEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/MetricsProcessor.html">MetricsProcessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/MetricsUploadRequest.html">MetricsUploadRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/MetricsUploaderModel.html">MetricsUploaderModel</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/NoticeInfo.html">NoticeInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/PersistNonUploadedLogsEffectHandler.html">PersistNonUploadedLogsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/PostgreSQLJobLogRepository.html">PostgreSQLJobLogRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/PostgreSQLMetricsRepository.html">PostgreSQLMetricsRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/TemporaryFile.html">TemporaryFile</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/UploadMetricsEffectHandler.html">UploadMetricsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/UploadedLogTaggerEffectHandler.html">UploadedLogTaggerEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/XCMetrics.html">XCMetrics</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Structs/XCMetricsPlugin.html">XCMetricsPlugin</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="../Other%20Typealiases.html">Other Type Aliases</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient5Builda">Build</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient9BuildHosta">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient13BuildMetadataa">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient10ErrorBuilda">ErrorBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient13FunctionBuilda">FunctionBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient014MetricsServiceB0a">MetricsServiceClient</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient9NoteBuilda">NoteBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient9StepBuilda">StepBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient19SwiftTypeCheckBuilda">SwiftTypeCheckBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient11TargetBuilda">TargetBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient25UploadBuildMetricsRequesta">UploadBuildMetricsRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient12WarningBuilda">WarningBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Other%20Typealiases.html#/s:15XCMetricsClient12XcodeVersiona">XcodeVersion</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer-wrapper">
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </div>
+    </div>
+  </body>
+</div>
+</html>

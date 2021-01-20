@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Getting Started  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a title="Getting Started  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p>
+          <a href="index.html"> Docs</a>
+          <span class="no-mobile"> (31% documented)</span>
+        </p>
+    
+        <p class="header-right">
+          <a href="https://github.com/spotify/XCMetrics">
+            <img src="img/gh.png"/>
+            <span class="no-mobile">View on GitHub</span>
+          </a>
+        </p>
+    
+      </div>
+    </header>
+    <div id="breadcrumbs-container">
+      <div class="content-wrapper">
+        <p id="breadcrumbs">
+          <span class="no-mobile">
+            <a href="index.html"> Reference</a>
+            <img id="carat" src="img/carat.png" />
+          </span>
+          Getting Started  Reference
+        </p>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="article-wrapper">
+        <article class="main-content">
+          <section>
+            <section class="section">
+              
+              <h1 id='getting-started' class='heading'>Getting Started</h1>
+
+<p>There are two ways to integrate <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> in your project. Based on how much customizability you need and the kind of metrics you&rsquo;d like to collect, you&rsquo;ll need to take your decision. Here we describe the two approaches.</p>
+<h2 id='approach-1-default-metrics-collection' class='heading'>Approach #1: Default Metrics Collection</h2>
+
+<p><code><a href="Structs/XCMetrics.html">XCMetrics</a></code> supports a few arguments out of the box that allow you to start sending the default set of metrics to any supported backend service. In this getting started guide, we will show how to integrate <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> in our example project named <code>BasicApp</code>. You can find the completed example app in the <a href="https://github.com/spotify/XCMetrics/blob/main/Examples/BasicApp/">Examples/BasicApp</a> directory. Feel free to follow along with your own project.</p>
+
+<p>One of the pre-requisites is to get a binary release of XCMetrics directly from our GitHub repo or compile it locally. In this case, we&rsquo;ll compile it locally since it&rsquo;s already in the repo, but we recommend to package it and download it as part of your project configuration steps in order to save time to your developers.</p>
+
+<blockquote>
+<p>If you&rsquo;re downloading a pre-built executable version of XCMetrics, you can skip the following section.</p>
+</blockquote>
+<h4 id='compile-xcmetrics-executable' class='heading'>Compile XCMetrics Executable</h4>
+
+<p>In a terminal window inside the <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> repo, run the following:</p>
+<pre class="highlight shell"><code>swift build --product XCMetrics -c release
+</code></pre>
+
+<p>An executable named <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> will be place inside <code>.build/release/XCMetrics</code>. This is the executable that manages the metrics collection for you.</p>
+<h4 id='xcode-integration' class='heading'>Xcode Integration</h4>
+
+<p>Now that we have an <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> executable, we can proceed with the integration in your project. Open your <code>xcodeproj</code> (<code>BasicApp.xcodeproj</code> if you&rsquo;re following our example), select your scheme and press &ldquo;Edit Scheme&rdquo;.</p>
+
+<p><img src="img/edit-scheme.png" alt=""></p>
+
+<p>Expand the &ldquo;Build&rdquo; left panel to reveal pre and post-actions. Let&rsquo;s create a new post-action by pressing on the &ldquo;+&rdquo; button.</p>
+
+<p><img src="img/build-panel.png" alt=""></p>
+
+<p>Make sure to select your target in &ldquo;Provide build settings from&rdquo; in order to provide the build settings to the post-action scheme (required for the next step). Paste the following script in the text area:</p>
+<pre class="highlight shell"><code><span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../XCMetricsLauncher <span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../.build/release/XCMetrics --name BasicApp --buildDir <span class="k">${</span><span class="nv">BUILD_DIR</span><span class="k">}</span> --serviceURL https://yourservice.com/v1/metrics
+</code></pre>
+
+<p>This is how the post-action scheme should look like. Let&rsquo;s break it down:</p>
+
+<ul>
+<li><code>${SRCROOT}/../../XCMetricsLauncher</code> is a launcher script that is to make our post-scheme action run in the background and let Xcode finish the build cleanly. More information on why this is needed is available in <a href="">its docs</a>.</li>
+<li>The previous script then accepts the <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> executable location. In this case it&rsquo;s in the Swift Package Manager build directory, but it could really be anywhere on your system.</li>
+<li>Some required parameters are then passed to the executable:
+
+<ul>
+<li><code>--name</code>: the name of the project where we are collecting the metrics. This could be your scheme name of project name for example.</li>
+<li><code>--buildDir</code>: the build directory of the project where we are collecting the metrics. This is the value of the <code>BUILD_DIR</code> variable, thus why before we needed to make sure the build environment variables are shared to our post-action scheme.</li>
+<li><code>--serviceURL</code>: the URL of the service receiving the collected metrics. If you haven&rsquo;t deployed a service yet, please head over to <a href="https://github.com/spotify/XCMetrics/blob/main/docs/How%20to%20Deploy%20Backend.md">&ldquo;Deploy Backend&rdquo;</a> first.</li>
+<li><code>--timeout</code>: the number of seconds to wait for the Xcode log to appear. The default value is 5s.</li>
+<li><code>--isCI</code>: either true or false based on if the current build is running on CI or not. This is useful to categorize builds as local or continuous integration builds.</li>
+</ul></li>
+</ul>
+
+<p><img src="img/post-action-scheme.png" alt=""></p>
+
+<p>If you build the scheme now, the build metrics should be sent to your service as soon as the build completes!</p>
+<h4 id='default-metrics' class='heading'>Default Metrics</h4>
+
+<p>All the metrics produced by Xcode in the xcactivitylog are of course collected:</p>
+
+<ul>
+<li>Build Information</li>
+<li>Build Steps</li>
+<li>Build Targets</li>
+<li>Warnings</li>
+<li>Errors</li>
+<li>Function compilation times and type-check information (requires a <code>swiftc</code> flag to be passed in order for the compiler to emit the data)</li>
+<li>Notes</li>
+</ul>
+
+<p>The following metrics are also collected by default for each build:</p>
+
+<ul>
+<li>Hardware information: CPU model, CPU count, hardware model, macOS version and more.</li>
+<li>Xcode version: build number, version string and build identifier.</li>
+<li>Tag: an optional tag to easily identify a build, such as a benchmark build or some other well-known build type.</li>
+</ul>
+<h2 id='approach-2-custom-metrics-collection' class='heading'>Approach #2: Custom Metrics Collection</h2>
+
+<p>If you need more customizability and you would like to build your own plugins to collect even more data alongside each build, the solution is to write your own SPM packages to extend <code><a href="Structs/XCMetrics.html">XCMetrics</a></code>. At Spotify for example, we have <code>SPTXCMetrics</code> which collects even more data from developers&rsquo; machines to make our analysis on build data more powerful and detailed.</p>
+<h4 id='spm-package-creation' class='heading'>SPM Package Creation</h4>
+
+<p>Start by creating a new SPM package with the following command:</p>
+<pre class="highlight shell"><code>swift package init --type executable
+</code></pre>
+<h4 id='add-xcmetrics-dependency' class='heading'>Add XCMetrics Dependency</h4>
+
+<p>Open the newly created <code>Package.swift</code> and modify it as following (this is an example of our internal <code>SPTXCMetrics</code> implementation):</p>
+<pre class="highlight swift"><code><span class="c1">// swift-tools-version:5.2</span>
+<span class="c1">// The swift-tools-version declares the minimum version of Swift required to build this package.</span>
+
+<span class="kd">import</span> <span class="kt">PackageDescription</span>
+
+<span class="k">let</span> <span class="nv">package</span> <span class="o">=</span> <span class="kt">Package</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"client"</span><span class="p">,</span>
+    <span class="nv">platforms</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">macOS</span><span class="p">(</span><span class="o">.</span><span class="n">v10_15</span><span class="p">),</span>
+    <span class="p">],</span> <span class="nv">products</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">executable</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"SPTXCMetrics"</span><span class="p">,</span> <span class="nv">targets</span><span class="p">:</span> <span class="p">[</span><span class="s">"SPTXCMetricsApp"</span><span class="p">]),</span>
+    <span class="p">],</span>
+    <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
+         <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/spotify/XCMetrics"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"0.1.0"</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="nv">targets</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">target</span><span class="p">(</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="s">"SPTXCMetrics"</span><span class="p">,</span>
+            <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="nf">product</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"XCMetricsClient"</span><span class="p">,</span> <span class="nv">package</span><span class="p">:</span> <span class="s">"XCMetrics"</span><span class="p">)]),</span>
+        <span class="o">.</span><span class="nf">target</span><span class="p">(</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="s">"SPTXCMetricsApp"</span><span class="p">,</span>
+            <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span><span class="s">"SPTXCMetrics"</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="o">.</span><span class="nf">testTarget</span><span class="p">(</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="s">"SPTXCMetricsTests"</span><span class="p">,</span>
+            <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span><span class="s">"SPTXCMetrics"</span><span class="p">]),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</code></pre>
+
+<p>We now have wrapped <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> in a new <code>SPTXCMetris</code> target. This target can include more plugins and logic that will be by <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> when collecting metrics.</p>
+<h3 id='plugin-architecture-overview' class='heading'>Plugin Architecture Overview</h3>
+
+<p>Here&rsquo;s an example of how <code>SPTXCMetrics</code> could be implemented. Here&rsquo;s we&rsquo;re implementing a plugin to track the thermal throttling status of the machine to see how it could affect build times.</p>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">Foundation</span>
+<span class="kd">import</span> <span class="kt">XCMetricsClient</span>
+<span class="kd">import</span> <span class="kt">XCMetricsUtils</span>
+
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SPTXCMetrics</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">metrics</span> <span class="o">=</span> <span class="kt">XCMetrics</span><span class="o">.</span><span class="nf">parseOrExit</span><span class="p">()</span>
+        <span class="k">let</span> <span class="nv">configuration</span> <span class="o">=</span> <span class="kt">XCMetricsConfiguration</span><span class="p">()</span>
+        <span class="n">configuration</span><span class="o">.</span><span class="nf">add</span><span class="p">(</span><span class="nv">plugin</span><span class="p">:</span> <span class="kt">ThermalThrottlingPlugin</span><span class="p">()</span><span class="o">.</span><span class="nf">create</span><span class="p">())</span>
+        <span class="n">metrics</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">configuration</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ThermalThrottlingPlugin</span> <span class="p">{</span>
+
+    <span class="kd">func</span> <span class="nf">create</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">XCMetricsPlugin</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kt">XCMetricsPlugin</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Thermal Throttling"</span><span class="p">,</span> <span class="nv">body</span><span class="p">:</span> <span class="p">{</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="k">in</span>
+            <span class="k">let</span> <span class="nv">captureGroup</span> <span class="o">=</span> <span class="s">"cpuspeed"</span>
+            <span class="k">let</span> <span class="nv">regex</span> <span class="o">=</span> <span class="s">"[.</span><span class="se">\n</span><span class="s">]*CPU_Speed_Limit </span><span class="se">\t</span><span class="s">= (?&lt;</span><span class="se">\(</span><span class="n">captureGroup</span><span class="se">)</span><span class="s">&gt;[0-9]*)"</span>
+            <span class="k">guard</span> <span class="k">let</span> <span class="nv">thermStdout</span> <span class="o">=</span> <span class="k">try</span><span class="p">?</span> <span class="nf">shellGetStdout</span><span class="p">(</span><span class="s">"pmset"</span><span class="p">,</span> <span class="nv">args</span><span class="p">:</span> <span class="p">[</span><span class="s">"-g"</span><span class="p">,</span> <span class="s">"therm"</span><span class="p">])</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">[:]</span> <span class="p">}</span>
+            <span class="k">let</span> <span class="nv">nsrange</span> <span class="o">=</span> <span class="kt">NSRange</span><span class="p">(</span><span class="n">thermStdout</span><span class="o">.</span><span class="n">startIndex</span><span class="o">..&lt;</span><span class="n">thermStdout</span><span class="o">.</span><span class="n">endIndex</span><span class="p">,</span> <span class="nv">in</span><span class="p">:</span> <span class="n">thermStdout</span><span class="p">)</span>
+            <span class="k">let</span> <span class="nv">reg</span> <span class="o">=</span> <span class="k">try!</span> <span class="kt">NSRegularExpression</span><span class="p">(</span><span class="nv">pattern</span><span class="p">:</span> <span class="n">regex</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[])</span>
+            <span class="k">var</span> <span class="nv">cpuSpeedLimit</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+            <span class="n">reg</span><span class="o">.</span><span class="nf">enumerateMatches</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="n">thermStdout</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[],</span> <span class="nv">range</span><span class="p">:</span> <span class="n">nsrange</span><span class="p">)</span> <span class="p">{</span> <span class="n">match</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">stop</span> <span class="k">in</span>
+                <span class="k">guard</span> <span class="k">let</span> <span class="nv">match</span> <span class="o">=</span> <span class="n">match</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+                <span class="k">let</span> <span class="nv">matchRange</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="nf">range</span><span class="p">(</span><span class="nv">withName</span><span class="p">:</span> <span class="n">captureGroup</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">matchRange</span><span class="o">.</span><span class="n">location</span> <span class="o">!=</span> <span class="kt">NSNotFound</span><span class="p">,</span> <span class="k">let</span> <span class="nv">range</span> <span class="o">=</span> <span class="kt">Range</span><span class="p">(</span><span class="n">matchRange</span><span class="p">,</span> <span class="nv">in</span><span class="p">:</span> <span class="n">thermStdout</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">cpuSpeedLimit</span> <span class="o">=</span> <span class="kt">String</span><span class="p">(</span><span class="n">thermStdout</span><span class="p">[</span><span class="n">range</span><span class="p">])</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="k">let</span> <span class="nv">value</span> <span class="o">=</span> <span class="n">cpuSpeedLimit</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s">"CPU_Speed_Limit"</span><span class="p">:</span> <span class="n">value</span><span class="p">]</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">[:]</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Each plugin has given access to the environment variables in a dictionary, for even higher customizability. You can for example provide values from your build environment and track them when collecting metrics. Each plugin should return itself a dictionary of values that will be attached to each build and stored in the as build metadata.</p>
+<h2 id='pro-amp-debugging-tips' class='heading'>Pro &amp; Debugging Tips</h2>
+
+<p>For some reason, Xcode doesn&rsquo;t execute the post-action scheme in case the build fails. To force Xcode to execute the post-action scheme even if the build fails, add <code>runPostActionsOnFailure = &quot;YES&quot;</code> as an attribute of the <code>BuildAction</code> tag in your <code>xscheme</code> (like we do in our <a href="https://github.com/spotify/XCMetrics/blob/main/Examples/BasicApp/BasicApp.xcodeproj/xcshareddata/xcschemes/BasicApp.xcscheme#L8">BasicApp.xcsheme</a>).</p>
+
+<p>In case of issues, here are some useful tips on how to debug them:</p>
+
+<ul>
+<li>The post-action scheme is ran in a temporary directory created by Xcode, so you should use absolute paths when referencing files or executables.</li>
+<li>The post-action scheme doesn&rsquo;t print its output anywhere. If you&rsquo;re trying to debug something, you redirect stdout and stderr to files on disk to inspect them (e.g: append to your command <code>&gt; ~/Desktop/error.txt 2&gt;&amp;1</code>)</li>
+<li>If you think the problem is inside <code><a href="Structs/XCMetrics.html">XCMetrics</a></code>, you can inspect its logs by using the Console app and filtering for <code>XCMetricsApp</code> or use the following command: <code>log show --start &#39;2020-10-05 12:05:00&#39; --info --predicate &quot;process like &#39;XCMetricsApp&#39;&quot;</code></li>
+</ul>
+
+            </section>
+          </section>
+        </article>
+      </div>
+      <div class="nav-wrapper">
+        <nav class="nav-bottom">
+          <ul class="nav-groups">
+            <li class="nav-group-name">
+              <a href="HTTP%20Endpoints.html">HTTP Endpoints</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Structs/BuildController.html">BuildController</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobLogController.html">JobLogController</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/UploadMetricsController.html">UploadMetricsController</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Guides.html">Other Guides</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="getting-started.html">Getting Started</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="how-to-deploy-backend.html">How to Deploy Backend</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="log-management-deep-dive.html">Log Management Deep Dive</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="run-the-backend-locally.html">Run the Backend Locally</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Classes.html">Other Classes</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Classes/Build.html">Build</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildBuilder.html">BuildBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildError.html">BuildError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildHost.html">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildMetadata.html">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildMetrics.html">BuildMetrics</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildNote.html">BuildNote</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildWarning.html">BuildWarning</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/Configuration.html">Configuration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ErrorBuilder.html">ErrorBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ExtraInfo.html">ExtraInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ExtraInfo.html">ExtraInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/FileManagerAccessor.html">FileManagerAccessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/FunctionBuilder.html">FunctionBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/HardwareFactsFetcherImplementation.html">HardwareFactsFetcherImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/HashedMacOSMachineNameReader.html">HashedMacOSMachineNameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/JSONMetricsParserFactory.html">JSONMetricsParserFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/JobLogEntry.html">JobLogEntry</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogManagerImplementation.html">LogManagerImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation.html">LogParserImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation/NoteType.html">– NoteType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation/BuildCategoryType.html">– BuildCategoryType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation/BuildCategorisation.html">– BuildCategorisation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MacOSUsernameReader.html">MacOSUsernameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MetricsPublisherServiceHTTP.html">MetricsPublisherServiceHTTP</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MetricsUploaderLogger.html">MetricsUploaderLogger</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MultipartRequestBuilder.html">MultipartRequestBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/NoteBuilder.html">NoteBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ProcessMetricsJob.html">ProcessMetricsJob</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/Step.html">Step</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/StepBuilder.html">StepBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/SwiftFunction.html">SwiftFunction</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/SwiftTypeCheckBuilder.html">SwiftTypeCheckBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/SwiftTypeChecks.html">SwiftTypeChecks</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/Target.html">Target</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/TargetBuilder.html">TargetBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/UploadMetricsPayload.html">UploadMetricsPayload</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/UploadMetricsRequest.html">UploadMetricsRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/WarningBuilder.html">WarningBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XCMetricsBuilder.html">XCMetricsBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XCMetricsConfiguration.html">XCMetricsConfiguration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XCMetricsLoop.html">XCMetricsLoop</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XcodeVersion.html">XcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ZipValidatorLogCopier.html">ZipValidatorLogCopier</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Enums.html">Other Enumerations</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Enums/Constants.html">Constants</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/ControllerFactory.html">ControllerFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/EnvironmentVariable.html">EnvironmentVariable</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/HardwareFactsFetcherError.html">HardwareFactsFetcherError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/JSONValue.html">JSONValue</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/JobLogStatus.html">JobLogStatus</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/LogCopierError.html">LogCopierError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/LogManagerError.html">LogManagerError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/LogParserError.html">LogParserError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsParserError.html">MetricsParserError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderEffect.html">MetricsUploaderEffect</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderEvent.html">MetricsUploaderEvent</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderLogType.html">MetricsUploaderLogType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderLogic.html">MetricsUploaderLogic</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/RepositoryError.html">RepositoryError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/SysctlProperty.html">SysctlProperty</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/UploadError.html">UploadError</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Extensions.html">Other Extensions</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Extensions/Array.html">Array</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Bool.html">Bool</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildHost.html">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildHost/CodingKeys.html">– CodingKeys</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildMetadata.html">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildMetadata/CodingKeys.html">– CodingKeys</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildStep.html">BuildStep</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/ByteBuffer.html">ByteBuffer</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Data.html">Data</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Dictionary.html">Dictionary</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Double.html">Double</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/FileManager.html">FileManager</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Float.html">Float</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Int.html">Int</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Int32.html">Int32</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Int64.html">Int64</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/JobEventData.html">JobEventData</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/NSNotification.html">NSNotification</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/NSNotification/Name.html">– Name</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Notice.html">Notice</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/ObjCBool.html">ObjCBool</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/ProcessInfo.html">ProcessInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/String.html">String</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/UInt64.html">UInt64</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/URL.html">URL</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/XcodeVersion.html">XcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/XcodeVersion/CodingKeys.html">– CodingKeys</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Functions.html">Other Functions</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:19XCMetricsBackendLib9configureyy5Vapor11ApplicationCKF">configure(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:15XCMetricsClient4exitys5NeverOs5Int32V_SStF">exit(_:_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:15XCMetricsClient3logyySSF">log(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:15XCMetricsClient8logErroryySSF">logError(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:19XCMetricsBackendLib16logWithTimestamp_3msgy7Logging6LoggerV_SStF">logWithTimestamp(_:msg:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:19XCMetricsBackendLib6routesyy5Vapor11ApplicationCKF">routes(_:)</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Protocols.html">Other Protocols</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Protocols/Defaultable.html">Defaultable</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/FileAccessor.html">FileAccessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/HardwareFactsFetcher.html">HardwareFactsFetcher</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/JobLogRepository.html">JobLogRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogCopier.html">LogCopier</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogFileRepository.html">LogFileRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogManager.html">LogManager</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogParser.html">LogParser</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MachineNameReader.html">MachineNameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MetricsParserFactory.html">MetricsParserFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MetricsPublisherService.html">MetricsPublisherService</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MetricsRepository.html">MetricsRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/PartitionedByDay.html">PartitionedByDay</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/UsernameReader.html">UsernameReader</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Structs.html">Other Structures</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Structs/AddBuildStatusIndex.html">AddBuildStatusIndex</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddDetailsToErrors.html">AddDetailsToErrors</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddDetailsToNotes.html">AddDetailsToNotes</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddDetailsToWarnings.html">AddDetailsToWarnings</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddMetadataEffectHandler.html">AddMetadataEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddProjectNameIndex.html">AddProjectNameIndex</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/BuildInfo.html">BuildInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/BuildListParams.html">BuildListParams</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/BuildResponse.html">BuildResponse</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CacheLogsEffectHandler.html">CacheLogsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/ChartTimeSeries.html">ChartTimeSeries</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/Command.html">Command</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuild.html">CreateBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildError.html">CreateBuildError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildHosts.html">CreateBuildHosts</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildMetadata.html">CreateBuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildNotes.html">CreateBuildNotes</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildWarning.html">CreateBuildWarning</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateStep.html">CreateStep</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateSwiftFunction.html">CreateSwiftFunction</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateSwiftTypeCheck.html">CreateSwiftTypeCheck</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateTarget.html">CreateTarget</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateXcodeVersion.html">CreateXcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/ExecutePluginsEffectHandler.html">ExecutePluginsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/FileEntry.html">FileEntry</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobDashboard.html">JobDashboard</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobListRequest.html">JobListRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobLogEntryMigration.html">JobLogEntryMigration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobLogEventDelegate.html">JobLogEventDelegate</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LocalLogFileRepository.html">LocalLogFileRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogFileGCSRepository.html">LogFileGCSRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogFileRepositoryFactory.html">LogFileRepositoryFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogFileS3Repository.html">LogFileS3Repository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser.html">LogParser</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser/NoteType.html">– NoteType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser/BuildCategoryType.html">– BuildCategoryType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser/BuildCategorisation.html">– BuildCategorisation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogUploadError.html">LogUploadError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogsFinderEffectHandler.html">LogsFinderEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogsTaggerEffectHandler.html">LogsTaggerEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/MetricsProcessor.html">MetricsProcessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/MetricsUploadRequest.html">MetricsUploadRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/MetricsUploaderModel.html">MetricsUploaderModel</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/NoticeInfo.html">NoticeInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/PersistNonUploadedLogsEffectHandler.html">PersistNonUploadedLogsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/PostgreSQLJobLogRepository.html">PostgreSQLJobLogRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/PostgreSQLMetricsRepository.html">PostgreSQLMetricsRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/TemporaryFile.html">TemporaryFile</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/UploadMetricsEffectHandler.html">UploadMetricsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/UploadedLogTaggerEffectHandler.html">UploadedLogTaggerEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/XCMetrics.html">XCMetrics</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/XCMetricsPlugin.html">XCMetricsPlugin</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Typealiases.html">Other Type Aliases</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient5Builda">Build</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient9BuildHosta">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient13BuildMetadataa">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient10ErrorBuilda">ErrorBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient13FunctionBuilda">FunctionBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient014MetricsServiceB0a">MetricsServiceClient</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient9NoteBuilda">NoteBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient9StepBuilda">StepBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient19SwiftTypeCheckBuilda">SwiftTypeCheckBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient11TargetBuilda">TargetBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient25UploadBuildMetricsRequesta">UploadBuildMetricsRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient12WarningBuilda">WarningBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient12XcodeVersiona">XcodeVersion</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer-wrapper">
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </div>
+    </div>
+  </body>
+</div>
+</html>

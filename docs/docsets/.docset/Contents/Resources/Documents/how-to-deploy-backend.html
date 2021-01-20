@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>How to Deploy Backend  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a title="How to Deploy Backend  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p>
+          <a href="index.html"> Docs</a>
+          <span class="no-mobile"> (31% documented)</span>
+        </p>
+    
+        <p class="header-right">
+          <a href="https://github.com/spotify/XCMetrics">
+            <img src="img/gh.png"/>
+            <span class="no-mobile">View on GitHub</span>
+          </a>
+        </p>
+    
+      </div>
+    </header>
+    <div id="breadcrumbs-container">
+      <div class="content-wrapper">
+        <p id="breadcrumbs">
+          <span class="no-mobile">
+            <a href="index.html"> Reference</a>
+            <img id="carat" src="img/carat.png" />
+          </span>
+          How to Deploy Backend  Reference
+        </p>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="article-wrapper">
+        <article class="main-content">
+          <section>
+            <section class="section">
+              
+              <h1 id='backend-deployment' class='heading'>Backend Deployment</h1>
+
+<p>This repo includes a Dockerfile that you can use to build a docker image (<code>docker build .</code>) that can be deployed to the cloud.</p>
+<h2 id='1-requirements' class='heading'>1. Requirements</h2>
+
+<p>The Backend needs Redis, a PostgreSQL database and optionally a Google Cloud Storage Bucket.</p>
+
+<p>You can pass the setting of those servers as Environment Variables:</p>
+
+<ul>
+<li><strong><code>REDIS_HOST</code></strong> IP of the Redis server. Example: <code>127.0.0.1</code></li>
+<li><strong><code>REDIS_PORT</code></strong> Port of the Redis server. Example: <code>6379</code></li>
+<li><strong><code>DB_HOST</code></strong> PostgreSQL host. The default value is <code>localhost</code></li>
+<li><strong><code>DB_PORT</code></strong> PostgreSQL port. The default value is <code>5036</code></li>
+<li><strong><code>DB_USER</code></strong> PostgreSQL user. The default value is <code>xcmetrics-dev</code></li>
+<li><strong><code>DB_PASSWORD</code></strong> PostgreSQL user&rsquo;s password. The default value is <code>xcmetrics-dev</code></li>
+<li><strong><code>DB_NAME</code></strong> Name of the database. The default value is <code>xcmetrics-dev</code></li>
+</ul>
+<h4 id='gdpr-and-privacy' class='heading'>GDPR and Privacy</h4>
+
+<ul>
+<li><strong><code>XCMETRICS_REDACT_USER_DATA</code></strong> If this flag is <code>&quot;1&quot;</code> the Data will be anonymized, meaning that both the username and the machine name will be hashed using MD5 and the hash will be stored instead of the full names. Also, in all the file paths contained in the logs, the User folder will be redacted. For instance, instead of <code>/Users/mary/MyProject</code>, the data inserted in the tables will have <code>Users/&lt;redacted&gt;/MyProject</code> paths</li>
+</ul>
+<h2 id='single-instance-deployment' class='heading'>Single instance deployment</h2>
+
+<p>The easiest way to deploy the Backend is using only one instance that have both the Endpoints and the Job in the same process. </p>
+
+<p>In this case, you don&rsquo;t need Google Cloud Storage. The Endpoint&rsquo;s controller will store the log files in disk and, because the Job will be running in the same machine, the Job will just read them from there.</p>
+
+<p><img src="img/deploy-single-instance.jpg" alt=""></p>
+
+<p>Having a single instance running limits the amount of logs that can be processed. A Job runs in an EventLoop and Vapor creates one per CPU core, aditionally each EventLoop has a Database pool. This makes the max number of logs that can be processed in parallel to be:</p>
+
+<p><strong>number of cores</strong> * <strong>connections per pool</strong></p>
+
+<p>By default, we configure <strong>10</strong> connections per pool. You can change that number if your Database instance supports it.</p>
+
+<p>You can check an example Kubernetes deployment files of this scenario in the folder <code>DeploymentExamples/SingleInstance</code></p>
+<h2 id='multi-instance-deployment' class='heading'>Multi instance deployment</h2>
+
+<p>Having multiple instances will make the Backend to be more fault tolerant and more performant. You can process more logs in parallel. </p>
+
+<p>By far, the most resource-consuming task that the Backend does is parsing the Xcode logs. So it&rsquo;s advisable to deploy more instances that only run the ProcessLogJob than instances with the Endpoint to upload the Logs.</p>
+
+<p>This diagram shows how such a deployment will look like:</p>
+
+<p><img src="img/deploy-multiple-instances.jpg" alt=""></p>
+
+<p>For this to work, you&rsquo;ll need to configure an extra Set of Environment Variables:</p>
+
+<ul>
+<li><strong><code>XCMETRICS_START_JOBS_SAME_PROCESS</code></strong> Should be set to <code>&quot;0&quot;</code>. This will instruct the backend to not start the ProcessLogJob in the same instance than the Endpoints.</li>
+</ul>
+
+<p>In this configuation, the Controller needs to store the logs in the Cloud, not in disk. So the Jobs can download them from there. XCMetrics supports two Cloud Storage Systems: <strong>Amazon S3</strong> and <strong>Google Cloud Storage</strong></p>
+<h3 id='amazon-s3' class='heading'>Amazon S3</h3>
+
+<p>You will need to create a new S3 Bucket and a new User with permissions to write and read from it. You can follow the instructions in this <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/example-walkthroughs-managing-access-example1.html">Amazon AWS document</a></p>
+
+<ul>
+<li><strong><code>XCMETRICS_USE_S3_REPOSITORY</code></strong> Should be set to <code>&quot;1&quot;</code>.</li>
+<li><strong><code>XCMETRICS_S3_BUCKET</code></strong>. The name of the Bucket in S3. You need to create the Bucket manually.</li>
+<li><strong><code>XCMETRICS_S3_REGION</code></strong>. The region where the bucket lives, use the identifiers listed in <a href="https://docs.aws.amazon.com/general/latest/gr/s3.html">Amazon documentation</a>.</li>
+<li><strong><code>AWS_ACCESS_KEY_ID</code></strong>. The Access Key Id of an Amazon IAM User with permissions to the bucket</li>
+<li><strong><code>AWS_SECRET_ACCESS_KEY</code></strong>. The Secret Access Key Id of an Amazon IAM User with permissions to the bucket</li>
+</ul>
+<h3 id='google-cloud-storage' class='heading'>Google Cloud Storage</h3>
+
+<ul>
+<li><strong><code>XCMETRICS_USE_GCS_REPOSITORY</code></strong> Should be set to <code>&quot;1&quot;</code>.</li>
+<li><strong><code>XCMETRICS_GOOGLE_PROJECT</code></strong> Identifier of the Google Project where the GCS Bucket lives.</li>
+<li><strong><code>XCMETRICS_GCS_CREDENTIALS</code></strong> Path to the <code>.json</code> Google Cloud credentials file. The service account to which the credentials belong to, should have write and read permisions on the GCS Bucket</li>
+<li><strong><code>XCMETRICS_GCS_BUCKET</code></strong> Name of the Bucket where the log files will be stored.</li>
+</ul>
+
+<p>You can find example Kubernetes deployment&rsquo;s files of this scenario in the folder <code>DeploymentExamples/MultiInstances</code></p>
+<h2 id='google-cloud-run-deployment' class='heading'>Google Cloud Run Deployment</h2>
+
+<p>One quick option to deploy the backend is using Cloud Run in a Google Cloud Project. You will need a PostgreSQL instance deployed outside of Cloud Run, typically in Cloud SQL. One key feature in Cloud Run, is that you only get charged when your App is being used. If there are not requests to it, all instances will be removed and a new one will be spawned when a new request arrives. This makes Cloud Run not a good choice to run Async Jobs, the instance could be killed in the middle of processing a log. Thus, in this case you can disable the jobs and process the logs in the same Endpoint. The response time of the request will be longer, because it will wait for the log to be processed and inserted into the Database before responding to the XCMetrics Client, but Cloud Run plays well with this kind of Endpoints.</p>
+
+<p><img src="img/deploy-cloudrun.jpg" alt=""></p>
+
+<p><strong>Important</strong> When you use Cloud Run, the XCMetrics client needs to point to the <code>metrics-sync</code> endpoint. In your Xcode&rsquo;s PostAction edit it to something like:</p>
+<pre class="highlight shell"><code><span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../XCMetricsLauncher <span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../.build/release/XCMetrics --name BasicApp --buildDir <span class="k">${</span><span class="nv">BUILD_DIR</span><span class="k">}</span> --serviceURL https://yourservice.com/v1/metrics-sync
+</code></pre>
+<h2 id='1-use-our-cloud-run-button' class='heading'>1. Use our Cloud Run button</h2>
+
+<p>The easiest way to start is to click on the following &ldquo;Run on Google Cloud&rdquo; button. You will need to configure Cloud SQL manually, you can read the details in the next section.</p>
+
+<p><a href="https://deploy.cloud.run"><img src="https://deploy.cloud.run/button.svg" alt="Run on Google Cloud"></a></p>
+<h2 id='2-or-enable-it-manually' class='heading'>2. Or enable it manually</h2>
+
+<ol>
+<li><p>Enable Cloud Run and Cloud Build in your Google Cloud Project.</p></li>
+<li><p>Setup your Cloud SQL PostgreSQL database. Follow the instructions of the <a href="#using-google-cloud-sql">Using Google Cloud SQL section</a></p></li>
+<li><p>Add permissions to Cloud&rsquo;s Run Service Account for Cloud SQL. By default, Cloud Run uses the service account named <code>&lt;project number&gt;-compute@developer.gserviceaccount.com</code>. It will need the permissions <strong>Cloud SQL Client</strong></p></li>
+<li><p>You can skip the next sections if you&rsquo;re using &ldquo;Run in Google Cloud&rdquo; button. Next, you need to build a Docker image and deploy it using Cloud Run:</p></li>
+</ol>
+<pre class="highlight shell"><code>gcloud builds submit --tag gcr.io/&lt;my_gcp_project&gt;/xcmetricsserver --timeout<span class="o">=</span>30m
+</code></pre>
+
+<ol>
+<li>Use the <a href="https://console.cloud.google.com/run">Cloud Run console</a> to crrate a new Service using the Image you just uploaded. When you&rsquo;re creating it you need to add the Cloud SQL Connection in Advanced Settings as <a href="https://cloud.google.com/sql/docs/postgres/connect-run#configuring">described here</a></li>
+</ol>
+
+<p>You will need some specific Env Variables setup so the App can run in this environment:</p>
+
+<ul>
+<li><strong><code>XCMETRICS_USE_ASYNC_LOG_PROCESSING=&quot;0&quot;</code></strong> Should be 0, Cloud Run can&rsquo;t run Asynchronous jobs.</li>
+<li><strong><code>XCMETRICS_USE_CLOUDSQL_SOCKET=&quot;1&quot;</code></strong> Cloud Run uses Unix Sockets to connect to Cloud Run.</li>
+<li><strong><code>XCMETRICS_CLOUDSQL_CONNECTION_NAME</code></strong>. You can find this name in the Cloud SQL console. It&rsquo;s usually <code>my_project:gcp_region:cloudql_instance_name</code></li>
+<li><strong><code>DB_NAME=&quot;database name&quot;</code></strong>. The name of the database</li>
+<li><strong><code>DB_USER=&quot;database user&quot;</code></strong>. The name of the user with permissions on the database</li>
+<li><strong><code>DB_PASSWORD</code></strong>. Password to the database, you can also add it as a <strong>Secret</strong> to Cloud Run</li>
+</ul>
+<h2 id='using-google-cloud-sql' class='heading'>Using Google Cloud SQL</h2>
+
+<p>Google offers Managed PostgreSQL instances in its Cloud SQL product. If you want to use one of this as the database of XCMetrics, you will need to do some extra configuration to use it from GKE.</p>
+<h3 id='1-create-the-xcmetrics-database' class='heading'>1. Create the XCMetrics database</h3>
+
+<p>Create a new CloudSQL Instance for PostgreSQL. The Backend needs PostgreSQL 11.0 or 12.0. You can follow the instructions <a href="https://cloud.google.com/sql/docs/postgres/quickstart">here</a></p>
+
+<p>Once you created a CloudSQL Instance, Connect to the instance using the <a href="https://cloud.google.com/sql/docs/postgres/quickstart#connect">Cloud Shell</a> and create a Database, a user and a password that will be used by the Backend. You can do that by running this script:</p>
+<pre class="highlight sql"><code><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">xcmetrics</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">USER</span> <span class="n">xcmetrics</span> <span class="k">WITH</span> <span class="k">ENCRYPTED</span> <span class="n">PASSWORD</span> <span class="s1">'mypassword'</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="k">DATABASE</span> <span class="n">xcmetrics</span> <span class="k">to</span> <span class="n">xcmetrics</span><span class="p">;</span>
+</code></pre>
+<h3 id='2-setup-cloud-sql-proxy' class='heading'>2. Setup Cloud SQL Proxy</h3>
+
+<p>Cloud SQL Proxy will allow you to connect to the database from your computer and from GKE (If you choose to deploy the Backend using Kubernetes). Follow <a href="https://cloud.google.com/sql/docs/postgres/quickstart-proxy-test">this instructions</a> to enable it and to test it locally. Once you connect to it locally, you can use a PostgreSQL client (Postico is a good one) from your computer to query the tables once they have data.</p>
+<h3 id='3-give-permissions-to-your-service-account' class='heading'>3. Give permissions to your Service Account</h3>
+
+<p>The next step is to assign permissions to the Google Service Account that you&rsquo;re going to use with XCMetrics. Especifically, you will need the <strong>Cloud SQL Client</strong> permission and ghe <strong>Storage Admin</strong>:</p>
+
+<p><img src="img/gcp-permissions.jpg" alt=""></p>
+<h3 id='4-kubernetes-gke-configuration' class='heading'>4. Kubernetes (GKE) configuration</h3>
+
+<p>If you plan to deploy the Backend to GKE, You will need to do two things in order to connect it to Cloud SQL: create a Kubernetes Secret to store the password and the Google Service Account and setup Cloud SQL as a sidecar container. You can find the instructions <a href="https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine">here</a></p>
+<h2 id='deploy-to-gke' class='heading'>Deploy to GKE</h2>
+<h3 id='pre-requisites' class='heading'>Pre requisites</h3>
+
+<ol>
+<li><p>A Google Cloud Project</p></li>
+<li><p>Install The <code>gcloud</code> command line tools (<a href="https://cloud.google.com/sdk/docs/downloads-versioned-archives">download page</a> and configure it with your project by running <code>gcloud init</code>.</p></li>
+<li><p>Setup Cloud SQL following the instructions of the previous section.</p></li>
+<li><p>If you&rsquo;re planning to do a MultiInstance deployment, create a Google Cloud Storage Bucket. Use the same region where your Cloud SQL Instance is. A good advice is to add a Lifecycle Policy, so the logs will be automatically removed after a period. Open the bucket you just created and look for the <code>Lifecycle</code> menu in the upper bar. In this example we&rsquo;re setting up that the logs will be deleted after 2 days:</p></li>
+</ol>
+
+<p><img src="img/gcs-lifecycle.jpg" alt=""></p>
+
+<ol>
+<li><p>Create a new Service Account and give it the permissions for CloudSQL Client and Storage Admin. Generate a JSON credentials file and save it locally. You can check the steps in <a href="https://cloud.google.com/iam/docs/creating-managing-service-accounts">this page</a>.</p></li>
+<li><p>Enable the Cloud Build API in your project following the <strong>Before you begin</strong> instructions in <a href="https://cloud.google.com/cloud-build/docs/quickstart-build">this document</a></p></li>
+</ol>
+<h3 id='1-create-a-gke-cluster' class='heading'>1. Create a GKE Cluster</h3>
+
+<p>Create <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-cluster">a new GKE Cluster</a> in the same Google Cloud project where your Cloud SQL is running.</p>
+
+<p>Don&rsquo;t forget to select the same Region where the Cloud SQL database and the Cloud Storage bucket are for the cluster.</p>
+
+<p>In the wizard, open the <code>Nodes Groups</code> and select the <code>Default Pool</code>. Change the number of nodes to be 5. (By default is set to 3).
+Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medium</code>, also change the Disk to use SSD</p>
+
+<p><img src="img/gke-nodes.jpg" alt=""></p>
+<h3 id='2-setup-the-kubernetes-tools' class='heading'>2. Setup the Kubernetes Tools.</h3>
+
+<p>You will need to install <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-cluster">kubectl</a>. Once that&rsquo;s done, you need to configure you&rsquo;re new cluster. Run this command with the name of the cluster you created in step 1:</p>
+<pre class="highlight shell"><code>gcloud container clusters get-credentials name-of-cluster
+</code></pre>
+<h3 id='3-build-and-upload-an-image-with-the-xcmetrics-backend' class='heading'>3. Build and upload an image with the XCMetrics Backend</h3>
+
+<p>From the root of the project (where the Dockerfile is), run this command changing the name of the project for yours.</p>
+<pre class="highlight shell"><code>gcloud builds submit --tag gcr.io/my-gcp-project/xcmetrics --timeout<span class="o">=</span>30m
+</code></pre>
+<h3 id='4-create-kubernetes-secrets' class='heading'>4. Create Kubernetes Secrets</h3>
+
+<p>We will store in the Kubernetes Secrets two values: the Service account&rsquo;s credentials JSON file you created in the Pre Requisites and the password to the database. Run these commands:</p>
+<pre class="highlight shell"><code>kubectl create secret generic google-service-account <span class="se">\</span>
+--from-file<span class="o">=</span>service_account.json<span class="o">=</span>/path/to/credentials.json
+</code></pre>
+<pre class="highlight shell"><code>kubectl create secret generic db-secret <span class="se">\</span>
+  --from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'database password'</span>
+</code></pre>
+<h3 id='5-deploy-the-kubernetes-artifacts' class='heading'>5. Deploy the Kubernetes artifacts</h3>
+
+<p>Go to the <strong>DeploymentExamples</strong> folder and choose one type: either SingleInstance or MultiInstances (check the beginning of this document to know the differences) and change to that folder.</p>
+
+<p>You will need to edit some values.</p>
+
+<p>In <code>xcmetrics-service.yaml</code>:</p>
+
+<ol>
+<li>Change the image value to the uri you used to create it in Step 3  (<code>gcr.io/my-gcp-project/xcmetrics</code>).</li>
+<li>Replace the name of your Cloud SQL connection name here:
+<code>yaml
+    command: [&quot;/cloud_sql_proxy&quot;,
+              &quot;-instances=Replace with your Cloud SQL connection string=tcp:5432&quot;,
+              &quot;-credential_file=/secrets/service_account.json&quot;]
+</code></li>
+<li>For Multi instance deployments: Change the name of the environment variables <strong><code>XCMETRICS_GOOGLE_PROJECT</code></strong> and <strong><code>XCMETRICS_GCS_BUCKET</code></strong>.</li>
+</ol>
+
+<p>For MultiInstance Deployments, in <code>xcmetrics-jobs-deployment.yaml</code></p>
+
+<ol>
+<li>Change the image to the uri you used to create it in Step 3  (<code>gcr.io/my-gcp-project/xcmetrics</code>).</li>
+<li>Replace the name of your Cloud SQL connection name here:
+<code>yaml
+    command: [&quot;/cloud_sql_proxy&quot;,
+              &quot;-instances=Replace with your Cloud SQL connection string=tcp:5432&quot;,
+              &quot;-credential_file=/secrets/service_account.json&quot;]
+</code></li>
+<li>Change the name of the environment variables <strong><code>XCMETRICS_GOOGLE_PROJECT</code></strong> and <strong><code>XCMETRICS_GCS_BUCKET</code></strong>.</li>
+</ol>
+
+<p>Now, you&rsquo;re ready to deploy the XCMetrics artifacts:</p>
+
+<p>Deploy the Redis artifacts:</p>
+<pre class="highlight shell"><code>kubectl create -f xcmetrics-redis-deployment.yaml
+kubectl create -f xcmetrics-redis-service.yaml
+</code></pre>
+
+<p>Deploy XCMetrics</p>
+<pre class="highlight shell"><code>kubectl create -f xcmetrics-deployment.yaml
+kubectl create -f xcmetrics-service.yaml
+</code></pre>
+
+<p>For MultiInstances deployments, deploy the XCMetrics Jobs:</p>
+<pre class="highlight shell"><code>kubectl create -f xcmetrics-jobs-deployment.yaml
+kubectl create -f xcmetrics-jobs-service.yaml
+</code></pre>
+<h3 id='6-verify-the-deployment' class='heading'>6. Verify the deployment</h3>
+
+<p>Run the command <code>kubectl get services</code>. You should get the list of the Services deployed and the External IP for the XCMetrics Backend:</p>
+<pre class="highlight shell"><code>NAME               TYPE           CLUSTER-IP    EXTERNAL-IP     PORT<span class="o">(</span>S<span class="o">)</span>        AGE
+kubernetes         ClusterIP      10.12.0.1     &lt;none&gt;          443/TCP        5h4m
+redis              ClusterIP      10.12.10.21   &lt;none&gt;          6379/TCP       139m
+xcmetrics-jobs     ClusterIP      10.12.1.144   &lt;none&gt;          80/TCP         116m
+xcmetrics-server   LoadBalancer   10.12.5.86    35.187.83.33   80:30969/TCP   139m
+</code></pre>
+
+<p>You can run <code>curl -i http://external ip/v1/builds</code> to verify that everything is working. You should get a response like:</p>
+<pre class="highlight shell"><code>curl -i http://35.187.83.38/v1/builds
+HTTP/1.1 200 OK
+content-type: application/json; <span class="nv">charset</span><span class="o">=</span>utf-8
+content-length: 53
+connection: keep-alive
+date: Wed, 14 Oct 2020 17:48:00 GMT
+
+<span class="o">{</span><span class="s2">"metadata"</span>:<span class="o">{</span><span class="s2">"total"</span>:0,<span class="s2">"page"</span>:1,<span class="s2">"per"</span>:10<span class="o">}</span>,<span class="s2">"items"</span>:[]<span class="o">}</span>
+</code></pre>
+
+<p>Use the new URL in your XCMetrics client. Pass the <code>--serviceURL</code> with the new value. In this example will be <code>http://35.187.83.38/v1/metrics</code></p>
+
+            </section>
+          </section>
+        </article>
+      </div>
+      <div class="nav-wrapper">
+        <nav class="nav-bottom">
+          <ul class="nav-groups">
+            <li class="nav-group-name">
+              <a href="HTTP%20Endpoints.html">HTTP Endpoints</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Structs/BuildController.html">BuildController</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobLogController.html">JobLogController</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/UploadMetricsController.html">UploadMetricsController</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Guides.html">Other Guides</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="getting-started.html">Getting Started</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="how-to-deploy-backend.html">How to Deploy Backend</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="log-management-deep-dive.html">Log Management Deep Dive</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="run-the-backend-locally.html">Run the Backend Locally</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Classes.html">Other Classes</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Classes/Build.html">Build</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildBuilder.html">BuildBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildError.html">BuildError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildHost.html">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildMetadata.html">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildMetrics.html">BuildMetrics</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildNote.html">BuildNote</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/BuildWarning.html">BuildWarning</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/Configuration.html">Configuration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ErrorBuilder.html">ErrorBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ExtraInfo.html">ExtraInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ExtraInfo.html">ExtraInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/FileManagerAccessor.html">FileManagerAccessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/FunctionBuilder.html">FunctionBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/HardwareFactsFetcherImplementation.html">HardwareFactsFetcherImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/HashedMacOSMachineNameReader.html">HashedMacOSMachineNameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/JSONMetricsParserFactory.html">JSONMetricsParserFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/JobLogEntry.html">JobLogEntry</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogManagerImplementation.html">LogManagerImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation.html">LogParserImplementation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation/NoteType.html">– NoteType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation/BuildCategoryType.html">– BuildCategoryType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/LogParserImplementation/BuildCategorisation.html">– BuildCategorisation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MacOSUsernameReader.html">MacOSUsernameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MetricsPublisherServiceHTTP.html">MetricsPublisherServiceHTTP</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MetricsUploaderLogger.html">MetricsUploaderLogger</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/MultipartRequestBuilder.html">MultipartRequestBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/NoteBuilder.html">NoteBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ProcessMetricsJob.html">ProcessMetricsJob</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/Step.html">Step</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/StepBuilder.html">StepBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/SwiftFunction.html">SwiftFunction</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/SwiftTypeCheckBuilder.html">SwiftTypeCheckBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/SwiftTypeChecks.html">SwiftTypeChecks</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/Target.html">Target</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/TargetBuilder.html">TargetBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/UploadMetricsPayload.html">UploadMetricsPayload</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/UploadMetricsRequest.html">UploadMetricsRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/WarningBuilder.html">WarningBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XCMetricsBuilder.html">XCMetricsBuilder</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XCMetricsConfiguration.html">XCMetricsConfiguration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XCMetricsLoop.html">XCMetricsLoop</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/XcodeVersion.html">XcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Classes/ZipValidatorLogCopier.html">ZipValidatorLogCopier</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Enums.html">Other Enumerations</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Enums/Constants.html">Constants</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/ControllerFactory.html">ControllerFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/EnvironmentVariable.html">EnvironmentVariable</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/HardwareFactsFetcherError.html">HardwareFactsFetcherError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/JSONValue.html">JSONValue</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/JobLogStatus.html">JobLogStatus</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/LogCopierError.html">LogCopierError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/LogManagerError.html">LogManagerError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/LogParserError.html">LogParserError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsParserError.html">MetricsParserError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderEffect.html">MetricsUploaderEffect</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderEvent.html">MetricsUploaderEvent</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderLogType.html">MetricsUploaderLogType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/MetricsUploaderLogic.html">MetricsUploaderLogic</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/RepositoryError.html">RepositoryError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/SysctlProperty.html">SysctlProperty</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Enums/UploadError.html">UploadError</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Extensions.html">Other Extensions</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Extensions/Array.html">Array</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Bool.html">Bool</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildHost.html">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildHost/CodingKeys.html">– CodingKeys</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildMetadata.html">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildMetadata/CodingKeys.html">– CodingKeys</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/BuildStep.html">BuildStep</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/ByteBuffer.html">ByteBuffer</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Data.html">Data</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Dictionary.html">Dictionary</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Double.html">Double</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/FileManager.html">FileManager</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Float.html">Float</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Int.html">Int</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Int32.html">Int32</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Int64.html">Int64</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/JobEventData.html">JobEventData</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/NSNotification.html">NSNotification</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/NSNotification/Name.html">– Name</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/Notice.html">Notice</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/ObjCBool.html">ObjCBool</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/ProcessInfo.html">ProcessInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/String.html">String</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/UInt64.html">UInt64</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/URL.html">URL</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/XcodeVersion.html">XcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Extensions/XcodeVersion/CodingKeys.html">– CodingKeys</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Functions.html">Other Functions</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:19XCMetricsBackendLib9configureyy5Vapor11ApplicationCKF">configure(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:15XCMetricsClient4exitys5NeverOs5Int32V_SStF">exit(_:_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:15XCMetricsClient3logyySSF">log(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:15XCMetricsClient8logErroryySSF">logError(_:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:19XCMetricsBackendLib16logWithTimestamp_3msgy7Logging6LoggerV_SStF">logWithTimestamp(_:msg:)</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Functions.html#/s:19XCMetricsBackendLib6routesyy5Vapor11ApplicationCKF">routes(_:)</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Protocols.html">Other Protocols</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Protocols/Defaultable.html">Defaultable</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/FileAccessor.html">FileAccessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/HardwareFactsFetcher.html">HardwareFactsFetcher</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/JobLogRepository.html">JobLogRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogCopier.html">LogCopier</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogFileRepository.html">LogFileRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogManager.html">LogManager</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/LogParser.html">LogParser</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MachineNameReader.html">MachineNameReader</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MetricsParserFactory.html">MetricsParserFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MetricsPublisherService.html">MetricsPublisherService</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/MetricsRepository.html">MetricsRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/PartitionedByDay.html">PartitionedByDay</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Protocols/UsernameReader.html">UsernameReader</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Structs.html">Other Structures</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Structs/AddBuildStatusIndex.html">AddBuildStatusIndex</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddDetailsToErrors.html">AddDetailsToErrors</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddDetailsToNotes.html">AddDetailsToNotes</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddDetailsToWarnings.html">AddDetailsToWarnings</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddMetadataEffectHandler.html">AddMetadataEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/AddProjectNameIndex.html">AddProjectNameIndex</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/BuildInfo.html">BuildInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/BuildListParams.html">BuildListParams</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/BuildResponse.html">BuildResponse</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CacheLogsEffectHandler.html">CacheLogsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/ChartTimeSeries.html">ChartTimeSeries</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/Command.html">Command</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuild.html">CreateBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildError.html">CreateBuildError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildHosts.html">CreateBuildHosts</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildMetadata.html">CreateBuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildNotes.html">CreateBuildNotes</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateBuildWarning.html">CreateBuildWarning</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateStep.html">CreateStep</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateSwiftFunction.html">CreateSwiftFunction</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateSwiftTypeCheck.html">CreateSwiftTypeCheck</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateTarget.html">CreateTarget</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/CreateXcodeVersion.html">CreateXcodeVersion</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/ExecutePluginsEffectHandler.html">ExecutePluginsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/FileEntry.html">FileEntry</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobDashboard.html">JobDashboard</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobListRequest.html">JobListRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobLogEntryMigration.html">JobLogEntryMigration</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/JobLogEventDelegate.html">JobLogEventDelegate</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LocalLogFileRepository.html">LocalLogFileRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogFileGCSRepository.html">LogFileGCSRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogFileRepositoryFactory.html">LogFileRepositoryFactory</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogFileS3Repository.html">LogFileS3Repository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser.html">LogParser</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser/NoteType.html">– NoteType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser/BuildCategoryType.html">– BuildCategoryType</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogParser/BuildCategorisation.html">– BuildCategorisation</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogUploadError.html">LogUploadError</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogsFinderEffectHandler.html">LogsFinderEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/LogsTaggerEffectHandler.html">LogsTaggerEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/MetricsProcessor.html">MetricsProcessor</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/MetricsUploadRequest.html">MetricsUploadRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/MetricsUploaderModel.html">MetricsUploaderModel</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/NoticeInfo.html">NoticeInfo</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/PersistNonUploadedLogsEffectHandler.html">PersistNonUploadedLogsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/PostgreSQLJobLogRepository.html">PostgreSQLJobLogRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/PostgreSQLMetricsRepository.html">PostgreSQLMetricsRepository</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/TemporaryFile.html">TemporaryFile</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/UploadMetricsEffectHandler.html">UploadMetricsEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/UploadedLogTaggerEffectHandler.html">UploadedLogTaggerEffectHandler</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/XCMetrics.html">XCMetrics</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Structs/XCMetricsPlugin.html">XCMetricsPlugin</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-group-name">
+              <a href="Other%20Typealiases.html">Other Type Aliases</a>
+              <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient5Builda">Build</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient9BuildHosta">BuildHost</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient13BuildMetadataa">BuildMetadata</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient10ErrorBuilda">ErrorBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient13FunctionBuilda">FunctionBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient014MetricsServiceB0a">MetricsServiceClient</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient9NoteBuilda">NoteBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient9StepBuilda">StepBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient19SwiftTypeCheckBuilda">SwiftTypeCheckBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient11TargetBuilda">TargetBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient25UploadBuildMetricsRequesta">UploadBuildMetricsRequest</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient12WarningBuilda">WarningBuild</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="Other%20Typealiases.html#/s:15XCMetricsClient12XcodeVersiona">XcodeVersion</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer-wrapper">
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </div>
+    </div>
+  </body>
+</div>
+</html>
