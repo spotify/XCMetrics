@@ -280,6 +280,7 @@ footer {
 
 .info-item-gray img {
   width: 100%;
+  max-width: 430px;
   margin-bottom: 32px;
 }
 
