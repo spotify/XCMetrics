@@ -20,12 +20,14 @@
 import Fluent
 import Vapor
 
-final class BuildHost: Model, Content, PartitionedByDay {
+public final class BuildHost: Model, Content, PartitionedByDay {
 
-    static let schema = "build_hosts"
+    public static let schema = "build_hosts"
+
+    public init() { }
 
     @ID(key: .id)
-    var id: UUID?
+    public var id: UUID?
 
     @Field(key: "build_identifier")
     var buildIdentifier: String

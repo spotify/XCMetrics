@@ -21,13 +21,13 @@ import Fluent
 import Vapor
 
 /// Controller with endpoints that return Builds related data
-struct BuildController: RouteCollection {
+public struct BuildController: RouteCollection {
 
     /// Returns the routes supported by this Controller.
     /// All the routes are in the `v1/build` path
     /// - Parameter routes: RoutesBuilder to which the routes will be added
     /// - Throws: An `Error` if something goes wrong
-    func boot(routes: RoutesBuilder) throws {
+    public func boot(routes: RoutesBuilder) throws {
         routes.get("v1", "build", "error", ":id", use: buildErrors)
         routes.get("v1", "build", "host", ":id", use: buildHost)
         routes.get("v1", "build", "warning", ":id", use: buildWarnings)
@@ -85,7 +85,7 @@ struct BuildController: RouteCollection {
     /// }
     /// ```
     ///
-    func index(req: Request) -> EventLoopFuture<Page<Build>> {
+    public func index(req: Request) -> EventLoopFuture<Page<Build>> {
         return Build.query(on: req.db)
             .sort(\.$startTimestampMicroseconds, .descending)
             .paginate(for: req)
@@ -156,7 +156,7 @@ struct BuildController: RouteCollection {
     /// }
     /// ```
     ///
-    func list(req: Request) throws -> EventLoopFuture<Page<Build>> {
+    public func list(req: Request) throws -> EventLoopFuture<Page<Build>> {
         let params = try req.content.decode(BuildListParams.self)
         let query = Build.query(on: req.db)
             .filter(\.$startTimestamp >= params.from)
@@ -239,7 +239,7 @@ struct BuildController: RouteCollection {
     ///   }
     /// ```
     ///
-    func build(req: Request) throws -> EventLoopFuture<BuildResponse> {
+    public func build(req: Request) throws -> EventLoopFuture<BuildResponse> {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
@@ -304,7 +304,7 @@ struct BuildController: RouteCollection {
     /// ]
     /// ```
     ///
-    func buildErrors(req: Request) throws -> EventLoopFuture<[BuildError]> {
+    public func buildErrors(req: Request) throws -> EventLoopFuture<[BuildError]> {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
@@ -345,7 +345,7 @@ struct BuildController: RouteCollection {
     /// ]
     /// ```
     ///
-    func buildWarnings(req: Request) throws -> EventLoopFuture<[BuildWarning]> {
+    public func buildWarnings(req: Request) throws -> EventLoopFuture<[BuildWarning]> {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
@@ -385,7 +385,7 @@ struct BuildController: RouteCollection {
     /// }
     /// ```
     ///
-    func buildHost(req: Request) throws -> EventLoopFuture<BuildHost> {
+    public func buildHost(req: Request) throws -> EventLoopFuture<BuildHost> {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
@@ -422,7 +422,7 @@ struct BuildController: RouteCollection {
     /// }
     /// ```
     ///
-    func metadata(req: Request) throws -> EventLoopFuture<BuildMetadata> {
+    public func metadata(req: Request) throws -> EventLoopFuture<BuildMetadata> {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
@@ -451,7 +451,7 @@ struct BuildController: RouteCollection {
     /// ]
     /// ```
     ///
-    func projects(req: Request) throws -> EventLoopFuture<[String]> {
+    public func projects(req: Request) throws -> EventLoopFuture<[String]> {
         return Build.query(on: req.db)
                 .unique()
                 .sort(\.$projectName)
@@ -460,7 +460,7 @@ struct BuildController: RouteCollection {
 
 }
 
-struct BuildResponse: Content {
+public struct BuildResponse: Content {
     let build: Build    
     let targets: [Target]
     let xcode: XcodeVersion?

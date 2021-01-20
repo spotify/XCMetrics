@@ -20,11 +20,13 @@
 import Fluent
 import Vapor
 
-final class BuildMetadata: Model, Content, PartitionedByDay {
-    static let schema = "build_metadata"
+public final class BuildMetadata: Model, Content, PartitionedByDay {
+    public static let schema = "build_metadata"
+
+    public init() { }
 
     @ID(key: .id)
-    var id: UUID?
+    public var id: UUID?
 
     @Field(key: "build_identifier")
     var buildIdentifier: String
@@ -39,7 +41,7 @@ final class BuildMetadata: Model, Content, PartitionedByDay {
 
 extension BuildMetadata {
 
-    convenience init (id: UUID?, buildIdentifier: String, metadata: [String: JSONValue], day: Date?) {
+    convenience init(id: UUID?, buildIdentifier: String, metadata: [String: JSONValue], day: Date?) {
         self.init()
         self.id = id
         self.buildIdentifier = buildIdentifier

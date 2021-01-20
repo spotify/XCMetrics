@@ -21,13 +21,13 @@ import Foundation
 import Vapor
 
 /// Struct that holds Time Series data
-struct ChartTimeSeries: Content {
+public struct ChartTimeSeries: Content {
     var key: String
     var value: Double
 }
 
 /// Info about the Jobs
-struct JobDashboard: Content {
+public struct JobDashboard: Content {
 
     /// Starting date used to get the data.
     var from: Date

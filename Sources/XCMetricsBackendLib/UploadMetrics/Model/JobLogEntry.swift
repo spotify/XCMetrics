@@ -29,13 +29,13 @@ enum JobLogStatus: String, Codable {
 }
 
 /// Represents an entry for a log that holds all the logs received data
-final class JobLogEntry: Model {
+public final class JobLogEntry: Model {
 
-    static let schema = "job_log_entries"
+    public static let schema = "job_log_entries"
 
     /// Id, we use the name of the `xcactivity` log file as identifier.
     @ID(custom: .id, generatedBy: IDProperty.Generator.user)
-    var id: String?
+    public var id: String?
 
 
     @Field(key: "log_file")
@@ -71,7 +71,7 @@ final class JobLogEntry: Model {
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
-    init() {}
+    public init() {}
 
     init(id: String, logFile: String, logURL: String?, status: JobLogStatus, error: String?,
          queuedAt: Date, dequeuedAt: Date?, finishedAt: Date?) {
