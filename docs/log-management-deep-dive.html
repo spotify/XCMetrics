@@ -21,7 +21,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="img/gh.png"/>
+            <img src="/docs/img/gh.png"/>
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +33,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="img/carat.png" />
+            <img id="carat" src="/docs/img/carat.png" />
           </span>
           Log Management Deep Dive  Reference
         </p>
@@ -73,18 +73,18 @@ The directory is <code>~/Library/Caches/xcmetrics</code>, where logs are placed 
 
 <p>The following diagram better illustrates the flow of all the steps.</p>
 
-<p><img src="img/cache-management.jpg" alt="Cache Management"></p>
+<p><img src="/docs/img/cache-management.jpg" alt="Cache Management"></p>
 
 <p>Xcode sometimes takes a few seconds to write the full log to disk, so XCMetrics can optionally wait for some time in order to always try and fetch the latest log (use the argument <code>--timeout</code> to customize this behavior).</p>
 <h2 id='visual-demo' class='heading'>Visual Demo</h2>
 
 <p>The following GIF shows the behavior when the upload is successful. As you can see, the log is cached in the <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> directory and marked as uploaded.</p>
 
-<p><img src="img/upload-successful.gif" alt="Upload Successful"></p>
+<p><img src="/docs/img/upload-successful.gif" alt="Upload Successful"></p>
 
 <p>In case internet connectivity is absent or some other during the upload occurs, the log is marked as uploaded and cached offline for retry during the next run.</p>
 
-<p><img src="img/upload-failed.gif" alt="Upload Failed"></p>
+<p><img src="/docs/img/upload-failed.gif" alt="Upload Failed"></p>
 
             </section>
           </section>

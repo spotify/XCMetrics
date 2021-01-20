@@ -21,7 +21,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="img/gh.png"/>
+            <img src="/docs/img/gh.png"/>
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +33,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="img/carat.png" />
+            <img id="carat" src="/docs/img/carat.png" />
           </span>
           Getting Started  Reference
         </p>
@@ -68,11 +68,11 @@
 
 <p>Now that we have an <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> executable, we can proceed with the integration in your project. Open your <code>xcodeproj</code> (<code>BasicApp.xcodeproj</code> if you&rsquo;re following our example), select your scheme and press &ldquo;Edit Scheme&rdquo;.</p>
 
-<p><img src="img/edit-scheme.png" alt=""></p>
+<p><img src="/docs/img/edit-scheme.png" alt=""></p>
 
 <p>Expand the &ldquo;Build&rdquo; left panel to reveal pre and post-actions. Let&rsquo;s create a new post-action by pressing on the &ldquo;+&rdquo; button.</p>
 
-<p><img src="img/build-panel.png" alt=""></p>
+<p><img src="/docs/img/build-panel.png" alt=""></p>
 
 <p>Make sure to select your target in &ldquo;Provide build settings from&rdquo; in order to provide the build settings to the post-action scheme (required for the next step). Paste the following script in the text area:</p>
 <pre class="highlight shell"><code><span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../XCMetricsLauncher <span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../.build/release/XCMetrics --name BasicApp --buildDir <span class="k">${</span><span class="nv">BUILD_DIR</span><span class="k">}</span> --serviceURL https://yourservice.com/v1/metrics
@@ -94,7 +94,7 @@
 </ul></li>
 </ul>
 
-<p><img src="img/post-action-scheme.png" alt=""></p>
+<p><img src="/docs/img/post-action-scheme.png" alt=""></p>
 
 <p>If you build the scheme now, the build metrics should be sent to your service as soon as the build completes!</p>
 <h4 id='default-metrics' class='heading'>Default Metrics</h4>

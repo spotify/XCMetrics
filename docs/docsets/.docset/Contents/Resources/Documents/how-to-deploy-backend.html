@@ -21,7 +21,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="img/gh.png"/>
+            <img src="/docs/img/gh.png"/>
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +33,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="img/carat.png" />
+            <img id="carat" src="/docs/img/carat.png" />
           </span>
           How to Deploy Backend  Reference
         </p>
@@ -74,7 +74,7 @@
 
 <p>In this case, you don&rsquo;t need Google Cloud Storage. The Endpoint&rsquo;s controller will store the log files in disk and, because the Job will be running in the same machine, the Job will just read them from there.</p>
 
-<p><img src="img/deploy-single-instance.jpg" alt=""></p>
+<p><img src="/docs/img/deploy-single-instance.jpg" alt=""></p>
 
 <p>Having a single instance running limits the amount of logs that can be processed. A Job runs in an EventLoop and Vapor creates one per CPU core, aditionally each EventLoop has a Database pool. This makes the max number of logs that can be processed in parallel to be:</p>
 
@@ -91,7 +91,7 @@
 
 <p>This diagram shows how such a deployment will look like:</p>
 
-<p><img src="img/deploy-multiple-instances.jpg" alt=""></p>
+<p><img src="/docs/img/deploy-multiple-instances.jpg" alt=""></p>
 
 <p>For this to work, you&rsquo;ll need to configure an extra Set of Environment Variables:</p>
 
@@ -125,7 +125,7 @@
 
 <p>One quick option to deploy the backend is using Cloud Run in a Google Cloud Project. You will need a PostgreSQL instance deployed outside of Cloud Run, typically in Cloud SQL. One key feature in Cloud Run, is that you only get charged when your App is being used. If there are not requests to it, all instances will be removed and a new one will be spawned when a new request arrives. This makes Cloud Run not a good choice to run Async Jobs, the instance could be killed in the middle of processing a log. Thus, in this case you can disable the jobs and process the logs in the same Endpoint. The response time of the request will be longer, because it will wait for the log to be processed and inserted into the Database before responding to the XCMetrics Client, but Cloud Run plays well with this kind of Endpoints.</p>
 
-<p><img src="img/deploy-cloudrun.jpg" alt=""></p>
+<p><img src="/docs/img/deploy-cloudrun.jpg" alt=""></p>
 
 <p><strong>Important</strong> When you use Cloud Run, the XCMetrics client needs to point to the <code>metrics-sync</code> endpoint. In your Xcode&rsquo;s PostAction edit it to something like:</p>
 <pre class="highlight shell"><code><span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../XCMetricsLauncher <span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../.build/release/XCMetrics --name BasicApp --buildDir <span class="k">${</span><span class="nv">BUILD_DIR</span><span class="k">}</span> --serviceURL https://yourservice.com/v1/metrics-sync
@@ -179,7 +179,7 @@
 
 <p>The next step is to assign permissions to the Google Service Account that you&rsquo;re going to use with XCMetrics. Especifically, you will need the <strong>Cloud SQL Client</strong> permission and ghe <strong>Storage Admin</strong>:</p>
 
-<p><img src="img/gcp-permissions.jpg" alt=""></p>
+<p><img src="/docs/img/gcp-permissions.jpg" alt=""></p>
 <h3 id='4-kubernetes-gke-configuration' class='heading'>4. Kubernetes (GKE) configuration</h3>
 
 <p>If you plan to deploy the Backend to GKE, You will need to do two things in order to connect it to Cloud SQL: create a Kubernetes Secret to store the password and the Google Service Account and setup Cloud SQL as a sidecar container. You can find the instructions <a href="https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine">here</a></p>
@@ -193,7 +193,7 @@
 <li><p>If you&rsquo;re planning to do a MultiInstance deployment, create a Google Cloud Storage Bucket. Use the same region where your Cloud SQL Instance is. A good advice is to add a Lifecycle Policy, so the logs will be automatically removed after a period. Open the bucket you just created and look for the <code>Lifecycle</code> menu in the upper bar. In this example we&rsquo;re setting up that the logs will be deleted after 2 days:</p></li>
 </ol>
 
-<p><img src="img/gcs-lifecycle.jpg" alt=""></p>
+<p><img src="/docs/img/gcs-lifecycle.jpg" alt=""></p>
 
 <ol>
 <li><p>Create a new Service Account and give it the permissions for CloudSQL Client and Storage Admin. Generate a JSON credentials file and save it locally. You can check the steps in <a href="https://cloud.google.com/iam/docs/creating-managing-service-accounts">this page</a>.</p></li>
@@ -208,7 +208,7 @@
 <p>In the wizard, open the <code>Nodes Groups</code> and select the <code>Default Pool</code>. Change the number of nodes to be 5. (By default is set to 3).
 Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medium</code>, also change the Disk to use SSD</p>
 
-<p><img src="img/gke-nodes.jpg" alt=""></p>
+<p><img src="/docs/img/gke-nodes.jpg" alt=""></p>
 <h3 id='2-setup-the-kubernetes-tools' class='heading'>2. Setup the Kubernetes Tools.</h3>
 
 <p>You will need to install <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-cluster">kubectl</a>. Once that&rsquo;s done, you need to configure you&rsquo;re new cluster. Run this command with the name of the cluster you created in step 1:</p>
