@@ -57,4 +57,4 @@ This product includes software developed by the "Marcin Krzyzanowski" (http://kr
 
 ## Security Issues?
 
-Please report sensitive security issues via Spotify's bug-bounty program (https://hackerone.com/spotify) rather than GitHub.
+Please report sensitive security issues via [Spotify's bug-bounty program](https://hackerone.com/spotify) rather than GitHub.
