@@ -21,12 +21,14 @@ import Fluent
 import Vapor
 import XCLogParser
 
-final class BuildWarning: Model, Content, PartitionedByDay {
+public final class BuildWarning: Model, Content, PartitionedByDay {
 
-    static let schema = "build_warnings"
+    public static let schema = "build_warnings"
+
+    public init() { }
 
     @ID(key: .id)
-    var id: UUID?
+    public var id: UUID?
 
     @Field(key: "build_identifier")
     var buildIdentifier: String

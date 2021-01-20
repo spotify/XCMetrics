@@ -19,7 +19,7 @@
 
 import Vapor
 
-struct UploadMetricsController: RouteCollection {
+public struct UploadMetricsController: RouteCollection {
 
     /// 100 mb
     static let MAX_PAYLOAD_SIZE: ByteCount = 104857600
@@ -36,7 +36,7 @@ struct UploadMetricsController: RouteCollection {
         self.useAsyncProcessing = useAsyncProcessing
     }
 
-    func boot(routes: RoutesBuilder) throws {
+    public func boot(routes: RoutesBuilder) throws {
         let builds = routes.grouped("v1")
         if useAsyncProcessing {
             builds.on(.PUT, "metrics", body: .collect(maxSize: Self.MAX_PAYLOAD_SIZE), use: create)
@@ -53,7 +53,7 @@ struct UploadMetricsController: RouteCollection {
     /// - Returns: `200` HTTP Status if everything is ok. `400` if the request is not an `UploadMetricsPayload`,
     /// `404` if Async processing was turned off (`XCMETRICS_USE_ASYNC_LOG_PROCESSING`=0)
     /// `500` if there was an unexpected error
-    func create(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+    public func create(req: Request) throws -> EventLoopFuture<HTTPStatus> {
 
         // The request contains a Multipart Nested request: one field of type Octect-stream with the actual log
         // and several of type `json`. Vapor lacks support for this type of content [Issue-1925](https://github.com/vapor/vapor/issues/1925)
@@ -86,7 +86,7 @@ struct UploadMetricsController: RouteCollection {
     /// - Parameter req: Request with a valid`UploadMetricsPayload`
     /// - Throws: If the request is not a valid `UploadMetricsPayload` or there was an error parsing the Logs or inserting them in the database
     /// - Returns: `201` HTTP Status if everything is ok. `400` if the request is not an `UploadMetricsPayload`, `500` if there was an unexpected error
-    func createSync(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+    public func createSync(req: Request) throws -> EventLoopFuture<HTTPStatus> {
 
         // The request contains a Multipart Nested request: one field of type Octect-stream with the actual log
         // and several of type `json`. Vapor lacks support for this type of content [Issue-1925](https://github.com/vapor/vapor/issues/1925)

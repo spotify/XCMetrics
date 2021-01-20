@@ -21,11 +21,11 @@ import Foundation
 import Fluent
 import Vapor
 
-struct JobLogController: RouteCollection {
+public struct JobLogController: RouteCollection {
 
     let repository: JobLogRepository
 
-    func boot(routes: RoutesBuilder) throws {
+    public func boot(routes: RoutesBuilder) throws {
         routes.get("v1", "job", "dashboard", use: dashboard)
         routes.post("v1", "job", "list", use: list)
     }
@@ -33,7 +33,7 @@ struct JobLogController: RouteCollection {
     /// Returns a `JobDashboard` with the data between the provided dates.
     /// The dates are passed as query parameters named `from` and `to` in ISO Format.
     /// e.g. `?from=2020-10-23T01:00:00Z&to=2020-10-23T09:00`
-    func dashboard(req: Request) throws -> EventLoopFuture<JobDashboard> {
+    public func dashboard(req: Request) throws -> EventLoopFuture<JobDashboard> {
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withInternetDateTime,
                                        .withDashSeparatorInDate,
@@ -51,7 +51,7 @@ struct JobLogController: RouteCollection {
     }
 
     /// Retuns a paginated list of `JobLogEntry` that matches the `JobListRequest` parameters
-    func list(req: Request) throws -> EventLoopFuture<Page<JobLogEntry>> {
+    public func list(req: Request) throws -> EventLoopFuture<Page<JobLogEntry>> {
         let params = try req.content.decode(JobListRequest.self)
         return repository.getJobs(params: params, on: req.db)
     }

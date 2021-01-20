@@ -21,12 +21,14 @@ import Fluent
 import Vapor
 import XCLogParser
 
-final class BuildError: Model, Content, PartitionedByDay {
+public final class BuildError: Model, Content, PartitionedByDay {
 
-    static let schema = "build_errors"
+    public static let schema = "build_errors"
+
+    public init() { }
 
     @ID(key: .id)
-    var id: UUID?
+    public var id: UUID?
 
     @Field(key: "build_identifier")
     var buildIdentifier: String
