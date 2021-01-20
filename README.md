@@ -24,9 +24,10 @@ Head over to our [Getting Started docs](docs/Getting%20Started.md) to see how to
 
 ## Develop
 
+XCMetrics is built using Swift Package Manager, you just need to open the `Package.swift` file in Xcode: 
+
 ```bash
-swift package generate-xcodeproj # fetch dependencies and generate xcodeproj
-open XCMetrics.xcodeproj # open project in Xcode
+xed Package.swift
 ```
 
 ## Support
