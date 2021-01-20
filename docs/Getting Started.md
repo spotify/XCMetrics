@@ -40,7 +40,7 @@ This is how the post-action scheme should look like. Let's break it down:
 - Some required parameters are then passed to the executable:
 	- `--name`: the name of the project where we are collecting the metrics. This could be your scheme name of project name for example.
 	- `--buildDir`: the build directory of the project where we are collecting the metrics. This is the value of the `BUILD_DIR` variable, thus why before we needed to make sure the build environment variables are shared to our post-action scheme.
-	- `--serviceURL`: the URL of the service receiving the collected metrics. If you haven't deployed a service yet, please head over to ["Deploy Backend"](https://github.com/spotify/XCMetrics/blob/main/docs/deploy-backend.md) first.
+	- `--serviceURL`: the URL of the service receiving the collected metrics. If you haven't deployed a service yet, please head over to ["Deploy Backend"](https://github.com/spotify/XCMetrics/blob/main/docs/How%20to%20Deploy%20Backend.md) first.
     - `--timeout`: the number of seconds to wait for the Xcode log to appear. The default value is 5s.
     - `--isCI`: either true or false based on if the current build is running on CI or not. This is useful to categorize builds as local or continuous integration builds.
 
