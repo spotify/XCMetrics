@@ -16,3 +16,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./microsite
           keep_files: true
+          cname: xcmetrics.io
