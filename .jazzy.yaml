@@ -7,7 +7,7 @@ documentation: "docs/*.md"
 output: docs/generated
 github_url: https://github.com/spotify/XCMetrics
 author: Spotify
-min_acl: internal
+min_acl: public
 
 custom_categories:
   - name: HTTP Endpoints
