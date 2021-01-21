@@ -2,6 +2,11 @@
 
 There are two ways to integrate `XCMetrics` in your project. Based on how much customizability you need and the kind of metrics you'd like to collect, you'll need to take your decision. Here we describe the two approaches.
 
+If you prefer a video version of how XCMetrics works and how you can integrate it in your project, please watch the following video.
+
+[![XCMetrics Walkthrough](https://img.youtube.com/vi/kgdeqcYJKfo/0.jpg)](https://www.youtube.com/watch?v=kgdeqcYJKfo)
+
+
 ## Approach #1: Default Metrics Collection
 
 `XCMetrics` supports a few arguments out of the box that allow you to start sending the default set of metrics to any supported backend service. In this getting started guide, we will show how to integrate `XCMetrics` in our example project named `BasicApp`. You can find the completed example app in the [Examples/BasicApp](https://github.com/spotify/XCMetrics/blob/main/Examples/BasicApp/) directory. Feel free to follow along with your own project.
