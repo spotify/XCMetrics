@@ -5,6 +5,7 @@
   --text-margin: 10px;
   --side-margin: 78px;
   --side-margin-mobile: 22px;
+  --footer-text-color: #707070;
 }
 
 * {
@@ -33,6 +34,7 @@ main {
 
 .footer-notice {
   opacity: 0.7;
+  color: var(--footer-text-color);
 }
 
 .container {
@@ -174,6 +176,11 @@ footer {
 
 .footer-copyright {
   display: block;
+}
+
+.footer-xcode {
+  display: block;
+  margin-bottom: 10px;
 }
 
 .video-block {
