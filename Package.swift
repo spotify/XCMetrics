@@ -11,6 +11,7 @@ let package = Package(
         .executable(name: "XCMetrics", targets: ["XCMetricsApp"]),
         .executable(name: "XCMetricsBackend", targets: ["XCMetricsBackend"]),
         .library(name: "XCMetricsClient", targets: ["XCMetricsClient"]),
+        .library(name: "XCMetricsPlugins", targets: ["XCMetricsPlugins"]),
     ],
     dependencies: [
         .package(url: "https://github.com/spotify/xclogparser", from: "0.2.22"),
@@ -36,6 +37,10 @@ let package = Package(
         .target(
             name: "XCMetricsClient",
             dependencies: ["XCLogParser", "XCMetricsProto", "XCMetricsUtils", .product(name: "Utility", package: "SwiftPM"), "GRPC", "NIO", "NIOHTTP2", "MobiusCore", "MobiusExtras", "CryptoSwift", "Yams",  "ArgumentParser"]
+        ),
+        .target(
+            name: "XCMetricsPlugins",
+            dependencies: ["XCMetricsClient", "XCMetricsUtils"]
         ),
         .target(
             name: "XCMetricsUtils",
@@ -73,6 +78,10 @@ let package = Package(
         .testTarget(
             name: "XCMetricsTests",
             dependencies: ["XCMetricsClient", "XCMetricsProto", .product(name: "Utility", package: "SwiftPM"), "MobiusTest"]
+        ),
+        .testTarget(
+            name: "XCMetricsPluginsTests",
+            dependencies: ["XCMetricsPlugins"]
         ),
         .testTarget(name: "XCMetricsBackendLibTests", dependencies: [
             .target(name: "XCMetricsBackendLib"),
