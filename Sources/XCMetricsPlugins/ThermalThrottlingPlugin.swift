@@ -25,7 +25,7 @@ public struct ThermalThrottlingPlugin {
 
     private let shell: ShellOutFunction
 
-    init(shell: @escaping ShellOutFunction = shellGetStdout) {
+    public init(shell: @escaping ShellOutFunction = shellGetStdout) {
         self.shell = shell
     }
 
