@@ -48,7 +48,7 @@ public func shellGetStdout(_ cmd: String, args: [String] = [], inDir dir: String
 
     let handle = pipe.fileHandleForReading
     let data = handle.readDataToEndOfFile()
-    return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    return String(data: data, encoding: .utf8)?.trim() ?? ""
 }
 
 private func which(_ cmd: String) throws -> String {
@@ -59,7 +59,7 @@ private func shellInternal(_ cmd: String, args: [String] = [], stdout: PipeLike?
     let absCmd = try cmd.starts(with: "/") ? cmd : which(cmd)
 
     let errorHandle = Pipe()
-    let task = Process.init()    
+    let task = Process()
     if let env = environment {
         task.environment = env
     }
@@ -74,9 +74,34 @@ private func shellInternal(_ cmd: String, args: [String] = [], stdout: PipeLike?
     task.launch()
     task.waitUntilExit()
     if task.terminationStatus != 0 {
+        if stderr != nil {
+            // Error stream was captured so cannot inspect its content
+            throw ShellError.statusError("Failed command", task.terminationStatus)
+        }
         let errorData = errorHandle.fileHandleForReading.readDataToEndOfFile()
-        let errorString = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No error returned from the process."
+        let errorString = String(data: errorData, encoding: .utf8)?.trim() ?? "No error returned from the process."
         throw ShellError.statusError(
-            "status \(task.terminationStatus): \(errorString)", task.terminationStatus)
+            "status \(task.terminationStatus): \(errorString)", task.terminationStatus
+        )
+    }
+}
+
+extension String {
+    public func trim() -> String {
+        func trim(_ separator: String) -> String {
+            var E = endIndex
+            while String(self[startIndex..<E]).hasSuffix(separator) && E > startIndex {
+                E = index(before: E)
+            }
+            return String(self[startIndex..<E])
+        }
+
+        if hasSuffix("\r\n") {
+            return trim("\r\n")
+        } else if hasSuffix("\n") {
+            return trim("\n")
+        } else {
+            return self
+        }
     }
 }
