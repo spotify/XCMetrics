@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  postgresql:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      # default values for development purposes only
+      - POSTGRES_USER=xcmetrics-dev
+      - POSTGRES_PASSWORD=xcmetrics-dev
+      - POSTGRES_DB=xcmetrics-dev
+      - PGDATA=/data/postgres-xcmetrics
+    volumes:
+      - postgres:/data/postgres-xcmetrics
+    healthcheck:
+      test: pg_isready -U xcmetrics-dev -d xcmetrics-dev
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  xcmetrics:
+    image: spotify/xcmetrics:latest
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - XCMETRICS_START_JOBS_SAME_INSTANCE=1
+      - XCMETRICS_USE_ASYNC_LOG_PROCESSING=1
+      - XCMETRICS_REDACT_USER_DATA=1
+      - XCMETRICS_USE_GCS_REPOSITORY=0
+      - LOG_LEVEL=info
+      - REDIS_HOST=redis
+      - DB_HOST=postgresql
+
+volumes:
+  postgres:
