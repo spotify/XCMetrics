@@ -1,6 +1,8 @@
 # Backend Deployment
 
-This repo includes a Dockerfile that you can use to build a docker image (`docker build .`) that can be deployed to the cloud.
+We provide an [official Docker image](https://hub.docker.com/r/spotify/xcmetrics): `spotify/xcmetrics`.
+
+You can also build your own, this repo includes a Dockerfile that you can use to build a docker image (`docker build .`) that can be deployed to your own Docker registry.
 
 ## 1. Requirements
 
@@ -100,13 +102,9 @@ The easiest way to start is to click on the following "Run on Google Cloud" butt
 
 4. Add permissions to Cloud's Run Service Account for Cloud SQL. By default, Cloud Run uses the service account named `<project number>-compute@developer.gserviceaccount.com`. It will need the permissions **Cloud SQL Client**
 
-5. You can skip the next sections if you're using "Run in Google Cloud" button. Next, you need to build a Docker image and deploy it using Cloud Run:
+5. You can skip the next sections if you're using "Run in Google Cloud" button.
 
-```shell
-gcloud builds submit --tag gcr.io/<my_gcp_project>/xcmetricsserver --timeout=30m
-```
-
-6. Use the [Cloud Run console](https://console.cloud.google.com/run) to crrate a new Service using the Image you just uploaded. When you're creating it you need to add the Cloud SQL Connection in Advanced Settings as [described here](https://cloud.google.com/sql/docs/postgres/connect-run#configuring)
+6. Use the [Cloud Run console](https://console.cloud.google.com/run) to create a new Service. When you're creating it you need to add the Cloud SQL Connection in Advanced Settings as [described here](https://cloud.google.com/sql/docs/postgres/connect-run#configuring)
 
 You will need some specific Env Variables setup so the App can run in this environment:
 
@@ -192,15 +190,7 @@ You will need to install [kubectl](https://cloud.google.com/kubernetes-engine/do
 gcloud container clusters get-credentials name-of-cluster
 ```
 
-### 3. Build and upload an image with the XCMetrics Backend
-
-From the root of the project (where the Dockerfile is), run this command changing the name of the project for yours.
-
-```shell
-gcloud builds submit --tag gcr.io/my-gcp-project/xcmetrics --timeout=30m
-```
-
-### 4. Create Kubernetes Secrets
+### 3. Create Kubernetes Secrets
 
 We will store in the Kubernetes Secrets two values: the Service account's credentials JSON file you created in the Pre Requisites and the password to the database. Run these commands:
 
@@ -214,7 +204,7 @@ kubectl create secret generic db-secret \
   --from-literal=password='database password'
 ```
 
-### 5. Deploy the Kubernetes artifacts
+### 4. Deploy the Kubernetes artifacts
 
 Go to the **DeploymentExamples** folder and choose one type: either SingleInstance or MultiInstances (check the beginning of this document to know the differences) and change to that folder.
 
@@ -222,25 +212,23 @@ You will need to edit some values.
 
 In `xcmetrics-service.yaml`:
 
-1. Change the image value to the uri you used to create it in Step 3  (`gcr.io/my-gcp-project/xcmetrics`).
-2. Replace the name of your Cloud SQL connection name here:
+1. Replace the name of your Cloud SQL connection name here:
 ```yaml
         command: ["/cloud_sql_proxy",
                   "-instances=Replace with your Cloud SQL connection string=tcp:5432",
                   "-credential_file=/secrets/service_account.json"]
 ```
-3. For Multi instance deployments: Change the name of the environment variables **`XCMETRICS_GOOGLE_PROJECT`** and **`XCMETRICS_GCS_BUCKET`**.
+2. For Multi instance deployments: Change the name of the environment variables **`XCMETRICS_GOOGLE_PROJECT`** and **`XCMETRICS_GCS_BUCKET`**.
 
 For MultiInstance Deployments, in `xcmetrics-jobs-deployment.yaml`
 
-1. Change the image to the uri you used to create it in Step 3  (`gcr.io/my-gcp-project/xcmetrics`).
-2. Replace the name of your Cloud SQL connection name here:
+1. Replace the name of your Cloud SQL connection name here:
 ```yaml
         command: ["/cloud_sql_proxy",
                   "-instances=Replace with your Cloud SQL connection string=tcp:5432",
                   "-credential_file=/secrets/service_account.json"]
 ```
-3. Change the name of the environment variables **`XCMETRICS_GOOGLE_PROJECT`** and **`XCMETRICS_GCS_BUCKET`**.
+2. Change the name of the environment variables **`XCMETRICS_GOOGLE_PROJECT`** and **`XCMETRICS_GCS_BUCKET`**.
 
 Now, you're ready to deploy the XCMetrics artifacts:
 

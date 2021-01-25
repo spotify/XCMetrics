@@ -48,7 +48,7 @@ spec:
 
 
       - name: xcmetrics-server
-        image: "Replace with your XCMetrics image (e.g. gcr.io/my_gcp_project/xcmetrics)"
+        image: spotify/xcmetrics:latest
         env:
         - name: XCMETRICS_START_JOBS_SAME_INSTANCE
           value: "0" # Jobs will be run in other process
