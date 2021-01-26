@@ -41,7 +41,7 @@ let package = Package(
         ),
         .target(
             name: "XCMetricsPlugins",
-            dependencies: ["XCMetricsClient", "XCMetricsUtils"]
+            dependencies: ["XCMetricsClient", "XCMetricsUtils", "CryptoSwift"]
         ),
         .target(
             name: "XCMetricsUtils",
