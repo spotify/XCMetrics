@@ -19,6 +19,7 @@
 
 import Foundation
 import MobiusCore
+import XCMetricsUtils
 
 class XCMetricsLoop {
     private let group = DispatchGroup()

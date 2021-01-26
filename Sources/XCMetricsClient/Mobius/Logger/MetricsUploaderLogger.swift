@@ -19,6 +19,7 @@
 
 import Foundation
 import MobiusCore
+import XCMetricsUtils
 
 private let tag = "XCMetrics"
 
