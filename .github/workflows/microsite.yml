@@ -15,7 +15,6 @@ jobs:
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
           brew install sourcekitten
           sudo gem install jazzy bundler
-          chmod +x generate-documentation.sh
           sh generate-documentation.sh
       - name: Format and copy docs
         run: |
