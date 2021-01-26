@@ -21,7 +21,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="/docs/img/gh.png"/>
+            <img src="img/gh.png"/>
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +33,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="/docs/img/carat.png" />
+            <img id="carat" src="img/carat.png" />
           </span>
           Run the Backend Locally  Reference
         </p>
@@ -50,15 +50,32 @@
 <p>It&rsquo;s useful to run the backend locally to test that you can ingest data to it before deploying your changes. This guide will walk you through the necessary steps.</p>
 
 <p>The Backend is built using the <a href="https://vapor.codes">Vapor 4.0 framework</a>. We advise to read the <a href="https://docs.vapor.codes/4.0/">official documentation</a> if you plan to contribute to it. Another good resource for learning it, is <a href="https://www.raywenderlich.com/11555468-getting-started-with-server-side-swift-with-vapor-4">this tutorial</a></p>
-<h2 id='1-docker' class='heading'>1. Docker</h2>
+<h2 id='1-running-it-from-our-docker-image' class='heading'>1. Running it from our Docker Image</h2>
+
+<p>The easiest way to run it is to use our prebuilt <a href="https://hub.docker.com/r/spotify/xcmetrics">Docker Image</a>. Because it requires a Redis and a Postgres instance, we provide a Docker compose file that configures them for you. The file is called <code>docker-compose-local.yml</code>.</p>
+
+<ol>
+<li>If you haven&rsquo;t, install <a href="https://docs.docker.com/docker-for-mac/">Docker for Mac</a>.</li>
+<li>From the command line, run this command:</li>
+</ol>
+<pre class="highlight plaintext"><code>docker-compose -f docker-compose-local.yml up
+</code></pre>
+
+<p>The command will start the Postgres database, Redis and the XCMetrics backend. 
+The XCMetrics backend should be available in the port <strong>8080</strong>.</p>
+
+<p>To check that it works you can simply run</p>
+<pre class="highlight plaintext"><code>curl -I http://localhost:8080/hello
+</code></pre>
+<h2 id='2-running-it-from-xcode' class='heading'>2. Running it from Xcode</h2>
 
 <p>The Backend needs Redis and Postgresql to run. This repo contains a <code>docker-compose.yml</code> file that you can use to start them. From the command line run
 <code>docker-compose up -d</code></p>
 
 <p><strong>Note:</strong> Remember to stop the docker instances when you&rsquo;re done using the Backend locally with <code>docker-compose stop</code></p>
-<h2 id='2-run-the-migrations' class='heading'>2. Run the migrations</h2>
+<h3 id='2-1-database-migrations' class='heading'>2.1 Database migrations</h3>
 
-<p>The migrations will create the table in the Database. You only need to run them the first time you&rsquo;re going to start the backend or if a table changed since the last time you ran it. That information can be found in the Changelog.</p>
+<p>The migrations will create the tables that the project uses in the Database. You only need to run them the first time you&rsquo;re going to start the backend or if a table changed since the last time you ran it. That information can be found in the Changelog.</p>
 
 <p>From the command line</p>
 <pre class="highlight plaintext"><code>swift run XCMetricsBackend migrate
@@ -66,29 +83,28 @@
 
 <p>Or from Xcode, select the <strong>XCMetricsBackend</strong> schema and setup <code>migrate</code> as an Argument:</p>
 
-<p><img src="/docs/img/backend-migrate.png" alt="Xcode Schema argument"></p>
+<p><img src="img/backend-migrate.png" alt="Xcode Schema argument"></p>
 
 <p><strong>Note:</strong> You will get a prompt to confirm the migrations. Just press <code>y</code>.</p>
-<h2 id='3-start-the-backend' class='heading'>3. Start the backend</h2>
+<h3 id='2-2-start-the-backend' class='heading'>2.2 Start the backend</h3>
 
 <p>From the command line:</p>
 <pre class="highlight plaintext"><code>swift run XCMetricsBackend
 </code></pre>
 
 <p>Or from Xcode: remove the <code>migrate</code> argument and run the <strong>XCMetricsBackend</strong> schema</p>
-<h2 id='4-verify-that-is-running' class='heading'>4. Verify that is running</h2>
+<h3 id='2-3-verify-that-is-running' class='heading'>2.3 Verify that is running</h3>
 
 <p>The backend will start at port 8080. </p>
 
 <p>Run </p>
 
 <p><code>curl -I http://localhost:8080/hello</code></p>
-<h2 id='5-change-the-client-39-s-url' class='heading'>5. Change the client&rsquo;s URL</h2>
+<h2 id='3-insert-xcode-build-log-data-using-the-xcmetrics-client' class='heading'>3. Insert Xcode build log data using the XCMetrics Client</h2>
 
-<p>Open the file <code>MetricsServicePublisherHTTP.swift</code> and change the default url to point to localhost.</p>
-<h2 id='6-insert-some-data' class='heading'>6. Insert some data</h2>
+<p>Configure a Xcode project to use <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> as described in our <a href="https://github.com/spotify/XCMetrics/blob/main/docs/Getting%20Started.md">Getting Started guide</a>. Double check that in the Post-build action you pass localhost to the <code>--serviceURL</code> parameter: <code>--serviceURL http://localhost:8080/v1/metrics</code>.</p>
 
-<p>Run <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> and check that the build data was inserted in the database. You can use any Postgres client like <a href="https://eggerapps.at/postico/">Postico</a>. The Postgres instance is running in localhost, port 5432. Check the <code>docker-compose.yml</code> file for the database name and the default user and password. The main table is called <code>builds</code>. You will see the build data in that table.</p>
+<p>Once you send data to the backend by building the Xcode project where you configured <code><a href="Structs/XCMetrics.html">XCMetrics</a></code>, verify that it was inserted by inspecting the database. You can use any Postgres client like <a href="https://eggerapps.at/postico/">Postico</a>. The Postgres instance is running in localhost, port 5432. Check the <code>docker-compose.yml</code> file for the database name and the default user and password. The main table is called <code>builds</code>. You will see the build data in that table.</p>
 
 <blockquote>
 <p>Note: make sure to change the authentication values when deploying your service to production not to use the default values.</p>
@@ -291,7 +307,7 @@
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-26)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>

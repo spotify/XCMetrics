@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>  Reference</title>
-    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
-    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
-    <meta charset='utf-8'>
-	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css">
+    <link rel="stylesheet" type="text/css" href="css/highlight.css">
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0">
     <script src="js/jquery.min.js" defer></script>
     <script src="js/jazzy.js" defer></script>
     
@@ -21,7 +22,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="/docs/img/gh.png"/>
+            <img src="img/gh.png">
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +34,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="/docs/img/carat.png" />
+            <img id="carat" src="img/carat.png">
           </span>
             Reference
         </p>
@@ -48,15 +49,16 @@
               <!-- ![Build Status](docs/img/logo.png) -->
 
 <p align="center">
-    <img src="/docs/img/logo.png" width="75%">
+    <img src="img/logo.png" width="75%">
 </p>
 
 <p><em>XCMetrics is the easiest way to collect Xcode builds metrics and improve your developer productivity.</em></p>
 
 <p><a href="https://github.com/spotify/XCMetrics/workflows/CI/badge.svg"><img src="https://github.com/spotify/XCMetrics/workflows/CI/badge.svg" alt="Build Status"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
-<a href="http://slackin.spotify.com"><img src="https://slackin.spotify.com/badge.svg" alt="Slack"></a></p>
-<h2 id='overview' class='heading'>Overview</h2>
+<a href="https://hub.docker.com/r/spotify/xcmetrics"><img src="https://img.shields.io/docker/pulls/spotify/xcmetrics.svg" alt="Docker image"></a>
+<a href="https://slackin.spotify.com"><img src="https://slackin.spotify.com/badge.svg" alt="Slack"></a></p>
+<h2 id="overview" class="heading">Overview</h2>
 
 <ul>
 <li>📈 Keep your build times under control and monitor which targets are taking the longest to compile.</li>
@@ -67,37 +69,39 @@
 
 <p>XCMetrics is built on top of <a href="https://github.com/spotify/XCLogParser">XCLogParser</a>, which is a tool that can parse Xcode and xcodebuild logs stored in the xcactivitylog format. This allows XCMetrics to collect accurate metrics for you to review and keep track during the lifetime of a codebase.
 XCMetrics has collected almost 1 milion builds and over 10 bilion steps from all Spotify iOS applications since its introduction. It has allowed us to make important and informed decision in regards to our project structure and architecture.</p>
-<h2 id='getting-started' class='heading'>Getting Started</h2>
+<h2 id="getting-started" class="heading">Getting Started</h2>
 
-<p>Head over to our <a href="/docs/getting-started.html">Getting Started docs</a> to see how to integrate XCMetrics in your project.</p>
-<h2 id='develop' class='heading'>Develop</h2>
+<p>Head over to our <a href="getting-started.html">Getting Started docs</a> to see how to integrate XCMetrics in your project.</p>
+<h2 id="develop" class="heading">Develop</h2>
 
 <p>XCMetrics is built using Swift Package Manager, you just need to open the <code>Package.swift</code> file in Xcode: </p>
 <pre class="highlight shell"><code>xed Package.swift
 </code></pre>
-<h2 id='support' class='heading'>Support</h2>
+<h2 id="support" class="heading">Support</h2>
 
-<p>Create a <a href="https://github.com/spotify/XCMetrics/issues/new">new issue</a> with as many details as possible. It&rsquo;s important that you follow the issue template and include all required information in order for us to get back to you as soon as possible.</p>
-<h2 id='contributing' class='heading'>Contributing</h2>
+<p>Create a <a href="https://github.com/spotify/XCMetrics/issues/new">new issue</a> with as many details as possible. It’s important that you follow the issue template and include all required information in order for us to get back to you as soon as possible.</p>
 
-<p>We feel that a welcoming community is important and we ask that you follow Spotify&rsquo;s 
+<p>Reach us at the <code>#xcmetrics</code> channel in <a href="https://slackin.spotify.com/">Slack</a>.</p>
+<h2 id="contributing" class="heading">Contributing</h2>
+
+<p>We feel that a welcoming community is important and we ask that you follow Spotify’s 
 <a href="https://github.com/spotify/code-of-conduct/blob/master/code-of-conduct.md">Open Source Code of Conduct</a>
 in all interactions with the community.</p>
-<h2 id='authors' class='heading'>Authors</h2>
+<h2 id="authors" class="heading">Authors</h2>
 
 <p>A full list of <a href="https://github.com/spotify/XCMetrics/graphs/contributors?type=a">contributors</a> can be found on GitHub.</p>
 
 <p>Follow <a href="https://twitter.com/spotifyeng">@SpotifyEng</a> on Spotify for updates.</p>
-<h2 id='license' class='heading'>License</h2>
+<h2 id="license" class="heading">License</h2>
 
 <p>Copyright 2020 Spotify, Inc.</p>
 
 <p>Licensed under the Apache License, Version 2.0: <a href="https://www.apache.org/licenses/LICENSE-2.0">https://www.apache.org/licenses/LICENSE-2.0</a></p>
 
-<p>This product includes software developed by the &ldquo;Marcin Krzyzanowski&rdquo; (<a href="http://krzyzanowskim.com/">http://krzyzanowskim.com/</a>).</p>
-<h2 id='security-issues' class='heading'>Security Issues?</h2>
+<p>This product includes software developed by the “Marcin Krzyzanowski” (<a href="http://krzyzanowskim.com/">http://krzyzanowskim.com/</a>).</p>
+<h2 id="security-issues" class="heading">Security Issues?</h2>
 
-<p>Please report sensitive security issues via <a href="https://hackerone.com/spotify">Spotify&rsquo;s bug-bounty program</a> rather than GitHub.</p>
+<p>Please report sensitive security issues via <a href="https://hackerone.com/spotify">Spotify’s bug-bounty program</a> rather than GitHub.</p>
 
             </section>
           </section>
@@ -269,11 +273,11 @@ in all interactions with the community.</p>
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>© 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-26)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>
     </div>
   </body>
-</div>
+
 </html>

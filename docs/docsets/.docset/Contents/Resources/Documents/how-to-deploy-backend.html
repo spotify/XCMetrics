@@ -21,7 +21,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="/docs/img/gh.png"/>
+            <img src="img/gh.png"/>
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +33,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="/docs/img/carat.png" />
+            <img id="carat" src="img/carat.png" />
           </span>
           How to Deploy Backend  Reference
         </p>
@@ -47,7 +47,9 @@
               
               <h1 id='backend-deployment' class='heading'>Backend Deployment</h1>
 
-<p>This repo includes a Dockerfile that you can use to build a docker image (<code>docker build .</code>) that can be deployed to the cloud.</p>
+<p>We provide an <a href="https://hub.docker.com/r/spotify/xcmetrics">official Docker image</a>: <code>spotify/xcmetrics</code>.</p>
+
+<p>You can also build your own, this repo includes a Dockerfile that you can use to build a docker image (<code>docker build .</code>) that can be deployed to your own Docker registry.</p>
 <h2 id='1-requirements' class='heading'>1. Requirements</h2>
 
 <p>The Backend needs Redis, a PostgreSQL database and optionally a Google Cloud Storage Bucket.</p>
@@ -74,7 +76,7 @@
 
 <p>In this case, you don&rsquo;t need Google Cloud Storage. The Endpoint&rsquo;s controller will store the log files in disk and, because the Job will be running in the same machine, the Job will just read them from there.</p>
 
-<p><img src="/docs/img/deploy-single-instance.jpg" alt=""></p>
+<p><img src="img/deploy-single-instance.jpg" alt=""></p>
 
 <p>Having a single instance running limits the amount of logs that can be processed. A Job runs in an EventLoop and Vapor creates one per CPU core, aditionally each EventLoop has a Database pool. This makes the max number of logs that can be processed in parallel to be:</p>
 
@@ -91,7 +93,7 @@
 
 <p>This diagram shows how such a deployment will look like:</p>
 
-<p><img src="/docs/img/deploy-multiple-instances.jpg" alt=""></p>
+<p><img src="img/deploy-multiple-instances.jpg" alt=""></p>
 
 <p>For this to work, you&rsquo;ll need to configure an extra Set of Environment Variables:</p>
 
@@ -125,7 +127,7 @@
 
 <p>One quick option to deploy the backend is using Cloud Run in a Google Cloud Project. You will need a PostgreSQL instance deployed outside of Cloud Run, typically in Cloud SQL. One key feature in Cloud Run, is that you only get charged when your App is being used. If there are not requests to it, all instances will be removed and a new one will be spawned when a new request arrives. This makes Cloud Run not a good choice to run Async Jobs, the instance could be killed in the middle of processing a log. Thus, in this case you can disable the jobs and process the logs in the same Endpoint. The response time of the request will be longer, because it will wait for the log to be processed and inserted into the Database before responding to the XCMetrics Client, but Cloud Run plays well with this kind of Endpoints.</p>
 
-<p><img src="/docs/img/deploy-cloudrun.jpg" alt=""></p>
+<p><img src="img/deploy-cloudrun.jpg" alt=""></p>
 
 <p><strong>Important</strong> When you use Cloud Run, the XCMetrics client needs to point to the <code>metrics-sync</code> endpoint. In your Xcode&rsquo;s PostAction edit it to something like:</p>
 <pre class="highlight shell"><code><span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../XCMetricsLauncher <span class="k">${</span><span class="nv">SRCROOT</span><span class="k">}</span>/../../.build/release/XCMetrics --name BasicApp --buildDir <span class="k">${</span><span class="nv">BUILD_DIR</span><span class="k">}</span> --serviceURL https://yourservice.com/v1/metrics-sync
@@ -141,13 +143,8 @@
 <li><p>Enable Cloud Run and Cloud Build in your Google Cloud Project.</p></li>
 <li><p>Setup your Cloud SQL PostgreSQL database. Follow the instructions of the <a href="#using-google-cloud-sql">Using Google Cloud SQL section</a></p></li>
 <li><p>Add permissions to Cloud&rsquo;s Run Service Account for Cloud SQL. By default, Cloud Run uses the service account named <code>&lt;project number&gt;-compute@developer.gserviceaccount.com</code>. It will need the permissions <strong>Cloud SQL Client</strong></p></li>
-<li><p>You can skip the next sections if you&rsquo;re using &ldquo;Run in Google Cloud&rdquo; button. Next, you need to build a Docker image and deploy it using Cloud Run:</p></li>
-</ol>
-<pre class="highlight shell"><code>gcloud builds submit --tag gcr.io/&lt;my_gcp_project&gt;/xcmetricsserver --timeout<span class="o">=</span>30m
-</code></pre>
-
-<ol>
-<li>Use the <a href="https://console.cloud.google.com/run">Cloud Run console</a> to crrate a new Service using the Image you just uploaded. When you&rsquo;re creating it you need to add the Cloud SQL Connection in Advanced Settings as <a href="https://cloud.google.com/sql/docs/postgres/connect-run#configuring">described here</a></li>
+<li><p>You can skip the next sections if you&rsquo;re using &ldquo;Run in Google Cloud&rdquo; button.</p></li>
+<li><p>Use the <a href="https://console.cloud.google.com/run">Cloud Run console</a> to create a new Service. When you&rsquo;re creating it you need to add the Cloud SQL Connection in Advanced Settings as <a href="https://cloud.google.com/sql/docs/postgres/connect-run#configuring">described here</a></p></li>
 </ol>
 
 <p>You will need some specific Env Variables setup so the App can run in this environment:</p>
@@ -179,7 +176,7 @@
 
 <p>The next step is to assign permissions to the Google Service Account that you&rsquo;re going to use with XCMetrics. Especifically, you will need the <strong>Cloud SQL Client</strong> permission and ghe <strong>Storage Admin</strong>:</p>
 
-<p><img src="/docs/img/gcp-permissions.jpg" alt=""></p>
+<p><img src="img/gcp-permissions.jpg" alt=""></p>
 <h3 id='4-kubernetes-gke-configuration' class='heading'>4. Kubernetes (GKE) configuration</h3>
 
 <p>If you plan to deploy the Backend to GKE, You will need to do two things in order to connect it to Cloud SQL: create a Kubernetes Secret to store the password and the Google Service Account and setup Cloud SQL as a sidecar container. You can find the instructions <a href="https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine">here</a></p>
@@ -193,7 +190,7 @@
 <li><p>If you&rsquo;re planning to do a MultiInstance deployment, create a Google Cloud Storage Bucket. Use the same region where your Cloud SQL Instance is. A good advice is to add a Lifecycle Policy, so the logs will be automatically removed after a period. Open the bucket you just created and look for the <code>Lifecycle</code> menu in the upper bar. In this example we&rsquo;re setting up that the logs will be deleted after 2 days:</p></li>
 </ol>
 
-<p><img src="/docs/img/gcs-lifecycle.jpg" alt=""></p>
+<p><img src="img/gcs-lifecycle.jpg" alt=""></p>
 
 <ol>
 <li><p>Create a new Service Account and give it the permissions for CloudSQL Client and Storage Admin. Generate a JSON credentials file and save it locally. You can check the steps in <a href="https://cloud.google.com/iam/docs/creating-managing-service-accounts">this page</a>.</p></li>
@@ -208,18 +205,13 @@
 <p>In the wizard, open the <code>Nodes Groups</code> and select the <code>Default Pool</code>. Change the number of nodes to be 5. (By default is set to 3).
 Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medium</code>, also change the Disk to use SSD</p>
 
-<p><img src="/docs/img/gke-nodes.jpg" alt=""></p>
+<p><img src="img/gke-nodes.jpg" alt=""></p>
 <h3 id='2-setup-the-kubernetes-tools' class='heading'>2. Setup the Kubernetes Tools.</h3>
 
 <p>You will need to install <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-cluster">kubectl</a>. Once that&rsquo;s done, you need to configure you&rsquo;re new cluster. Run this command with the name of the cluster you created in step 1:</p>
 <pre class="highlight shell"><code>gcloud container clusters get-credentials name-of-cluster
 </code></pre>
-<h3 id='3-build-and-upload-an-image-with-the-xcmetrics-backend' class='heading'>3. Build and upload an image with the XCMetrics Backend</h3>
-
-<p>From the root of the project (where the Dockerfile is), run this command changing the name of the project for yours.</p>
-<pre class="highlight shell"><code>gcloud builds submit --tag gcr.io/my-gcp-project/xcmetrics --timeout<span class="o">=</span>30m
-</code></pre>
-<h3 id='4-create-kubernetes-secrets' class='heading'>4. Create Kubernetes Secrets</h3>
+<h3 id='3-create-kubernetes-secrets' class='heading'>3. Create Kubernetes Secrets</h3>
 
 <p>We will store in the Kubernetes Secrets two values: the Service account&rsquo;s credentials JSON file you created in the Pre Requisites and the password to the database. Run these commands:</p>
 <pre class="highlight shell"><code>kubectl create secret generic google-service-account <span class="se">\</span>
@@ -228,7 +220,7 @@ Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medi
 <pre class="highlight shell"><code>kubectl create secret generic db-secret <span class="se">\</span>
   --from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'database password'</span>
 </code></pre>
-<h3 id='5-deploy-the-kubernetes-artifacts' class='heading'>5. Deploy the Kubernetes artifacts</h3>
+<h3 id='4-deploy-the-kubernetes-artifacts' class='heading'>4. Deploy the Kubernetes artifacts</h3>
 
 <p>Go to the <strong>DeploymentExamples</strong> folder and choose one type: either SingleInstance or MultiInstances (check the beginning of this document to know the differences) and change to that folder.</p>
 
@@ -237,7 +229,6 @@ Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medi
 <p>In <code>xcmetrics-service.yaml</code>:</p>
 
 <ol>
-<li>Change the image value to the uri you used to create it in Step 3  (<code>gcr.io/my-gcp-project/xcmetrics</code>).</li>
 <li>Replace the name of your Cloud SQL connection name here:
 <code>yaml
     command: [&quot;/cloud_sql_proxy&quot;,
@@ -250,7 +241,6 @@ Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medi
 <p>For MultiInstance Deployments, in <code>xcmetrics-jobs-deployment.yaml</code></p>
 
 <ol>
-<li>Change the image to the uri you used to create it in Step 3  (<code>gcr.io/my-gcp-project/xcmetrics</code>).</li>
 <li>Replace the name of your Cloud SQL connection name here:
 <code>yaml
     command: [&quot;/cloud_sql_proxy&quot;,
@@ -469,7 +459,7 @@ date: Wed, 14 Oct 2020 17:48:00 GMT
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-26)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Log Management Deep Dive  Reference</title>
-    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
-    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
-    <meta charset='utf-8'>
-	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css">
+    <link rel="stylesheet" type="text/css" href="css/highlight.css">
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0">
     <script src="js/jquery.min.js" defer></script>
     <script src="js/jazzy.js" defer></script>
     
@@ -21,7 +22,7 @@
     
         <p class="header-right">
           <a href="https://github.com/spotify/XCMetrics">
-            <img src="/docs/img/gh.png"/>
+            <img src="img/gh.png">
             <span class="no-mobile">View on GitHub</span>
           </a>
         </p>
@@ -33,7 +34,7 @@
         <p id="breadcrumbs">
           <span class="no-mobile">
             <a href="index.html"> Reference</a>
-            <img id="carat" src="/docs/img/carat.png" />
+            <img id="carat" src="img/carat.png">
           </span>
           Log Management Deep Dive  Reference
         </p>
@@ -45,13 +46,13 @@
           <section>
             <section class="section">
               
-              <h1 id='logs-management' class='heading'>Logs Management</h1>
+              <h1 id="logs-management" class="heading">Logs Management</h1>
 
 <p>This document illustrates how XCMetrics manages the logs on the machine where builds are performed.
-The goal of XCMetrics (the tool being executed in a post-action scheme) is to fetch logs from Xcode&rsquo;s directory, cache them and perform the upload to the backend service for later parsing and processing.</p>
-<h2 id='cache-management' class='heading'>Cache Management</h2>
+The goal of XCMetrics (the tool being executed in a post-action scheme) is to fetch logs from Xcode’s directory, cache them and perform the upload to the backend service for later parsing and processing.</p>
+<h2 id="cache-management" class="heading">Cache Management</h2>
 
-<p>In order not to interfere with Xcode&rsquo;s build logs directory (<code>~/Library/Developer/Xcode/DerivedData/ProjectName-svojrqwbcsautrwqbobafsapoqwe/Logs/Build/</code>), we copy the logs to a separate cache directory that we can completely manage ourselves. 
+<p>In order not to interfere with Xcode’s build logs directory (<code>~/Library/Developer/Xcode/DerivedData/ProjectName-svojrqwbcsautrwqbobafsapoqwe/Logs/Build/</code>), we copy the logs to a separate cache directory that we can completely manage ourselves. 
 The directory is <code>~/Library/Caches/xcmetrics</code>, where logs are placed in different namespaced directories based on the criteria described below. This is a possible layout of the cache directory:</p>
 <pre class="highlight plaintext"><code>XCMetrics/
 ├── Project1/
@@ -63,28 +64,28 @@ The directory is <code>~/Library/Caches/xcmetrics</code>, where logs are placed 
     └── 0BBA9976-4EBB-484F-A276-C97A62AB90F2.xcactivitylog
 </code></pre>
 
-<p>Let&rsquo;s break it down:</p>
+<p>Let’s break it down:</p>
 
 <ul>
-<li>At the top level, we have a directory for each project. If this directory doesn&rsquo;t exist, for example the first time <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> is run in a new project, it will be automatically created. This allows XCMetrics to be used in multiple projects on the same machine, and avoid logs to conflict with each other.</li>
-<li>Logs are copied from Xcode&rsquo;s directory to the project directory. If a log has been successfully uploaded on the first try, <code>_UPLOADED</code> will be appended to its file name. This is done in order to keep track which logs have been cached already.</li>
+<li>At the top level, we have a directory for each project. If this directory doesn’t exist, for example the first time <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> is run in a new project, it will be automatically created. This allows XCMetrics to be used in multiple projects on the same machine, and avoid logs to conflict with each other.</li>
+<li>Logs are copied from Xcode’s directory to the project directory. If a log has been successfully uploaded on the first try, <code>_UPLOADED</code> will be appended to its file name. This is done in order to keep track which logs have been cached already.</li>
 <li>If a log fails to upload (i.e: the backend service is not reachable), the request is written to the <code>requests</code> directory as a binary object containing the log itself along with all the metadata collected for that build. The original <code>xcactivitylog</code> is renamed with <code>_UPLOADED</code> and then the request object will be automatically retried on the next run.</li>
 </ul>
 
 <p>The following diagram better illustrates the flow of all the steps.</p>
 
-<p><img src="/docs/img/cache-management.jpg" alt="Cache Management"></p>
+<p><img src="img/cache-management.jpg" alt="Cache Management"></p>
 
 <p>Xcode sometimes takes a few seconds to write the full log to disk, so XCMetrics can optionally wait for some time in order to always try and fetch the latest log (use the argument <code>--timeout</code> to customize this behavior).</p>
-<h2 id='visual-demo' class='heading'>Visual Demo</h2>
+<h2 id="visual-demo" class="heading">Visual Demo</h2>
 
 <p>The following GIF shows the behavior when the upload is successful. As you can see, the log is cached in the <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> directory and marked as uploaded.</p>
 
-<p><img src="/docs/img/upload-successful.gif" alt="Upload Successful"></p>
+<p><img src="img/upload-successful.gif" alt="Upload Successful"></p>
 
 <p>In case internet connectivity is absent or some other during the upload occurs, the log is marked as uploaded and cached offline for retry during the next run.</p>
 
-<p><img src="/docs/img/upload-failed.gif" alt="Upload Failed"></p>
+<p><img src="img/upload-failed.gif" alt="Upload Failed"></p>
 
             </section>
           </section>
@@ -256,11 +257,11 @@ The directory is <code>~/Library/Caches/xcmetrics</code>, where logs are placed 
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-20)</p>
+          <p>© 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-26)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>
     </div>
   </body>
-</div>
+
 </html>
