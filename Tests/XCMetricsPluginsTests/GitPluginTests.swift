@@ -29,7 +29,7 @@ class GitPluginTests: XCTestCase {
         }
         let plugin = GitPlugin(gitDirectoryPath: "", gitData: [.branch], shell: fakeShellOutFunction).create()
         let pluginData = plugin.body([:])
-        let expectedData = ["Git_Branch": "main"]
+        let expectedData = ["git_branch": "main"]
         XCTAssertEqual(pluginData, expectedData)
     }
     
@@ -39,7 +39,47 @@ class GitPluginTests: XCTestCase {
         }
         let plugin = GitPlugin(gitDirectoryPath: "", gitData: [.latestSHA], shell: fakeShellOutFunction).create()
         let pluginData = plugin.body([:])
-        let expectedData = ["Git_Commit_SHA": "123f4d"]
+        let expectedData = ["git_commit_sha": "123f4d"]
+        XCTAssertEqual(pluginData, expectedData)
+    }
+    
+    func testGitIsDirty() {
+        let fakeShellOutFunction: ShellOutFunction = { _,_,_,_ in
+            return "M Package.swift"
+        }
+        let plugin = GitPlugin(gitDirectoryPath: "", gitData: [.isDirty], shell: fakeShellOutFunction).create()
+        let pluginData = plugin.body([:])
+        let expectedData = ["git_is_dirty": "true"]
+        XCTAssertEqual(pluginData, expectedData)
+    }
+    
+    func testGitIsNotDirty() {
+        let fakeShellOutFunction: ShellOutFunction = { _,_,_,_ in
+            return ""
+        }
+        let plugin = GitPlugin(gitDirectoryPath: "", gitData: [.isDirty], shell: fakeShellOutFunction).create()
+        let pluginData = plugin.body([:])
+        let expectedData = ["git_is_dirty": "false"]
+        XCTAssertEqual(pluginData, expectedData)
+    }
+    
+    func testGitUserEmailRedacted() {
+        let fakeShellOutFunction: ShellOutFunction = { _,_,_,_ in
+            return "redacted@email.com"
+        }
+        let plugin = GitPlugin(gitDirectoryPath: "", gitData: [.userEmail(redacted: true)], shell: fakeShellOutFunction).create()
+        let pluginData = plugin.body([:])
+        let expectedData = ["git_user_email": "b94ae061e2153f07113b89df8afe121a"]
+        XCTAssertEqual(pluginData, expectedData)
+    }
+    
+    func testGitUserEmailNotRedacted() {
+        let fakeShellOutFunction: ShellOutFunction = { _,_,_,_ in
+            return "redacted@email.com"
+        }
+        let plugin = GitPlugin(gitDirectoryPath: "", gitData: [.userEmail(redacted: false)], shell: fakeShellOutFunction).create()
+        let pluginData = plugin.body([:])
+        let expectedData = ["git_user_email": "redacted@email.com"]
         XCTAssertEqual(pluginData, expectedData)
     }
 }

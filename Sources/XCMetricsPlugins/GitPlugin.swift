@@ -24,8 +24,14 @@ import XCMetricsUtils
 public struct GitPlugin {
     
     public enum GitData {
-        case branch // the current branch name
-        case latestSHA // the most recent commit hash in short format (6)
+        // The current branch name
+        case branch
+        // The status of the repo
+        case isDirty
+        // The most recent commit hash in short format (6)
+        case latestSHA
+        // The branch's creator's email, redacted if necessary
+        case userEmail(redacted: Bool)
     }
 
     private let gitDirectoryPath: String
@@ -33,11 +39,11 @@ public struct GitPlugin {
     private let shell: ShellOutFunction
 
     /// Initializes a `GitPlugin` using a configurable location for the git directory
-    /// as well as the git data to attach the associated build metadata.
-    /// - Parameter gitDirectoryPath: The location of the git directory to use - usualy Xcode's `${SRCROOT}` environment variable can be used (this variable is not available in the default environment variables for XCMetrics, and would need to be passed in).
+    /// as well as the git data to attach to the associated build metadata.
+    /// - Parameter gitDirectoryPath: The location of the git directory to use - usually Xcode's `${SRCROOT}` environment variable can be used (this variable is not available in the default environment variables for XCMetrics, and would need to be passed in).
     /// - Parameter gitData: The data to be retrieved from git (eg: the build's current branch).  Available data points can be found and added to the `GitData` enumeration.
     /// - Parameter shell: Will default to `shellGetStdout`
-    public init(gitDirectoryPath: String, gitData: [GitData] = [.branch, .latestSHA], shell: @escaping ShellOutFunction = shellGetStdout) {
+    public init(gitDirectoryPath: String, gitData: [GitData] = [.branch, .latestSHA, .isDirty, .userEmail(redacted: true)], shell: @escaping ShellOutFunction = shellGetStdout) {
         self.gitDirectoryPath = gitDirectoryPath
         self.gitData = gitData
         self.shell = shell
@@ -52,14 +58,29 @@ public struct GitPlugin {
                 switch target {
                 case .branch:
                     if let branch = try? shell("git", ["-C", gitDirectoryPath, "rev-parse", "--abbrev-ref", "HEAD"], nil, nil) {
-                        dictionary["Git_Branch"] = branch
+                        dictionary["git_branch"] = branch
                     }
+                case .isDirty:
+                    let hasChanges = try? shell("git", ["-C", gitDirectoryPath, "status", "--short"], nil, nil)
+                    // account for nil and empty string output
+                    dictionary["git_is_dirty"] = hasChanges.isNilOrEmpty ? "false" : "true"
+                        
                 case .latestSHA:
                     if let latestSHA = try? shell("git", ["-C", gitDirectoryPath, "rev-parse", "--short=6", "--verify", "HEAD"], nil, nil) {
-                        dictionary["Git_Commit_SHA"] = latestSHA
+                        dictionary["git_commit_sha"] = latestSHA
+                    }
+                case .userEmail(let redacted):
+                    if let userEmail = try? shell("git", ["-C", gitDirectoryPath, "config", "--get", "user.email"], nil, nil) {
+                        dictionary["git_user_email"] = redacted ? userEmail.md5() : userEmail
                     }
                 }
             }
         })
+    }
+}
+
+fileprivate extension Optional where Wrapped: Collection {
+    var isNilOrEmpty: Bool {
+        return self?.isEmpty ?? true
     }
 }
