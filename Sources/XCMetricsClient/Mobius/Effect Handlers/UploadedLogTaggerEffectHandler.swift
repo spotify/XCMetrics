@@ -20,6 +20,7 @@
 import Foundation
 import MobiusCore
 import MobiusExtras
+import XCMetricsUtils
 
 struct UploadedLogTaggerEffectHandler: EffectHandler {
 

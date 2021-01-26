@@ -18,6 +18,7 @@
 // under the License.
 
 import Foundation
+import XCMetricsUtils
 
 enum LogManagerError: Error {
     /// If a file is not found on disk, this error is thrown.

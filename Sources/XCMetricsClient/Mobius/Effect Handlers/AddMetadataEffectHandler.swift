@@ -20,6 +20,7 @@
 import Foundation
 import MobiusCore
 import MobiusExtras
+import XCMetricsUtils
 
 enum EnvironmentVariable {
     static var TAG_KEY = "SPT_XCMETRICS_TAG"

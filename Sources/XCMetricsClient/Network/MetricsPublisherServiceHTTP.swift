@@ -18,6 +18,7 @@
 // under the License.
 
 import Foundation
+import XCMetricsUtils
 
 enum UploadError: Error {
     case responseError(statusCode: Int)

@@ -12,6 +12,7 @@ let package = Package(
         .executable(name: "XCMetricsBackend", targets: ["XCMetricsBackend"]),
         .library(name: "XCMetricsClient", targets: ["XCMetricsClient"]),
         .library(name: "XCMetricsPlugins", targets: ["XCMetricsPlugins"]),
+        .library(name: "XCMetricsUtils", targets: ["XCMetricsUtils"]),
     ],
     dependencies: [
         .package(url: "https://github.com/spotify/xclogparser", from: "0.2.22"),
