@@ -7,13 +7,27 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-18.04
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Build docs
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew install sourcekitten
+          sudo gem install jazzy bundler
+          sh generate-documentation.sh
+      - name: Format and copy docs
+        run: |
+          cd tools/format-docs
+          bundle install
+          ruby main.rb
+          cd ../../
+          mkdir microsite/docs && mv docs/generated/* microsite/docs
+          mv docs/img/* microsite/docs/img
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./microsite
-          keep_files: true
+          keep_files: false
           cname: xcmetrics.io
