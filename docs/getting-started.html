@@ -171,52 +171,40 @@
 <span class="p">)</span>
 </code></pre>
 
-<p>We now have wrapped <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> in a new <code>SPTXCMetris</code> target. This target can include more plugins and logic that will be by <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> when collecting metrics.</p>
+<p>We now have wrapped <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> in a new <code>SPTXCMetris</code> target. This target can include more plugins and logic that will be executed by <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> when collecting metrics.</p>
 <h3 id="plugin-architecture-overview" class="heading">Plugin Architecture Overview</h3>
 
-<p>Here’s an example of how <code>SPTXCMetrics</code> could be implemented. Here’s we’re implementing a plugin to track the thermal throttling status of the machine to see how it could affect build times.</p>
+<p><code><a href="Structs/XCMetrics.html">XCMetrics</a></code> and <code>XCMetricsApp</code> will not accept substantial new features. We built <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> to be extensible and configurable from your own Swift Package. We would still like to offer a series of plugins that you can directly reuse without rewriting common metrics collection plugins. The <code>XCMetricsPlugins</code> library is available for you to depend on. It allows you to add more metrics collection capabilities to your version of XCMetrics.</p>
+
+<p>Start by adding a dependency on <code>XCMetricsPlugins</code> to the newly created <code>SPTXCMetrics</code> target:</p>
+<pre class="highlight swift"><code><span class="o">.</span><span class="nf">target</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"SPTXCMetrics"</span><span class="p">,</span>
+    <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">product</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"XCMetricsClient"</span><span class="p">,</span> <span class="nv">package</span><span class="p">:</span> <span class="s">"XCMetrics"</span><span class="p">),</span>
+        <span class="o">.</span><span class="nf">product</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"XCMetricsPlugins"</span><span class="p">,</span> <span class="nv">package</span><span class="p">:</span> <span class="s">"XCMetrics"</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">),</span>
+</code></pre>
+
+<p>Here’s an example of a custom version of <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> named <code>SPTXCMetrics</code> that adds thermal throttling information (that can usually affect build times) collection by using a plugin available in <code>XCMetricsPlugins</code>.</p>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">Foundation</span>
 <span class="kd">import</span> <span class="kt">XCMetricsClient</span>
-<span class="kd">import</span> <span class="kt">XCMetricsUtils</span>
+<span class="kd">import</span> <span class="kt">XCMetricsPlugins</span>
 
 <span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SPTXCMetrics</span> <span class="p">{</span>
 
     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">let</span> <span class="nv">metrics</span> <span class="o">=</span> <span class="kt">XCMetrics</span><span class="o">.</span><span class="nf">parseOrExit</span><span class="p">()</span>
         <span class="k">let</span> <span class="nv">configuration</span> <span class="o">=</span> <span class="kt">XCMetricsConfiguration</span><span class="p">()</span>
-        <span class="n">configuration</span><span class="o">.</span><span class="nf">add</span><span class="p">(</span><span class="nv">plugin</span><span class="p">:</span> <span class="kt">ThermalThrottlingPlugin</span><span class="p">()</span><span class="o">.</span><span class="nf">create</span><span class="p">())</span>
+        <span class="n">configuration</span><span class="o">.</span><span class="nf">add</span><span class="p">(</span><span class="nv">plugin</span><span class="p">:</span> <span class="kt">ThermalThrottlingPlugin</span><span class="p">()</span><span class="o">.</span><span class="nf">create</span><span class="p">())</span> <span class="c1">// ThermalThrottlingPlugin lives in XCMetricsPlugins.</span>
         <span class="n">metrics</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">configuration</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ThermalThrottlingPlugin</span> <span class="p">{</span>
-
-    <span class="kd">func</span> <span class="nf">create</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">XCMetricsPlugin</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kt">XCMetricsPlugin</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Thermal Throttling"</span><span class="p">,</span> <span class="nv">body</span><span class="p">:</span> <span class="p">{</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="k">in</span>
-            <span class="k">let</span> <span class="nv">captureGroup</span> <span class="o">=</span> <span class="s">"cpuspeed"</span>
-            <span class="k">let</span> <span class="nv">regex</span> <span class="o">=</span> <span class="s">"[.</span><span class="se">\n</span><span class="s">]*CPU_Speed_Limit </span><span class="se">\t</span><span class="s">= (?&lt;</span><span class="se">\(</span><span class="n">captureGroup</span><span class="se">)</span><span class="s">&gt;[0-9]*)"</span>
-            <span class="k">guard</span> <span class="k">let</span> <span class="nv">thermStdout</span> <span class="o">=</span> <span class="k">try</span><span class="p">?</span> <span class="nf">shellGetStdout</span><span class="p">(</span><span class="s">"pmset"</span><span class="p">,</span> <span class="nv">args</span><span class="p">:</span> <span class="p">[</span><span class="s">"-g"</span><span class="p">,</span> <span class="s">"therm"</span><span class="p">])</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">[:]</span> <span class="p">}</span>
-            <span class="k">let</span> <span class="nv">nsrange</span> <span class="o">=</span> <span class="kt">NSRange</span><span class="p">(</span><span class="n">thermStdout</span><span class="o">.</span><span class="n">startIndex</span><span class="o">..&lt;</span><span class="n">thermStdout</span><span class="o">.</span><span class="n">endIndex</span><span class="p">,</span> <span class="nv">in</span><span class="p">:</span> <span class="n">thermStdout</span><span class="p">)</span>
-            <span class="k">let</span> <span class="nv">reg</span> <span class="o">=</span> <span class="k">try!</span> <span class="kt">NSRegularExpression</span><span class="p">(</span><span class="nv">pattern</span><span class="p">:</span> <span class="n">regex</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[])</span>
-            <span class="k">var</span> <span class="nv">cpuSpeedLimit</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
-            <span class="n">reg</span><span class="o">.</span><span class="nf">enumerateMatches</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="n">thermStdout</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[],</span> <span class="nv">range</span><span class="p">:</span> <span class="n">nsrange</span><span class="p">)</span> <span class="p">{</span> <span class="n">match</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">stop</span> <span class="k">in</span>
-                <span class="k">guard</span> <span class="k">let</span> <span class="nv">match</span> <span class="o">=</span> <span class="n">match</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
-                <span class="k">let</span> <span class="nv">matchRange</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="nf">range</span><span class="p">(</span><span class="nv">withName</span><span class="p">:</span> <span class="n">captureGroup</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">matchRange</span><span class="o">.</span><span class="n">location</span> <span class="o">!=</span> <span class="kt">NSNotFound</span><span class="p">,</span> <span class="k">let</span> <span class="nv">range</span> <span class="o">=</span> <span class="kt">Range</span><span class="p">(</span><span class="n">matchRange</span><span class="p">,</span> <span class="nv">in</span><span class="p">:</span> <span class="n">thermStdout</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">cpuSpeedLimit</span> <span class="o">=</span> <span class="kt">String</span><span class="p">(</span><span class="n">thermStdout</span><span class="p">[</span><span class="n">range</span><span class="p">])</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="k">let</span> <span class="nv">value</span> <span class="o">=</span> <span class="n">cpuSpeedLimit</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="p">[</span><span class="s">"CPU_Speed_Limit"</span><span class="p">:</span> <span class="n">value</span><span class="p">]</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="p">[:]</span>
-            <span class="p">}</span>
-        <span class="p">})</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
 
-<p>Each plugin has given access to the environment variables in a dictionary, for even higher customizability. You can for example provide values from your build environment and track them when collecting metrics. Each plugin should return itself a dictionary of values that will be attached to each build and stored in the as build metadata.</p>
+<p>For examples on how to write custom plugins, take a look at the existing plugins in <a href="https://github.com/spotify/XCMetrics/tree/main/Sources/XCMetricsPlugins"><code>XCMetricsPlugins</code></a>. In short, each plugin is given access to the environment variables of the build in a dictionary   for even higher customizability. You can provide values from your build environment and track them when collecting metrics for example. Each plugin should return a dictionary of values that will be attached to each build and stored as build metadata.</p>
+
+<p>Feel free to contribute new plugins to <code>XCMetricsPlugins</code>. We’re happy to add more features in order to make them available to the wider community.</p>
 <h2 id="pro-amp-debugging-tips" class="heading">Pro &amp; Debugging Tips</h2>
 
 <p>For some reason, Xcode doesn’t execute the post-action scheme in case the build fails. To force Xcode to execute the post-action scheme even if the build fails, add <code>runPostActionsOnFailure = "YES"</code> as an attribute of the <code>BuildAction</code> tag in your <code>xscheme</code> (like we do in our <a href="https://github.com/spotify/XCMetrics/blob/main/Examples/BasicApp/BasicApp.xcodeproj/xcshareddata/xcschemes/BasicApp.xcscheme#L8">BasicApp.xcsheme</a>).</p>
@@ -391,7 +379,7 @@
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>© 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-26)</p>
+          <p>© 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>
