@@ -115,55 +115,44 @@ let package = Package(
 )
 ```
 
-We now have wrapped `XCMetrics` in a new `SPTXCMetris` target. This target can include more plugins and logic that will be by `XCMetrics` when collecting metrics.
+We now have wrapped `XCMetrics` in a new `SPTXCMetris` target. This target can include more plugins and logic that will be executed by `XCMetrics` when collecting metrics.
 
 ### Plugin Architecture Overview
 
-Here's an example of how `SPTXCMetrics` could be implemented. Here's we're implementing a plugin to track the thermal throttling status of the machine to see how it could affect build times.
+`XCMetrics` and `XCMetricsApp` will not accept substantial new features. We built `XCMetrics` to be extensible and configurable from your own Swift Package. We would still like to offer a series of plugins that you can directly reuse without rewriting common metrics collection plugins. The `XCMetricsPlugins` library is available for you to depend on. It allows you to add more metrics collection capabilities to your version of XCMetrics.
+
+Start by adding a dependency on `XCMetricsPlugins` to the newly created `SPTXCMetrics` target:
+```swift
+.target(
+    name: "SPTXCMetrics",
+    dependencies: [
+        .product(name: "XCMetricsClient", package: "XCMetrics"),
+        .product(name: "XCMetricsPlugins", package: "XCMetrics")
+    ]
+),
+```
+
+Here's an example of a custom version of `XCMetrics` named `SPTXCMetrics` that adds thermal throttling information (that can usually affect build times) collection by using a plugin available in `XCMetricsPlugins`.
 
 ```swift
 import Foundation
 import XCMetricsClient
-import XCMetricsUtils
+import XCMetricsPlugins
 
 public struct SPTXCMetrics {
 
     public static func main() {
         let metrics = XCMetrics.parseOrExit()
         let configuration = XCMetricsConfiguration()
-        configuration.add(plugin: ThermalThrottlingPlugin().create())
+        configuration.add(plugin: ThermalThrottlingPlugin().create()) // ThermalThrottlingPlugin lives in XCMetricsPlugins.
         metrics.run(with: configuration)
-    }
-}
-
-public struct ThermalThrottlingPlugin {
-
-    func create() -> XCMetricsPlugin {
-        return XCMetricsPlugin(name: "Thermal Throttling", body: { _ -> [String : String] in
-            let captureGroup = "cpuspeed"
-            let regex = "[.\n]*CPU_Speed_Limit \t= (?<\(captureGroup)>[0-9]*)"
-            guard let thermStdout = try? shellGetStdout("pmset", args: ["-g", "therm"]) else { return [:] }
-            let nsrange = NSRange(thermStdout.startIndex..<thermStdout.endIndex, in: thermStdout)
-            let reg = try! NSRegularExpression(pattern: regex, options: [])
-            var cpuSpeedLimit: String?
-            reg.enumerateMatches(in: thermStdout, options: [], range: nsrange) { match, _, stop in
-                guard let match = match else { return }
-                let matchRange = match.range(withName: captureGroup)
-                if matchRange.location != NSNotFound, let range = Range(matchRange, in: thermStdout) {
-                    cpuSpeedLimit = String(thermStdout[range])
-                }
-            }
-            if let value = cpuSpeedLimit {
-                return ["CPU_Speed_Limit": value]
-            } else {
-                return [:]
-            }
-        })
     }
 }
 ```
 
-Each plugin has given access to the environment variables in a dictionary, for even higher customizability. You can for example provide values from your build environment and track them when collecting metrics. Each plugin should return itself a dictionary of values that will be attached to each build and stored in the as build metadata.
+For examples on how to write custom plugins, take a look at the existing plugins in [`XCMetricsPlugins`](https://github.com/spotify/XCMetrics/tree/main/Sources/XCMetricsPlugins). In short, each plugin is given access to the environment variables of the build in a dictionary   for even higher customizability. You can provide values from your build environment and track them when collecting metrics for example. Each plugin should return a dictionary of values that will be attached to each build and stored as build metadata.
+
+Feel free to contribute new plugins to `XCMetricsPlugins`. We're happy to add more features in order to make them available to the wider community.
 
 ## Pro & Debugging Tips
 
