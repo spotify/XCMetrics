@@ -121,13 +121,23 @@ We now have wrapped `XCMetrics` in a new `SPTXCMetris` target. This target can i
 
 `XCMetrics` and `XCMetricsApp` will not accept substantial new features. We built `XCMetrics` to be extensible and configurable from your own Swift Package. We would still like to offer a series of plugins that you can directly reuse without rewriting common metrics collection plugins. The `XCMetricsPlugins` library is available for you to depend on. It allows you to add more metrics collection capabilities to your version of XCMetrics.
 
+Start by adding a dependency on `XCMetricsPlugins` to the newly created `SPTXCMetrics` target:
+```swift
+.target(
+    name: "SPTXCMetrics",
+    dependencies: [
+        .product(name: "XCMetricsClient", package: "XCMetrics")
+        .product(name: "XCMetricsPlugins", package: "XCMetrics")
+    ]
+),
+```
+
 Here's an example of a custom version of `XCMetrics` named `SPTXCMetrics` that adds thermal throttling information (that can usually affect build times) collection by using a plugin available in `XCMetricsPlugins`.
 
 ```swift
 import Foundation
 import XCMetricsClient
 import XCMetricsPlugins
-import XCMetricsUtils
 
 public struct SPTXCMetrics {
 
@@ -140,7 +150,7 @@ public struct SPTXCMetrics {
 }
 ```
 
-For examples on how to write custom plugins, take a look at the existing plugins in [`XCMetricsPlugins`](https://github.com/spotify/XCMetrics/tree/main/Sources/XCMetricsPlugins). In short, each plugin is given access to the environment variables of the build in a dictionary for even higher customizability. You can provide values from your build environment and track them when collecting metrics for example. Each plugin should return a dictionary of values that will be attached to each build and stored as build metadata.
+For examples on how to write custom plugins, take a look at the existing plugins in [`XCMetricsPlugins`](https://github.com/spotify/XCMetrics/tree/main/Sources/XCMetricsPlugins). In short, each plugin is given access to the environment variables of the build in a dictionary   for even higher customizability. You can provide values from your build environment and track them when collecting metrics for example. Each plugin should return a dictionary of values that will be attached to each build and stored as build metadata.
 
 Feel free to contribute new plugins to `XCMetricsPlugins`. We're happy to add more features in order to make them available to the wider community.
 
