@@ -126,7 +126,7 @@ Start by adding a dependency on `XCMetricsPlugins` to the newly created `SPTXCMe
 .target(
     name: "SPTXCMetrics",
     dependencies: [
-        .product(name: "XCMetricsClient", package: "XCMetrics")
+        .product(name: "XCMetricsClient", package: "XCMetrics"),
         .product(name: "XCMetricsPlugins", package: "XCMetrics")
     ]
 ),
