@@ -26,7 +26,7 @@ struct AddBuildIdentifierIndexToTarget: Migration {
 
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         guard let sql = database as? SQLDatabase else {
-            preconditionFailure("AddBuildIdIndexToTarget can only run on a SQL database")
+            preconditionFailure("AddBuildIdentifierIndexToTarget can only run on a SQL database")
         }
         return sql.raw("""
                 CREATE INDEX "index_build_identifier_on_targets"
@@ -43,7 +43,7 @@ struct AddBuildIdentifierIndexToTarget: Migration {
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
         guard let sql = database as? SQLDatabase else {
-            preconditionFailure("AddBuildIdIndexToTarget can only run on a SQL database")
+            preconditionFailure("AddBuildIdentifierIndexToTarget can only run on a SQL database")
         }
         return sql.raw("""
                 DROP INDEX "index_build_identifier_on_targets";
