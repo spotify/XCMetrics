@@ -77,7 +77,22 @@ public func configure(_ app: Application) throws {
                        AddDetailsToNotes(),
                        AddDetailsToWarnings(),
                        AddBuildStatusIndex(),
-                       AddProjectNameIndex())
+                       AddProjectNameIndex(),
+                       AddBuildIdentifierIndexToTarget(),
+                       AddBuildIdentifierIndexToBuildErrors(),
+                       AddBuildIdentifierIndexToStep(),
+                       AddBuildIdentifierIndexToBuildErrors(),
+                       AddBuildIdentifierIndexToBuildWarnings(),
+                       AddBuildIdentifierIndexToBuildNotes(),
+                       AddBuildIdentifierIndexToBuildHost(),
+                       AddBuildIdentifierIndexToSwiftFunctions(),
+                       AddBuildIdentifierIndexToSwiftTypeChecks(),
+                       AddBuildIdentifierIndexToXcodeVersion(),
+                       AddBuildIdentifierIndexToBuildMetadata(),
+                       AddTargetIdentifierIndexToSteps(),
+                       AddStepIdentifierIndexToSwiftFunctions(),
+                       AddStepIdentifierIndexToSwiftTypeChecks()
+                       )
 
 
     if config.useAsyncLogProcessing {

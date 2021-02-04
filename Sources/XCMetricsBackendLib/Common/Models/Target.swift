@@ -21,14 +21,18 @@ import Fluent
 import Vapor
 import XCLogParser
 
-final class Target: Model, Content, PartitionedByDay {
+public final class Target: Model, Content, PartitionedByDay {
 
-    typealias IDValue = String
+    public typealias IDValue = String
 
-    static let schema = "build_targets"
+    public static let schema = "build_targets"
+
+    public init() {
+        
+    }
 
     @ID(custom: .id, generatedBy: IDProperty.Generator.user)
-    var id: String?
+    public var id: String?
 
     @Field(key: "build_identifier")
     var buildIdentifier: String

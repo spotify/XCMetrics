@@ -18,6 +18,7 @@
 // under the License.
 
 import Fluent
+import FluentSQL
 import Vapor
 
 /// Controller with endpoints that return Builds related data
@@ -36,6 +37,7 @@ public struct BuildController: RouteCollection {
         routes.get("v1", "build", "project", use: projects)
         routes.get("v1", "build", ":id", use: build)
         routes.get("v1", "build", use: index)
+        routes.get("v1", "build", "step", ":day", ":id", use: targetSteps)
     }
 
     /// Endpoint that returns the paginated list of `Build`
@@ -253,20 +255,33 @@ public struct BuildController: RouteCollection {
                 }
                 return build
             })
-            .and(
-                Target.query(on: req.db)
-                    .filter(\.$buildIdentifier == buildId)
-                    .sort(\.$startTimestampMicroseconds)
-                    .sort(\.$name)
-                    .all()
-            )
+            .flatMap({ build -> EventLoopFuture<([Target], Build)> in
+                // Optimization to speed up queries if we're using tables sharded by day
+                if let day = build.day, let sql = req.db as? SQLDatabase {
+                    return sql.raw("""
+                        SELECT * FROM \(raw: Target.schema)_\(raw: day.xcm_toPartitionedTableFormat())
+                        WHERE build_identifier = \(literal: buildId)
+                        ORDER BY start_timestamp_microseconds,
+                        name
+                        """)
+                        .all(decoding: Target.self)
+                        .and(value: build)
+                } else {
+                    return Target.query(on: req.db)
+                           .filter(\.$buildIdentifier == buildId)
+                           .sort(\.$startTimestampMicroseconds)
+                           .sort(\.$name)
+                           .all()
+                        .and(value: build)
+               }
+            })
             .and(
                 XcodeVersion.query(on: req.db)
                     .filter(\.$buildIdentifier == buildId)
                     .first()
             )
             .map({ (data, xcode: XcodeVersion?) -> (BuildResponse) in
-                let (build, targets) = data
+                let (targets, build) = data
                 return BuildResponse(build: build, targets: targets, xcode: xcode)
             })
     }
@@ -456,6 +471,59 @@ public struct BuildController: RouteCollection {
                 .unique()
                 .sort(\.$projectName)
                 .all(\.$projectName)
+    }
+
+    /// Endpoint that returns the list of `Step`s that were done to build a Target.
+    ///
+    /// - Method: `GET`
+    /// - Route: `/v1/build/step/:day/:targetId` example:
+    /// `/v1/build/step/20210129/ash22j3sdba1f0654c3f9e9a_6561690B-DFE4-4EE8-ABEE-99E4D3325E7B_15`
+    /// - Path parameters
+    ///     - `day`. Mandatory. `Target`'s day as String in UTC. example: `20210129`
+    ///     - targetId. Mandatory. `Target`'s id.
+    /// - Response:
+    ///
+    /// ```
+    /// [
+    ///     {
+    ///       "id": "ash22j3sdba1f0654c3f9e9a_6561690B-DFE4-4EE8-ABEE-99E4D3325E7B_16",
+    ///       "startTimestamp": "2021-01-29T08:11:41Z",
+    ///       "endTimestamp": "2021-01-29T08:11:41Z",
+    ///       "errorCount": 0,
+    ///       "endTimestampMicroseconds": 1611907901.256928,
+    ///       "fetchedFromCache": false,
+    ///       "targetIdentifier": "ecba60d222f04c51dba1f0654c3f9e9a_6561690B-DFE8-4EE8-ABEE-99E4D3325E7B_15",
+    ///       "day": "2021-01-29T00:00:00Z",
+    ///       "type": "other",
+    ///       "title": "Create directory SPTAuthAccountsTests.xctest",
+    ///       "warningCount": 0,
+    ///        "signature": "MkDir \/Users\/<redacted>\/my_project\/build\/DerivedData\/Build\/Products\/Debug-iphonesimulator\/MyProjectTests.xctest",
+    ///        "architecture": "",
+    ///        "duration": 2.3,
+    ///        "documentURL": "",
+    ///        "buildIdentifier": "ash22j3sdba1f0654c3f9e9a_6561690B-DFE4-4EE8-ABEE-99E4D3325E7B_1",
+    ///        "startTimestampMicroseconds": 1611907901.255825
+    ///      },
+    ///      ...
+    /// ]
+    /// ```
+    ///
+    public func targetSteps(req: Request) throws -> EventLoopFuture<[Step]> {
+        guard let day = req.parameters.get("day"),
+              let targetId = req.parameters.get("id"),
+              Date.xcm_fromPartitionDay(day) != nil else {
+            throw Abort(.badRequest)
+        }
+        guard let sql = req.db as? SQLDatabase else {
+            throw Abort(.internalServerError)
+        }
+
+        return sql.raw("""
+                SELECT * FROM \(raw: Step.schema)_\(raw: day)
+                WHERE target_identifier = \(literal: targetId)
+                ORDER BY start_timestamp_microseconds, title
+            """)
+            .all(decoding: Step.self)
     }
 
 }
