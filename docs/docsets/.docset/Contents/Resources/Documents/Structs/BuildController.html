@@ -17,7 +17,7 @@
       <div class="content-wrapper">
         <p>
           <a href="../index.html"> Docs</a>
-          <span class="no-mobile"> (73% documented)</span>
+          <span class="no-mobile"> (67% documented)</span>
         </p>
     
         <p class="header-right">
@@ -294,7 +294,7 @@ filtered by different criteria, like creation date, build status and project nam
                         <div class="pointer"></div>
                         <div class="abstract">
                           <p>Endpoint that returns the most relevant information of a <code><a href="../Classes/Build.html">Build</a></code>:
-<code><a href="../Classes/Build.html">Build</a></code> data, Xcode used and list of <code>Target</code> that were built.</p>
+<code><a href="../Classes/Build.html">Build</a></code> data, Xcode used and list of <code><a href="../Classes/Target.html">Target</a></code> that were built.</p>
 
 <ul>
 <li>Method: <code>GET</code></li>
@@ -646,6 +646,69 @@ Useful if you want the list to filter the build per project using the endpoint
                       </section>
                     </div>
                   </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib15BuildControllerV11targetSteps3req3NIO15EventLoopFutureCySayAA4StepCGG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/targetSteps(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib15BuildControllerV11targetSteps3req3NIO15EventLoopFutureCySayAA4StepCGG5Vapor7RequestC_tKF">targetSteps(req:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Endpoint that returns the list of <code><a href="../Classes/Step.html">Step</a></code>s that were done to build a Target.</p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/build/step/:day/:targetId</code> example:
+<code>/v1/build/step/20210129/ash22j3sdba1f0654c3f9e9a_6561690B-DFE4-4EE8-ABEE-99E4D3325E7B_15</code></li>
+<li>Path parameters
+
+<ul>
+<li><code>day</code>. Mandatory. <code><a href="../Classes/Target.html">Target</a></code>&lsquo;s day as String in UTC. example: <code>20210129</code></li>
+<li>targetId. Mandatory. <code><a href="../Classes/Target.html">Target</a></code>&rsquo;s id.</li>
+</ul></li>
+<li>Response:</li>
+</ul>
+<pre class="highlight swift"><code><span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s">"id"</span><span class="p">:</span> <span class="s">"ash22j3sdba1f0654c3f9e9a_6561690B-DFE4-4EE8-ABEE-99E4D3325E7B_16"</span><span class="p">,</span>
+      <span class="s">"startTimestamp"</span><span class="p">:</span> <span class="s">"2021-01-29T08:11:41Z"</span><span class="p">,</span>
+      <span class="s">"endTimestamp"</span><span class="p">:</span> <span class="s">"2021-01-29T08:11:41Z"</span><span class="p">,</span>
+      <span class="s">"errorCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s">"endTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1611907901.256928</span><span class="p">,</span>
+      <span class="s">"fetchedFromCache"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="s">"targetIdentifier"</span><span class="p">:</span> <span class="s">"ecba60d222f04c51dba1f0654c3f9e9a_6561690B-DFE8-4EE8-ABEE-99E4D3325E7B_15"</span><span class="p">,</span>
+      <span class="s">"day"</span><span class="p">:</span> <span class="s">"2021-01-29T00:00:00Z"</span><span class="p">,</span>
+      <span class="s">"type"</span><span class="p">:</span> <span class="s">"other"</span><span class="p">,</span>
+      <span class="s">"title"</span><span class="p">:</span> <span class="s">"Create directory SPTAuthAccountsTests.xctest"</span><span class="p">,</span>
+      <span class="s">"warningCount"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+       <span class="s">"signature"</span><span class="p">:</span> <span class="s">"MkDir </span><span class="err">\</span><span class="s">/Users</span><span class="err">\</span><span class="s">/&lt;redacted&gt;</span><span class="err">\</span><span class="s">/my_project</span><span class="err">\</span><span class="s">/build</span><span class="err">\</span><span class="s">/DerivedData</span><span class="err">\</span><span class="s">/Build</span><span class="err">\</span><span class="s">/Products</span><span class="err">\</span><span class="s">/Debug-iphonesimulator</span><span class="err">\</span><span class="s">/MyProjectTests.xctest"</span><span class="p">,</span>
+       <span class="s">"architecture"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+       <span class="s">"duration"</span><span class="p">:</span> <span class="mf">2.3</span><span class="p">,</span>
+       <span class="s">"documentURL"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+       <span class="s">"buildIdentifier"</span><span class="p">:</span> <span class="s">"ash22j3sdba1f0654c3f9e9a_6561690B-DFE4-4EE8-ABEE-99E4D3325E7B_1"</span><span class="p">,</span>
+       <span class="s">"startTimestampMicroseconds"</span><span class="p">:</span> <span class="mf">1611907901.255825</span>
+     <span class="p">},</span>
+     <span class="o">...</span>
+<span class="p">]</span>
+</code></pre>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">targetSteps</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Classes/Step.html">Step</a></span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
                 </ul>
               </div>
             </section>
@@ -709,6 +772,12 @@ Useful if you want the list to filter the build per project using the endpoint
                 </li>
                 <li class="nav-group-task">
                   <a href="../Other%20Classes.html#/s:15XCMetricsClient27MetricsPublisherServiceHTTPC">MetricsPublisherServiceHTTP</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/Step.html">Step</a>
+                </li>
+                <li class="nav-group-task">
+                  <a href="../Classes/Target.html">Target</a>
                 </li>
                 <li class="nav-group-task">
                   <a href="../Classes/XCMetricsConfiguration.html">XCMetricsConfiguration</a>
@@ -809,7 +878,7 @@ Useful if you want the list to filter the build per project using the endpoint
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-01-27)</p>
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-02-04)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>

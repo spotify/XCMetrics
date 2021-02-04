@@ -2,7 +2,7 @@
   "warnings": [
     {
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Builds/Controllers/BuildController.swift",
-      "line": 463,
+      "line": 531,
       "symbol": "BuildResponse",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -151,6 +151,76 @@
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/BuildWarning.swift",
       "line": 31,
       "symbol": "BuildWarning.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Step.swift",
+      "line": 24,
+      "symbol": "Step",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Step.swift",
+      "line": 26,
+      "symbol": "Step.IDValue",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Step.swift",
+      "line": 28,
+      "symbol": "Step.schema",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Step.swift",
+      "line": 30,
+      "symbol": "Step.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Step.swift",
+      "line": 33,
+      "symbol": "Step.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Target.swift",
+      "line": 24,
+      "symbol": "Target",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Target.swift",
+      "line": 26,
+      "symbol": "Target.IDValue",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Target.swift",
+      "line": 28,
+      "symbol": "Target.schema",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Target.swift",
+      "line": 30,
+      "symbol": "Target.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Common/Models/Target.swift",
+      "line": 35,
+      "symbol": "Target.id",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
