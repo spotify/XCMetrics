@@ -16,7 +16,8 @@ struct MetricsProcessor {
             projectName: metricsRequest.extraInfo.projectName,
             userId: userId,
             userIdSHA256: userIdSHA256,
-            isCI: isCI
+            isCI: isCI,
+            sleepTime: metricsRequest.extraInfo.sleepTime
         )
     }
 

@@ -71,7 +71,9 @@ class MultipartRequestBuilder {
         let jsonEncoder = JSONEncoder()
         /// Backend will decide if the username will be stored hashed or not based on its configuration
         let user = MacOSUsernameReader().userID ?? "unknown"
-        let extraInfo = ExtraInfo(projectName: projectName, machineName: machineName, user: user, isCI: isCI)
+        let sleepTime = HardwareFactsFetcherImplementation().sleepTime
+        let extraInfo = ExtraInfo(projectName: projectName, machineName: machineName, user: user, isCI: isCI,
+                                  sleepTime: sleepTime)
         let extraJson = try jsonEncoder.encode(extraInfo)
         if let extraData = toJSONFormField(named: "extraInfo", jsonData: extraJson, using: boundary) {
           httpBody.append(extraData)

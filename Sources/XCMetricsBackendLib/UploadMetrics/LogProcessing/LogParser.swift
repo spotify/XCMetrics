@@ -47,7 +47,8 @@ struct LogParser {
         projectName: String,
         userId: String,
         userIdSHA256: String,
-        isCI: Bool
+        isCI: Bool,
+        sleepTime: Int?
     ) throws -> BuildMetrics {
         let activityLog = try ActivityParser().parseActivityLogInURL(url, redacted: true, withoutBuildSpecificInformation: true)
         let buildSteps = try ParserBuildSteps(machineName: machineName, omitWarningsDetails: false).parse(activityLog: activityLog).flatten()
@@ -56,7 +57,8 @@ struct LogParser {
             projectName: projectName,
             userId: userId,
             userIdSHA256: userIdSHA256,
-            isCI: isCI
+            isCI: isCI,
+            sleepTime: sleepTime
         )
     }
 
@@ -65,15 +67,22 @@ struct LogParser {
         projectName: String,
         userId: String,
         userIdSHA256: String,
-        isCI: Bool
+        isCI: Bool,
+        sleepTime: Int?
     ) -> BuildMetrics {
-        var build = Build().withBuildStep(buildStep: buildSteps[0])
+        let buildInfo: BuildStep = buildSteps[0]
+        var build = Build().withBuildStep(buildStep: buildInfo)
         build.projectName = projectName
         build.userid = userId
         build.userid256 = userIdSHA256
-        build.wasSuspended = false
         build.tag = ""
         build.isCi = isCI
+
+        if let sleepTime = sleepTime {
+            build.wasSuspended = Int64(round(buildInfo.startTimestamp)) < sleepTime
+        } else {
+            build.wasSuspended = false
+        }
 
         let targetBuildSteps = buildSteps.filter { $0.type == .target }
         var targets = targetBuildSteps.map { step in
