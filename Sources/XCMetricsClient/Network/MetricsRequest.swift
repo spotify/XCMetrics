@@ -30,11 +30,14 @@ final class ExtraInfo: Encodable {
 
     let isCI: Bool
 
-    init(projectName: String, machineName: String, user: String, isCI: Bool) {
+    let sleepTime: Int
+
+    init(projectName: String, machineName: String, user: String, isCI: Bool, sleepTime: Int) {
         self.projectName = projectName
         self.machineName = machineName
         self.user = user
         self.isCI = isCI
+        self.sleepTime = sleepTime
     }
 }
 

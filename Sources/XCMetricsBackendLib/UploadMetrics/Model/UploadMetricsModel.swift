@@ -115,6 +115,9 @@ final class ExtraInfo: Codable {
 
     /// True if the build was performed on a continuous integration machine, false otherwise.
     let isCI: Bool
+
+    /// The last time the host went to sleep as reported by sysctl's `kern.sleeptime` property.
+    let sleepTime: Int?
 }
 
 extension ByteBuffer {
