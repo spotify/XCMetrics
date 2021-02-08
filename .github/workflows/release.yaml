@@ -39,31 +39,3 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
 
-  linux:
-    name: Add Linux binaries to release
-    runs-on: ubuntu-latest
-    container:
-      image: swift:5.2
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Install Ruby
-        run: apt-get update && apt-get install -y ruby zlib1g-dev
-      - name: Build
-        run: LANG=en_US.UTF-8 LC_CTYPE=UTF-8 swift build -c release
-      - name: Set tag name
-        run: echo "TAG_NAME=$(echo $GITHUB_REF | cut -c 11-)" >> $GITHUB_ENV
-      - name: Zip release
-        uses: montudor/action-zip@v0.1.0
-        with:
-          args: zip -j XCMetrics-linux-amd64.zip XCMetricsLauncher LICENSE.md README.md .build/release/xcmetrics
-      - name: Rename zip
-        run: "mkdir releases && mv XCMetrics-linux-amd64.zip releases/XCMetrics-linux-amd64-$TAG_NAME.zip"
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: releases/*
-          file_glob: true
-          tag: ${{ github.ref }}
-          overwrite: true
