@@ -18,7 +18,7 @@ _XCMetrics is the easiest way to collect Xcode builds metrics and improve your d
 - 🛠 Build custom plugins to collect an infinite amount of metadata to be attached to each build, such as version control information and thermal throttling.
 
 XCMetrics is built on top of [XCLogParser](https://github.com/spotify/XCLogParser), which is a tool that can parse Xcode and xcodebuild logs stored in the xcactivitylog format. This allows XCMetrics to collect accurate metrics for you to review and keep track during the lifetime of a codebase.
-XCMetrics has collected almost 1 milion builds and over 10 bilion steps from all Spotify iOS applications since its introduction. It has allowed us to make important and informed decision in regards to our project structure and architecture.
+XCMetrics has collected almost 1 million builds and over 10 billion steps from all Spotify iOS applications since its introduction. It has allowed us to make important and informed decision in regards to our project structure and architecture.
 
 ## Getting Started
 
