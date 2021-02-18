@@ -151,39 +151,46 @@ struct PostgreSQLMetricsRepository: MetricsRepository {
     }
 
     private func insert(on db: Database, buildMetrics: BuildMetrics) -> EventLoopFuture<Void> {
-        // Postgress NIO can handle up to Int16.max connections at once and we usually have more steps
-        let splittedSteps = buildMetrics.steps.xcm_chunked(into: 1000)
+        // Postgress NIO can handle up to Int16.max connections at once and we usually have more items in a list
+        // We split them in chunks to avoid reaching the limit
+        let chunk_size = 1_000
+
         var result = buildMetrics.build.save(on: db)
-            .flatMap { buildMetrics.targets.create(on: db) }
+
+        let splittedTargets = buildMetrics.targets.xcm_chunked(into: chunk_size)
+        splittedTargets.forEach { targets in
+            result = result.flatMap{ targets.create(on: db) }
+        }
         if !buildMetrics.host.buildIdentifier.isEmpty {
             result = result.flatMap { buildMetrics.host.save(on: db) }
         }
         if let xcodeVersion = buildMetrics.xcodeVersion, !xcodeVersion.buildIdentifier.isEmpty {
             result = result.flatMap { xcodeVersion.save(on: db) }
         }
-        let splittedWarnings = buildMetrics.warnings?.xcm_chunked(into: 1000)
+        let splittedWarnings = buildMetrics.warnings?.xcm_chunked(into: chunk_size)
         splittedWarnings?.forEach { warnings in
             result = result.flatMap { warnings.create(on: db) }
         }
-        let splittedErrors = buildMetrics.errors?.xcm_chunked(into: 1000)
+        let splittedErrors = buildMetrics.errors?.xcm_chunked(into: chunk_size)
         splittedErrors?.forEach { errors in
             result = result.flatMap { errors.create(on: db) }
         }
-        let splittedNotes = buildMetrics.notes?.xcm_chunked(into: 1000)
+        let splittedNotes = buildMetrics.notes?.xcm_chunked(into: chunk_size)
         splittedNotes?.forEach { notes in
             result = result.flatMap { notes.create(on: db) }
         }
-        let splittedSwiftFunctions = buildMetrics.swiftFunctions?.xcm_chunked(into: 1000)
+        let splittedSwiftFunctions = buildMetrics.swiftFunctions?.xcm_chunked(into: chunk_size)
         splittedSwiftFunctions?.forEach { swiftFunctions in
             result = result.flatMap { swiftFunctions.create(on: db) }
         }
-        let splittedSwiftTypeChecks = buildMetrics.swiftTypeChecks?.xcm_chunked(into: 1000)
+        let splittedSwiftTypeChecks = buildMetrics.swiftTypeChecks?.xcm_chunked(into: chunk_size)
         splittedSwiftTypeChecks?.forEach { swiftTypeChecks in
             result = result.flatMap { swiftTypeChecks.create(on: db) }
         }
         if let buildMetadata = buildMetrics.buildMetadata, !buildMetadata.buildIdentifier.isEmpty {
             result = result.flatMap{ buildMetadata.create(on: db) }
         }
+        let splittedSteps = buildMetrics.steps.xcm_chunked(into: chunk_size)
         splittedSteps.forEach { steps in
             result = result.flatMap { steps.create(on: db) }
         }
