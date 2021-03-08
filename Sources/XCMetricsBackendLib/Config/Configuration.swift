@@ -106,4 +106,24 @@ class Configuration {
     lazy var s3Region: String? = {
         return Environment.get("XCMETRICS_S3_REGION")
     }()
+
+    /// The Bazel BES Server endpoint to proxy metrics to
+    lazy var besTarget: String? = {
+        return Environment.get("XCMETRICS_BES_TARGET")
+    }()
+
+    /// The auth token to pass as Authorization header to BES endpoint
+    lazy var besAuthToken: String? = {
+        Environment.get("XCMETRICS_BES_AUTH_TOKEN")
+    }()
+
+    /// The optional BES Project ID
+    lazy var besProjectId: String? = {
+        Environment.get("XCMETRICS_BES_PROJECT_ID")
+    }()
+
+    /// Optional keywords for BES
+    lazy var besKeywords: String? = {
+        Environment.get("XCMETRICS_BES_KEYWORDS")
+    }()
 }

@@ -45,18 +45,29 @@ func routes(_ app: Application) throws {
     // Log File Repository
     let logFileRepository = LogFileRepositoryFactory.makeWithConfiguration(config: config, logger: app.logger)
 
+    // Repository Selection
+    let metricsRepository: MetricsRepository
+    if config.besTarget == nil {
+        app.logger.info("Running in standard mode.")
+        metricsRepository = PostgreSQLMetricsRepository(db: app.db, logger: app.logger)
+    } else {
+        app.logger.info("Running in BES Proxy mode.")
+        let besConfig = BESConfiguration(from: config)
+        metricsRepository = BESMetricsRepository(logger: app.logger, besConfig: besConfig)
+    }
+
     // Controllers
     try app.register(collection: BuildController())
     try app.register(collection: UploadMetricsController(fileLogRepository: logFileRepository,
                                                          redactUserData: config.redactUserData,
-                                                         metricsRepository: PostgreSQLMetricsRepository(db: app.db, logger: app.logger),
+                                                         metricsRepository: metricsRepository,
                                                          useAsyncProcessing: config.useAsyncLogProcessing))
     try app.register(collection: JobLogController(repository: PostgreSQLJobLogRepository(db: app.db)))
 
     // Run Job queues
     if config.useAsyncLogProcessing {
         app.queues.add(ProcessMetricsJob(logFileRepository: logFileRepository,
-                                         metricsRepository: PostgreSQLMetricsRepository(db: app.db, logger: app.logger),
+                                         metricsRepository: metricsRepository,
                                          redactUserData: config.redactUserData))
 
         if config.startAsyncJobsInSameInstance {
