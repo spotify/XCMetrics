@@ -12,6 +12,7 @@ You can pass the setting of those servers as Environment Variables:
 
 - **`REDIS_HOST`** IP of the Redis server. Example: `127.0.0.1`
 - **`REDIS_PORT`** Port of the Redis server. Example: `6379`
+- **`REDIS_PASSWORD`** Password for the Redis server. The default value is nil (unset).
 - **`DB_HOST`** PostgreSQL host. The default value is `localhost`
 - **`DB_PORT`** PostgreSQL port. The default value is `5036`
 - **`DB_USER`** PostgreSQL user. The default value is `xcmetrics-dev`

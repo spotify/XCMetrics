@@ -59,6 +59,10 @@ class Configuration {
         return Int(Environment.get("REDIS_PORT") ?? "6379") ?? 6379
     }()
 
+    lazy var redisPassword: String? = {
+        return Environment.get("REDIS_PASSWORD")
+    }()
+
     lazy var redactUserData: Bool = {
         return (Environment.get("XCMETRICS_REDACT_USER_DATA") ?? "0") == "1"
     }()
