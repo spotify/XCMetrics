@@ -81,7 +81,6 @@ public func configure(_ app: Application) throws {
                        AddBuildIdentifierIndexToTarget(),
                        AddBuildIdentifierIndexToBuildErrors(),
                        AddBuildIdentifierIndexToStep(),
-                       AddBuildIdentifierIndexToBuildErrors(),
                        AddBuildIdentifierIndexToBuildWarnings(),
                        AddBuildIdentifierIndexToBuildNotes(),
                        AddBuildIdentifierIndexToBuildHost(),
