@@ -20,6 +20,7 @@
 import Fluent
 import FluentPostgresDriver
 import QueuesRedisDriver
+import Redis
 import Vapor
 
 // configures your application
@@ -95,11 +96,14 @@ public func configure(_ app: Application) throws {
 
 
     if config.useAsyncLogProcessing {
-        let redisURL = "redis://\(config.redisHost):\(config.redisPort)"
-        app.logger.info("Using redis queue \(redisURL)")
+        app.logger.info("Using redis host \(config.redisHost) and port \(config.redisPort)")
         app.queues.add(JobLogEventDelegate(logger: app.logger,
                                            repository: PostgreSQLJobLogRepository(db: app.db)))
-        try app.queues.use(.redis(url: redisURL))
+        let redisConfig = try RedisConfiguration(
+            hostname: config.redisHost,
+            port: config.redisPort,
+            password: config.redisPassword)
+        app.queues.use(.redis(redisConfig))
     } else {
         app.logger.info("Async log processing is disabled")
     }
