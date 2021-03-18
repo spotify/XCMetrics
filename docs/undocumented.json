@@ -226,7 +226,7 @@
     },
     {
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Config/configure.swift",
-      "line": 26,
+      "line": 27,
       "symbol": "configure(_:)",
       "symbol_kind": "source.lang.swift.decl.function.free",
       "warning": "undocumented"
