@@ -105,7 +105,7 @@ public struct XCMetrics: ParsableCommand {
     public var isCI: Bool = false
 
     /// An optional 'Authorization' header to be included in the upload request.
-    @Option(name: [.customLong("authorizationHeader"), .customShort("s")], help: "An optional 'Authorization' header to be included in the upload request.")
+    @Option(name: [.customLong("authorizationHeader"), .customShort("s")], help: "An optional 'Authorization' header to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l'")
     public var authorizationHeader: String?
 
     private static let loop = XCMetricsLoop()
