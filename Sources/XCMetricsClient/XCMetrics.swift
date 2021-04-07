@@ -71,6 +71,7 @@ struct Command {
     let timeout: Int
     let serviceURL: String
     let isCI: Bool
+    let authorizationHeader: String?
 }
 
 
@@ -102,6 +103,10 @@ public struct XCMetrics: ParsableCommand {
     /// If the metrics collected are coming from CI or not provided as argument. Default value is false.
     @Option(name: [.customLong("isCI")], help: "If the metrics collected are coming from CI or not.")
     public var isCI: Bool = false
+
+    /// An optional 'Authorization' header to be included in the upload request.
+    @Option(name: [.customLong("authorizationHeader"), .customShort("s")], help: "An optional 'Authorization' header to be included in the upload request.")
+    public var authorizationHeader: String?
 
     private static let loop = XCMetricsLoop()
 
@@ -166,7 +171,8 @@ public struct XCMetrics: ParsableCommand {
             projectName: name,
             timeout: timeout,
             serviceURL: serviceURLValue,
-            isCI: isCI
+            isCI: isCI,
+            authorizationHeader: authorizationHeader
         )
         return command
     }

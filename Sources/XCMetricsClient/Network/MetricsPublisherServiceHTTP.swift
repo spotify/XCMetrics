@@ -37,6 +37,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
 
     func uploadMetrics(
         serviceURL: URL,
+        authorizationHeader: String?,
         projectName: String,
         isCI: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
@@ -49,7 +50,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         for uploadRequest in uploadRequests {
             self.dispatchGroup.enter()
 
-            self.uploadLog(uploadRequest, to: serviceURL, projectName: projectName, isCI: isCI) { (result: Result<Void, LogUploadError>) in
+            self.uploadLog(uploadRequest, to: serviceURL, authorizationHeader: authorizationHeader, projectName: projectName, isCI: isCI) { (result: Result<Void, LogUploadError>) in
                 switch result {
                 case .success:
                     successfulURLsLock.lock()
@@ -79,6 +80,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
     private func uploadLog(
         _ uploadRequest: MetricsUploadRequest,
         to requestUrl: URL,
+        authorizationHeader: String?,
         projectName: String,
         isCI: Bool,
         completion: @escaping (Result<Void, LogUploadError>) -> Void
@@ -89,6 +91,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         do {
             let request = try MultipartRequestBuilder(request: uploadRequest,
                            url: requestUrl,
+                           authorizationHeader: authorizationHeader,
                            machineName: machineName,
                            projectName: projectName,
                            isCI: isCI).build()

@@ -32,6 +32,7 @@ enum ControllerFactory {
             buildDirectory: command.buildDirectory,
             projectName: command.projectName,
             serviceURL: serviceURL,
+            authorizationHeader: command.authorizationHeader,
             timeout: command.timeout,
             isCI: command.isCI,
             plugins: plugins

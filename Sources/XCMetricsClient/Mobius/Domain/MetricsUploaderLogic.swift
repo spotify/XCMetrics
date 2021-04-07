@@ -82,7 +82,13 @@ enum MetricsUploaderLogic {
         })
 
         if !uploadRequests.isEmpty {
-            effects.append(.uploadLogs(serviceURL: model.serviceURL, projectName: model.projectName, isCI: model.isCI, logs: uploadRequests))
+            effects.append(.uploadLogs(
+                serviceURL: model.serviceURL,
+                authorizationHeader: model.authorizationHeader,
+                projectName: model.projectName,
+                isCI: model.isCI,
+                logs: uploadRequests
+            ))
         }
         let updatedModel = model.withChanged(
             parsedRequests: model.parsedRequests.union(cachedUploadRequest.prefix(maximumNumberOfParsedRequestsToSend)),
@@ -92,6 +98,7 @@ enum MetricsUploaderLogic {
         if effects.isEmpty {
             return .next(updatedModel, effects: [.uploadLogs(
                 serviceURL: model.serviceURL,
+                authorizationHeader: model.authorizationHeader,
                 projectName: model.projectName,
                 isCI: model.isCI,
                 logs: updatedModel.parsedRequests
@@ -109,6 +116,7 @@ enum MetricsUploaderLogic {
         return .next(updatedModel, effects: [
             .uploadLogs(
                 serviceURL: model.serviceURL,
+                authorizationHeader: model.authorizationHeader,
                 projectName: model.projectName,
                 isCI: model.isCI,
                 logs: updatedModel.parsedRequests
