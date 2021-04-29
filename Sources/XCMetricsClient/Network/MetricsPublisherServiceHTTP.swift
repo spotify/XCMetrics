@@ -37,7 +37,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
 
     func uploadMetrics(
         serviceURL: URL,
-        authorizationHeader: String?,
+        additionalHeaders: [String: String],
         projectName: String,
         isCI: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
@@ -50,7 +50,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         for uploadRequest in uploadRequests {
             self.dispatchGroup.enter()
 
-            self.uploadLog(uploadRequest, to: serviceURL, authorizationHeader: authorizationHeader, projectName: projectName, isCI: isCI) { (result: Result<Void, LogUploadError>) in
+            self.uploadLog(uploadRequest, to: serviceURL, additionalHeaders: additionalHeaders, projectName: projectName, isCI: isCI) { (result: Result<Void, LogUploadError>) in
                 switch result {
                 case .success:
                     successfulURLsLock.lock()
@@ -80,7 +80,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
     private func uploadLog(
         _ uploadRequest: MetricsUploadRequest,
         to requestUrl: URL,
-        authorizationHeader: String?,
+        additionalHeaders: [String: String],
         projectName: String,
         isCI: Bool,
         completion: @escaping (Result<Void, LogUploadError>) -> Void
@@ -89,12 +89,13 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         /// based on its configuration
         let machineName = HashedMacOSMachineNameReader(encrypted: false).machineName ?? "none"
         do {
-            let request = try MultipartRequestBuilder(request: uploadRequest,
-                           url: requestUrl,
-                           authorizationHeader: authorizationHeader,
-                           machineName: machineName,
-                           projectName: projectName,
-                           isCI: isCI).build()
+            let request = try MultipartRequestBuilder(
+                request: uploadRequest,
+                url: requestUrl,
+                additionalHeaders: additionalHeaders,
+                machineName: machineName,
+                projectName: projectName,
+                isCI: isCI).build()
 
             getURLSession().dataTask(with: request) { (data, response, error) in
                 defer {

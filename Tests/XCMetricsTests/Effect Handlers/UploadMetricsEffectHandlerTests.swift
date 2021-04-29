@@ -27,6 +27,7 @@ final class MockMetricsPublisher: MetricsPublisherService {
 
     func uploadMetrics(
         serviceURL: URL,
+        additionalHeaders: [String : String],
         projectName: String,
         isCI: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
@@ -72,7 +73,7 @@ final class UploadMetricsEffectHandlerTests: XCTestCase {
                 XCTFail("Expected .logsUploaded or , got: \(event)")
             }
         }
-        _ = effectHandler.handle((serviceURL: serviceURL, projectName: projectName, isCI: false, logs: uploadRequests), effectCallback)
+        _ = effectHandler.handle((serviceURL: serviceURL, additionalHeaders: additionalHeaders, projectName: projectName, isCI: false, logs: uploadRequests), effectCallback)
         XCTAssertTrue(effectCallback.ended)
     }
 }

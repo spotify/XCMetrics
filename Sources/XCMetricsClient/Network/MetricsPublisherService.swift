@@ -27,13 +27,13 @@ import XCMetricsProto
 protocol MetricsPublisherService {
     /// Upload the given metrics and returns the result in a completion block.
     /// - Parameter serviceURL: The URL of the backend service where the metrics will be sent.
-    /// - Parameter authorizationHeader: An authorization header to be sent with the request.
+    /// - Parameter additionalHeaders: Additional headers to be sent with the request.
     /// - Parameter uploadRequests: The upload requests to be sent to the backend service.
     /// - Parameter completion: The result is successful if no error occurred. The .success enum case contains the URLs of the uploaded metrics.
     /// - Parameter projectName: The name of the project
     func uploadMetrics(
         serviceURL: URL,
-        authorizationHeader: String?,
+        additionalHeaders: [String: String],
         projectName: String,
         isCI: Bool,
         uploadRequests: Set<MetricsUploadRequest>,

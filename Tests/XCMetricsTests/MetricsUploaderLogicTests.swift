@@ -38,6 +38,7 @@ extension TemporaryFile: Hashable {
 
 let projectName = "Project Name"
 let serviceURL = URL(string: "https://example.com/v1/metrics")!
+let additionalHeaders = ["key": "value"]
 
 class MetricsUploaderLogicTests: XCTestCase {
 
@@ -45,6 +46,7 @@ class MetricsUploaderLogicTests: XCTestCase {
     private let initial = MetricsUploaderModel(buildDirectory: "BUILD_DIR",
                                                projectName: projectName,
                                                serviceURL: serviceURL,
+                                               additionalHeaders: additionalHeaders,
                                                timeout: 1,
                                                isCI: false,
                                                plugins: [])
@@ -81,6 +83,7 @@ class MetricsUploaderLogicTests: XCTestCase {
                 hasEffects([
                     .uploadLogs(
                         serviceURL: serviceURL,
+                        additionalHeaders: additionalHeaders,
                         projectName: projectName,
                         isCI: false,
                         logs: Set([MetricsUploadRequest(fileURL: cachedLog, request: UploadBuildMetricsRequest())])
@@ -107,6 +110,7 @@ class MetricsUploaderLogicTests: XCTestCase {
                     ),
                     .uploadLogs(
                         serviceURL: serviceURL,
+                        additionalHeaders: additionalHeaders,
                         projectName: projectName,
                         isCI: false,
                         logs: Set([

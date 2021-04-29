@@ -71,7 +71,7 @@ struct Command {
     let timeout: Int
     let serviceURL: String
     let isCI: Bool
-    let authorizationHeader: String?
+    let additionalHeaders: [String: String]
 }
 
 
@@ -104,9 +104,13 @@ public struct XCMetrics: ParsableCommand {
     @Option(name: [.customLong("isCI")], help: "If the metrics collected are coming from CI or not.")
     public var isCI: Bool = false
 
-    /// An optional 'Authorization' header to be included in the upload request.
-    @Option(name: [.customLong("authorizationHeader"), .customShort("s")], help: "An optional 'Authorization' header to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l'")
-    public var authorizationHeader: String?
+    /// An optional authorization/token header **key** to be included in the upload request. Must be used in conjunction with `authorizationValue.`
+    @Option(name: [.customLong("authorizationKey"), .customShort("k")], help: "An optional authorization header key to be included in the upload request e.g 'Authorization' or 'x-api-key' etc.")
+    public var authorizationKey: String?
+
+    /// An optional authorization/token header **value** to be included in the upload request. Must be used in conjunction with `authorizationKey.`
+    @Option(name: [.customLong("authorizationValue"), .customShort("a")], help: "An optional authorization header value to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc.")
+    public var authorizationValue: String?
 
     private static let loop = XCMetricsLoop()
 
@@ -137,6 +141,7 @@ public struct XCMetrics: ParsableCommand {
         If a $BUILD_DIR environment variable is defined, you can omit --buildDir.
         The --timeout argument is optional and defaults to 5 seconds.
         The --isCI argument is optional and defaults to false.
+        The --authorizationKey must be used in conjunction with --authorizationValue. One cannot be used without the other.
         Type 'XCMetrics --help' for more information.
         """)
     }
@@ -166,13 +171,28 @@ public struct XCMetrics: ParsableCommand {
             throw argumentError()
         }
 
+        var authorizationKey = ""
+        var authorizationValue = ""
+
+        switch (self.authorizationKey, self.authorizationValue) {
+        case (let .some(authKey), let .some(authValue)):
+            authorizationKey = authKey
+            authorizationValue = authValue
+        case (.none, .none):
+            break
+        default:
+            throw argumentError()
+        }
+
         let command = Command(
             buildDirectory: directoryBuild,
             projectName: name,
             timeout: timeout,
             serviceURL: serviceURLValue,
             isCI: isCI,
-            authorizationHeader: authorizationHeader
+            additionalHeaders: [
+                authorizationKey: authorizationValue
+            ]
         )
         return command
     }

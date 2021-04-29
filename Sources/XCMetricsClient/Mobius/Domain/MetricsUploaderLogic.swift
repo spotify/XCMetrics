@@ -84,7 +84,7 @@ enum MetricsUploaderLogic {
         if !uploadRequests.isEmpty {
             effects.append(.uploadLogs(
                 serviceURL: model.serviceURL,
-                authorizationHeader: model.authorizationHeader,
+                additionalHeaders: model.additionalHeaders,
                 projectName: model.projectName,
                 isCI: model.isCI,
                 logs: uploadRequests
@@ -98,7 +98,7 @@ enum MetricsUploaderLogic {
         if effects.isEmpty {
             return .next(updatedModel, effects: [.uploadLogs(
                 serviceURL: model.serviceURL,
-                authorizationHeader: model.authorizationHeader,
+                additionalHeaders: model.additionalHeaders,
                 projectName: model.projectName,
                 isCI: model.isCI,
                 logs: updatedModel.parsedRequests
@@ -116,7 +116,7 @@ enum MetricsUploaderLogic {
         return .next(updatedModel, effects: [
             .uploadLogs(
                 serviceURL: model.serviceURL,
-                authorizationHeader: model.authorizationHeader,
+                additionalHeaders: model.additionalHeaders,
                 projectName: model.projectName,
                 isCI: model.isCI,
                 logs: updatedModel.parsedRequests

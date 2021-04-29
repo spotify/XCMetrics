@@ -47,7 +47,11 @@ class XCMetricsArgumentTests: XCTestCase {
             "--buildDir",
             "/Users/Username/Library/Developer/Xcode/DerivedData/test/",
             "--timeout",
-            "10"
+            "10",
+            "--authorizationKey",
+            "Authorization",
+            "--authorizationValue",
+            "Bearer XXXXXXXXXXXXXXX"
         ]))
 
         XCTAssertNoThrow(try XCMetrics.parse([
@@ -56,7 +60,11 @@ class XCMetricsArgumentTests: XCTestCase {
             "-b",
             "/Users/Username/Library/Developer/Xcode/DerivedData/test/",
             "-t",
-            "10"
+            "10",
+            "-k",
+            "Authorization",
+            "-a",
+            "Bearer XXXXXXXXXXXXXXX"
         ]))
     }
 
