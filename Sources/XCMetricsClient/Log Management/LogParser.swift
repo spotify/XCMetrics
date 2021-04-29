@@ -72,7 +72,10 @@ class LogParserImplementation: LogParser {
         dispatchQueue.async {
             do {
                 let activityLog = try ActivityParser().parseActivityLogInURL(logURL, redacted: true, withoutBuildSpecificInformation: true)
-                let buildSteps = try ParserBuildSteps(machineName: self.machineNameReader.machineName, omitWarningsDetails: false).parse(activityLog: activityLog).flatten()
+                let buildSteps = try ParserBuildSteps(machineName: self.machineNameReader.machineName,
+                                                      omitWarningsDetails: false,
+                                                      omitNotesDetails: false)
+                    .parse(activityLog: activityLog).flatten()
                 let uploadRequest = self.parseBuildSteps(buildSteps, projectName: projectName, isCI: isCI, userID: userID)
                 completion(.success(uploadRequest))
             } catch {

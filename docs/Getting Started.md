@@ -48,6 +48,7 @@ This is how the post-action scheme should look like. Let's break it down:
 	- `--serviceURL`: the URL of the service receiving the collected metrics. If you haven't deployed a service yet, please head over to ["Deploy Backend"](https://github.com/spotify/XCMetrics/blob/main/docs/How%20to%20Deploy%20Backend.md) first.
     - `--timeout`: the number of seconds to wait for the Xcode log to appear. The default value is 5s.
     - `--isCI`: either true or false based on if the current build is running on CI or not. This is useful to categorize builds as local or continuous integration builds.
+    - `--skipNotes`: true or false. If true, the Notes found in a log (Xcode adds them to with things like the output of Post build phase's scripts like Swiftlint) won't be inserted in the Database. Useful if you have thousands of these in your log and want to save some space. 
 
 ![](img/post-action-scheme.png)
 

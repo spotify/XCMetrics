@@ -48,10 +48,15 @@ struct LogParser {
         userId: String,
         userIdSHA256: String,
         isCI: Bool,
-        sleepTime: Int?
+        sleepTime: Int?,
+        skipNotes: Bool?
     ) throws -> BuildMetrics {
         let activityLog = try ActivityParser().parseActivityLogInURL(url, redacted: true, withoutBuildSpecificInformation: true)
-        let buildSteps = try ParserBuildSteps(machineName: machineName, omitWarningsDetails: false).parse(activityLog: activityLog).flatten()
+        let buildSteps = try ParserBuildSteps(machineName: machineName,
+                                              omitWarningsDetails: false,
+                                              omitNotesDetails: skipNotes ?? false)
+            .parse(activityLog: activityLog)
+            .flatten()
         return toBuildMetrics(
             buildSteps,
             projectName: projectName,
