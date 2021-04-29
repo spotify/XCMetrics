@@ -52,7 +52,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         plugins: [XCMetricsPlugin],
         parsedRequests: Set<MetricsUploadRequest> = Set(),
         awaitingParsingLogResponses: Int = 0,
-        skipNotes: Bool
+        skipNotes: Bool = false
     ) {
         self.buildDirectory = buildDirectory
         self.projectName = projectName
