@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "XCMetricsUtils", targets: ["XCMetricsUtils"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/spotify/xclogparser", from: "0.2.24"),
+        .package(url: "https://github.com/spotify/xclogparser", from: "0.2.27"),
         .package(url: "https://github.com/apple/swift-package-manager.git", .exact("0.3.0")),
         .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.9")),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.23.0"),
@@ -25,7 +25,6 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.0"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "3.0.0"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.1.0"),
-
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.1.0"),
@@ -38,7 +37,18 @@ let package = Package(
     targets: [
         .target(
             name: "XCMetricsClient",
-            dependencies: ["XCLogParser", "XCMetricsProto", "XCMetricsUtils", .product(name: "Utility", package: "SwiftPM"), "GRPC", "NIO", "NIOHTTP2", "MobiusCore", "MobiusExtras", "CryptoSwift", "Yams",  "ArgumentParser"]
+            dependencies: ["XCLogParser",
+                           "XCMetricsProto",
+                           "XCMetricsUtils",
+                           "GRPC",
+                           "NIO",
+                           "NIOHTTP2",
+                           "MobiusCore",
+                           "MobiusExtras",
+                           "CryptoSwift",
+                           "Yams",
+                           "ArgumentParser",
+                           "XCMetricsCommon"]
         ),
         .target(
             name: "XCMetricsPlugins",
@@ -56,6 +66,10 @@ let package = Package(
             name: "XCMetricsApp",
             dependencies: ["XCMetricsClient"]
         ),
+        .target(
+            name: "XCMetricsCommon",
+            dependencies: []
+        ),
        .target(
             name: "XCMetricsBackendLib",
             dependencies: [
@@ -69,6 +83,7 @@ let package = Package(
                 .product(name: "CryptoSwift", package: "CryptoSwift"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit"),
                 .product(name: "S3", package: "AWSSDKSwift"),
+                "XCMetricsCommon"
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
@@ -80,7 +95,7 @@ let package = Package(
         .target(name: "XCMetricsBackend", dependencies: [.target(name: "XCMetricsBackendLib")]),
         .testTarget(
             name: "XCMetricsTests",
-            dependencies: ["XCMetricsClient", "XCMetricsProto", .product(name: "Utility", package: "SwiftPM"), "MobiusTest"]
+            dependencies: ["XCMetricsClient", "XCMetricsProto", "MobiusTest", .product(name: "Utility", package: "SwiftPM")]
         ),
         .testTarget(
             name: "XCMetricsPluginsTests",

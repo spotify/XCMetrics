@@ -5,7 +5,7 @@ class Configuration {
 
     /// If "1", the logs will be processed Asynchronously, it will need a `REDIS_HOST` to be defined
     /// Turn it off in environments where Async processing is not available like in Cloud Run
-    lazy var useAsyncLogProcessing: Bool = {
+    lazy var useAsyncLogProcessing: Bool = {        
         return (Environment.get("XCMETRICS_USE_ASYNC_LOG_PROCESSING") ?? "1" ) == "1"
     }()
 

@@ -71,6 +71,7 @@ struct Command {
     let timeout: Int
     let serviceURL: String
     let isCI: Bool
+    let skipNotes: Bool
 }
 
 
@@ -103,13 +104,18 @@ public struct XCMetrics: ParsableCommand {
     @Option(name: [.customLong("isCI")], help: "If the metrics collected are coming from CI or not.")
     public var isCI: Bool = false
 
+    /// If the Notes found in log should be skipped. Useful when there are thousands of notes to
+    /// reduce the size of the Database.
+    @Option(name: [.customLong("skipNotes")], help: "Notes found in logs won't be processed")
+    public var skipNotes: Bool = false
+
     private static let loop = XCMetricsLoop()
 
     /// The default initializer for the `XCMetrics` object.
     public init() {}
 
     /// Runs XCMetrics with the provided configuration containing the optional custom plugins to be executed.
-    /// - Parameter configuration: <#configuration description#>
+    /// - Parameter configuration: `XCMetricsConfiguration`
     public func run(with configuration: XCMetricsConfiguration) {
         do {
             let command = try fetchEnvironmentVariablesParameters()
@@ -132,6 +138,7 @@ public struct XCMetrics: ParsableCommand {
         If a $BUILD_DIR environment variable is defined, you can omit --buildDir.
         The --timeout argument is optional and defaults to 5 seconds.
         The --isCI argument is optional and defaults to false.
+        The --skipNotes argument is optional and defaults to false.
         Type 'XCMetrics --help' for more information.
         """)
     }
@@ -166,7 +173,8 @@ public struct XCMetrics: ParsableCommand {
             projectName: name,
             timeout: timeout,
             serviceURL: serviceURLValue,
-            isCI: isCI
+            isCI: isCI,
+            skipNotes: skipNotes
         )
         return command
     }

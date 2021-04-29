@@ -40,6 +40,8 @@ struct MetricsUploaderModel: Equatable, Hashable {
     let parsedRequests: Set<MetricsUploadRequest>
     /// Number of scheduled parsing logs in progress
     let awaitingParsingResultsCount: Int
+    /// If true, the Notes found in the log won't be inserted into the database
+    let skipNotes: Bool
 
     init(
         buildDirectory: String,
@@ -49,7 +51,8 @@ struct MetricsUploaderModel: Equatable, Hashable {
         isCI: Bool,
         plugins: [XCMetricsPlugin],
         parsedRequests: Set<MetricsUploadRequest> = Set(),
-        awaitingParsingLogResponses: Int = 0
+        awaitingParsingLogResponses: Int = 0,
+        skipNotes: Bool
     ) {
         self.buildDirectory = buildDirectory
         self.projectName = projectName
@@ -59,6 +62,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         self.isCI = isCI
         self.parsedRequests = parsedRequests
         self.awaitingParsingResultsCount = awaitingParsingLogResponses
+        self.skipNotes = skipNotes
     }
 
     init() {
@@ -70,6 +74,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         self.isCI = false
         self.parsedRequests = []
         self.awaitingParsingResultsCount = 0
+        self.skipNotes = false
     }
 }
 
@@ -84,6 +89,7 @@ extension MetricsUploaderModel: CustomDebugStringConvertible {
         isCI: \(isCI),
         parsedRequests: \(parsedRequests.count),
         awaitingParsingLogResponses: \(awaitingParsingResultsCount)
+        skipNotes: \(skipNotes)
         """
     }
 }
@@ -148,7 +154,7 @@ enum MetricsUploaderEffect: Hashable {
     /// Executes the custom plugins configured if any to add more data to the build.
     case executePlugins(request: MetricsUploadRequest, plugins: [XCMetricsPlugin])
     /// Uploads the given log upload requests to the specified backend service.
-    case uploadLogs(serviceURL: URL, projectName: String, isCI: Bool, logs: Set<MetricsUploadRequest>)
+    case uploadLogs(serviceURL: URL, projectName: String, isCI: Bool, skipNotes: Bool, logs: Set<MetricsUploadRequest>)
     /// Uploaded logs should be renamed to signal their status and differentiate them from logs yet to be uploaded.
     case tagLogsAsUploaded(logs: Set<URL>)
     /// Logs failed to upload are saved to disk in order to preserve the metadata collected (the actual xcactivitylog is always kept on disk for 7 days).

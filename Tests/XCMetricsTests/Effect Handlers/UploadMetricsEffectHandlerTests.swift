@@ -29,6 +29,7 @@ final class MockMetricsPublisher: MetricsPublisherService {
         serviceURL: URL,
         projectName: String,
         isCI: Bool,
+        skipNotes: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
         completion: @escaping (Set<URL>, [URL : Data]) -> Void
     ) {
@@ -72,7 +73,8 @@ final class UploadMetricsEffectHandlerTests: XCTestCase {
                 XCTFail("Expected .logsUploaded or , got: \(event)")
             }
         }
-        _ = effectHandler.handle((serviceURL: serviceURL, projectName: projectName, isCI: false, logs: uploadRequests), effectCallback)
+        _ = effectHandler.handle((serviceURL: serviceURL, projectName: projectName, isCI: false, skipNotes: false, logs: uploadRequests),
+                                 effectCallback)
         XCTAssertTrue(effectCallback.ended)
     }
 }
