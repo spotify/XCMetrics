@@ -40,6 +40,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         additionalHeaders: [String: String],
         projectName: String,
         isCI: Bool,
+        skipNotes: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
         completion: @escaping (_ successfulURLs: Set<URL>, _ failedURLs: [URL: Data]) -> Void
     ) {
@@ -50,7 +51,8 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         for uploadRequest in uploadRequests {
             self.dispatchGroup.enter()
 
-            self.uploadLog(uploadRequest, to: serviceURL, additionalHeaders: additionalHeaders, projectName: projectName, isCI: isCI) { (result: Result<Void, LogUploadError>) in
+            self.uploadLog(uploadRequest, to: serviceURL, additionalHeaders: additionalHeaders, projectName: projectName, isCI: isCI, skipNotes: skipNotes) { (result: Result<Void, LogUploadError>) in
+
                 switch result {
                 case .success:
                     successfulURLsLock.lock()
@@ -83,6 +85,7 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
         additionalHeaders: [String: String],
         projectName: String,
         isCI: Bool,
+        skipNotes: Bool,
         completion: @escaping (Result<Void, LogUploadError>) -> Void
     ) {
         /// We send the unencrypted machine name, the backend will decide if is going to store it encrypted or not
@@ -95,7 +98,8 @@ public class MetricsPublisherServiceHTTP: MetricsPublisherService {
                 additionalHeaders: additionalHeaders,
                 machineName: machineName,
                 projectName: projectName,
-                isCI: isCI).build()
+                isCI: isCI,
+                skipNotes: skipNotes).build()
 
             getURLSession().dataTask(with: request) { (data, response, error) in
                 defer {

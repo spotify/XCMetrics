@@ -34,7 +34,8 @@ extension MetricsUploaderModel {
             isCI: self.isCI,
             plugins: self.plugins,
             parsedRequests: parsedRequests ?? self.parsedRequests,
-            awaitingParsingLogResponses: awaitingParsingLogResponses ?? self.awaitingParsingResultsCount
+            awaitingParsingLogResponses: awaitingParsingLogResponses ?? self.awaitingParsingResultsCount,
+            skipNotes: self.skipNotes
         )
     }
 }

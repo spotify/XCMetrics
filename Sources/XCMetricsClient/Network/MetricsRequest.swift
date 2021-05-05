@@ -19,28 +19,6 @@
 
 import Foundation
 
-/// Info from the current build that is not in the Log and that is needed by the backend
-final class ExtraInfo: Encodable {
-
-    let projectName: String
-
-    let machineName: String
-
-    let user: String
-
-    let isCI: Bool
-
-    let sleepTime: Int
-
-    init(projectName: String, machineName: String, user: String, isCI: Bool, sleepTime: Int) {
-        self.projectName = projectName
-        self.machineName = machineName
-        self.user = user
-        self.isCI = isCI
-        self.sleepTime = sleepTime
-    }
-}
-
 extension BuildHost: Encodable {
     enum CodingKeys: String, CodingKey {
         case buildIdentifier

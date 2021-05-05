@@ -87,6 +87,7 @@ enum MetricsUploaderLogic {
                 additionalHeaders: model.additionalHeaders,
                 projectName: model.projectName,
                 isCI: model.isCI,
+                skipNotes: model.skipNotes,
                 logs: uploadRequests
             ))
         }
@@ -101,6 +102,7 @@ enum MetricsUploaderLogic {
                 additionalHeaders: model.additionalHeaders,
                 projectName: model.projectName,
                 isCI: model.isCI,
+                skipNotes: model.skipNotes,
                 logs: updatedModel.parsedRequests
             )])
         }
@@ -119,6 +121,7 @@ enum MetricsUploaderLogic {
                 additionalHeaders: model.additionalHeaders,
                 projectName: model.projectName,
                 isCI: model.isCI,
+                skipNotes: model.skipNotes,
                 logs: updatedModel.parsedRequests
             )
         ])

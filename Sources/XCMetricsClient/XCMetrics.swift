@@ -71,6 +71,7 @@ struct Command {
     let timeout: Int
     let serviceURL: String
     let isCI: Bool
+    let skipNotes: Bool
     let additionalHeaders: [String: String]
 }
 
@@ -104,6 +105,11 @@ public struct XCMetrics: ParsableCommand {
     @Option(name: [.customLong("isCI")], help: "If the metrics collected are coming from CI or not.")
     public var isCI: Bool = false
 
+    /// If the Notes found in log should be skipped. Useful when there are thousands of notes to
+    /// reduce the size of the Database.
+    @Option(name: [.customLong("skipNotes")], help: "Notes found in logs won't be processed")
+    public var skipNotes: Bool = false
+
     /// An optional authorization/token header **key** to be included in the upload request. Must be used in conjunction with `authorizationValue.`
     @Option(name: [.customLong("authorizationKey"), .customShort("k")], help: "An optional authorization header key to be included in the upload request e.g 'Authorization' or 'x-api-key' etc.")
     public var authorizationKey: String?
@@ -118,7 +124,7 @@ public struct XCMetrics: ParsableCommand {
     public init() {}
 
     /// Runs XCMetrics with the provided configuration containing the optional custom plugins to be executed.
-    /// - Parameter configuration: <#configuration description#>
+    /// - Parameter configuration: `XCMetricsConfiguration`
     public func run(with configuration: XCMetricsConfiguration) {
         do {
             let command = try fetchEnvironmentVariablesParameters()
@@ -141,6 +147,7 @@ public struct XCMetrics: ParsableCommand {
         If a $BUILD_DIR environment variable is defined, you can omit --buildDir.
         The --timeout argument is optional and defaults to 5 seconds.
         The --isCI argument is optional and defaults to false.
+        The --skipNotes argument is optional and defaults to false.
         The --authorizationKey must be used in conjunction with --authorizationValue. One cannot be used without the other.
         Type 'XCMetrics --help' for more information.
         """)
@@ -190,6 +197,7 @@ public struct XCMetrics: ParsableCommand {
             timeout: timeout,
             serviceURL: serviceURLValue,
             isCI: isCI,
+            skipNotes: skipNotes,
             additionalHeaders: [
                 authorizationKey: authorizationValue
             ]

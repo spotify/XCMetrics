@@ -91,7 +91,8 @@ class JSONMetricsParserFactory: MetricsParserFactory {
                              compilationEndTimestamp: representation.fetch("compilationEndTimestamp"),
                              compilationDuration: representation.fetch("compilationDuration"),
                              clangTimeTraceFile: nil,
-                             linkerStatistics: nil)
+                             linkerStatistics: nil,
+                             swiftTypeCheckTimes: nil)
             return BuildInfo(step: step,
                              projectName: representation.fetch("projectName"),
                              userID: representation.fetch("userID"))

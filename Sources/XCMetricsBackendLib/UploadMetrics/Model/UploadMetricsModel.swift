@@ -19,6 +19,7 @@
 
 import Foundation
 import Vapor
+import XCMetricsCommon
 
 /// Content of a Multipart request to upload Metrics
 final class UploadMetricsPayload: Content {
@@ -47,7 +48,7 @@ final class UploadMetricsRequest: Codable {
     let logURL: URL
 
     /// Extra data needed
-    let extraInfo: ExtraInfo
+    let extraInfo: UploadRequestExtraInfo
 
     /// Build host information
     let buildHost: BuildHost
@@ -59,7 +60,7 @@ final class UploadMetricsRequest: Codable {
     let buildMetadata: BuildMetadata?
 
     init(logURL : URL,
-         extraInfo: ExtraInfo,
+         extraInfo: UploadRequestExtraInfo,
          buildHost: BuildHost,
          xcodeVersion: XcodeVersion?,
          buildMetadata: BuildMetadata?) {
@@ -78,7 +79,7 @@ final class UploadMetricsRequest: Codable {
     convenience init?(logURL: URL, payload: UploadMetricsPayload) throws {
         let decoder = JSONDecoder()
 
-        let extraInfo = try decoder.decode(ExtraInfo.self, from: payload.extraInfo.xcm_onlyJsonContent())
+        let extraInfo = try decoder.decode(UploadRequestExtraInfo.self, from: payload.extraInfo.xcm_onlyJsonContent())
         let buildHost = try decoder.decode(BuildHost.self, from: payload.buildHost.xcm_onlyJsonContent())
         let xcodeVersion: XcodeVersion?
         if let xcodeVersionData = payload.xcodeVersion?.xcm_onlyJsonContent() {
@@ -99,25 +100,6 @@ final class UploadMetricsRequest: Codable {
                   buildMetadata: buildMetadata)
 
     }
-}
-
-/// Data needed from the client that did the build
-final class ExtraInfo: Codable {
-
-    /// Name of the Xcode project
-    let projectName: String
-
-    /// Name of the host where the build was done
-    let machineName: String
-
-    /// Name of the user that did the build
-    let user: String
-
-    /// True if the build was performed on a continuous integration machine, false otherwise.
-    let isCI: Bool
-
-    /// The last time the host went to sleep as reported by sysctl's `kern.sleeptime` property.
-    let sleepTime: Int?
 }
 
 extension ByteBuffer {

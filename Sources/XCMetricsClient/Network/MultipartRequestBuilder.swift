@@ -18,6 +18,7 @@
 // under the License.
 
 import Foundation
+import XCMetricsCommon
 
 /// Creates a Nested Multipart Request to send the
 /// `xcactivitylog` and the Metadata associated to it as `JSON` documents
@@ -30,14 +31,22 @@ class MultipartRequestBuilder {
     public let machineName: String
     public let projectName: String
     public let isCI: Bool
+    public let skipNotes: Bool
 
-    public init(request: MetricsUploadRequest, url: URL, additionalHeaders: [String: String], machineName: String, projectName: String, isCI: Bool) {
+    public init(request: MetricsUploadRequest,
+                url: URL,
+                additionalHeaders: [String: String],
+                machineName: String,
+                projectName: String,
+                isCI: Bool,
+                skipNotes: Bool) {
         self.request = request
         self.url = url
         self.additionalHeaders = additionalHeaders
         self.machineName = machineName
         self.projectName = projectName
         self.isCI = isCI
+        self.skipNotes = skipNotes
     }
 
     public func build() throws -> URLRequest {
@@ -75,8 +84,12 @@ class MultipartRequestBuilder {
         /// Backend will decide if the username will be stored hashed or not based on its configuration
         let user = MacOSUsernameReader().userID ?? "unknown"
         let sleepTime = HardwareFactsFetcherImplementation().sleepTime
-        let extraInfo = ExtraInfo(projectName: projectName, machineName: machineName, user: user, isCI: isCI,
-                                  sleepTime: sleepTime)
+        let extraInfo = UploadRequestExtraInfo(projectName: projectName,
+                                                machineName: machineName,
+                                                user: user,
+                                                isCI: isCI,
+                                                sleepTime: sleepTime,
+                                                skipNotes: skipNotes)
         let extraJson = try jsonEncoder.encode(extraInfo)
         if let extraData = toJSONFormField(named: "extraInfo", jsonData: extraJson, using: boundary) {
           httpBody.append(extraData)

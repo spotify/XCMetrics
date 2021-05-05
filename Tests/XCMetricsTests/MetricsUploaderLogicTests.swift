@@ -49,7 +49,8 @@ class MetricsUploaderLogicTests: XCTestCase {
                                                additionalHeaders: additionalHeaders,
                                                timeout: 1,
                                                isCI: false,
-                                               plugins: [])
+                                               plugins: [],
+                                               skipNotes: false)
 
     func testInitiator() {
         let initEffect = MetricsUploaderEffect.findLogs(buildDirectory: initial.buildDirectory, timeout: 1)
@@ -86,6 +87,7 @@ class MetricsUploaderLogicTests: XCTestCase {
                         additionalHeaders: additionalHeaders,
                         projectName: projectName,
                         isCI: false,
+                        skipNotes: false,
                         logs: Set([MetricsUploadRequest(fileURL: cachedLog, request: UploadBuildMetricsRequest())])
                     )
                 ])
@@ -113,6 +115,7 @@ class MetricsUploaderLogicTests: XCTestCase {
                         additionalHeaders: additionalHeaders,
                         projectName: projectName,
                         isCI: false,
+                        skipNotes: false,
                         logs: Set([
                             MetricsUploadRequest(fileURL: cachedLog, request: UploadBuildMetricsRequest())
                         ])
