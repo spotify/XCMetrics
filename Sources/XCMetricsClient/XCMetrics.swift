@@ -111,11 +111,11 @@ public struct XCMetrics: ParsableCommand {
     public var skipNotes: Bool = false
 
     /// An optional authorization/token header **key** to be included in the upload request. Must be used in conjunction with `authorizationValue.`
-    @Option(name: [.customLong("authorizationKey"), .customShort("k")], help: "An optional authorization header key to be included in the upload request e.g 'Authorization' or 'x-api-key' etc.")
+    @Option(name: [.customLong("authorizationKey"), .customShort("k")], help: "An optional authorization header key to be included in the upload request e.g 'Authorization' or 'x-api-key' etc. Must be used in conjunction with `authorizationValue`")
     public var authorizationKey: String?
 
     /// An optional authorization/token header **value** to be included in the upload request. Must be used in conjunction with `authorizationKey.`
-    @Option(name: [.customLong("authorizationValue"), .customShort("a")], help: "An optional authorization header value to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc.")
+    @Option(name: [.customLong("authorizationValue"), .customShort("a")], help: "An optional authorization header value to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc. Must be used in conjunction with `authorizationKey`")
     public var authorizationValue: String?
 
     private static let loop = XCMetricsLoop()
