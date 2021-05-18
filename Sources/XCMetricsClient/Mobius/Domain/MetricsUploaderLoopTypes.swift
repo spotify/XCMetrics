@@ -30,6 +30,8 @@ struct MetricsUploaderModel: Equatable, Hashable {
     let projectName: String
     /// The URL of the service where to send metrics to.
     let serviceURL: URL
+    /// Additional headers to be sent with the request.
+    let additionalHeaders: [String: String]
     /// The amount of seconds to wait for the Xcode's log to appear.
     let timeout: Int
     /// Whether or not this build was performed in a continuous integration environment.
@@ -47,6 +49,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         buildDirectory: String,
         projectName: String,
         serviceURL: URL,
+        additionalHeaders: [String: String],
         timeout: Int,
         isCI: Bool,
         plugins: [XCMetricsPlugin],
@@ -57,6 +60,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         self.buildDirectory = buildDirectory
         self.projectName = projectName
         self.serviceURL = serviceURL
+        self.additionalHeaders = additionalHeaders
         self.plugins = plugins
         self.timeout = timeout
         self.isCI = isCI
@@ -69,6 +73,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         self.buildDirectory = ""
         self.projectName = ""
         self.serviceURL = URL(string: "")!
+        self.additionalHeaders = [:]
         self.plugins = []
         self.timeout = 0
         self.isCI = false
@@ -154,7 +159,7 @@ enum MetricsUploaderEffect: Hashable {
     /// Executes the custom plugins configured if any to add more data to the build.
     case executePlugins(request: MetricsUploadRequest, plugins: [XCMetricsPlugin])
     /// Uploads the given log upload requests to the specified backend service.
-    case uploadLogs(serviceURL: URL, projectName: String, isCI: Bool, skipNotes: Bool, logs: Set<MetricsUploadRequest>)
+    case uploadLogs(serviceURL: URL, additionalHeaders: [String: String], projectName: String, isCI: Bool, skipNotes: Bool, logs: Set<MetricsUploadRequest>)
     /// Uploaded logs should be renamed to signal their status and differentiate them from logs yet to be uploaded.
     case tagLogsAsUploaded(logs: Set<URL>)
     /// Logs failed to upload are saved to disk in order to preserve the metadata collected (the actual xcactivitylog is always kept on disk for 7 days).

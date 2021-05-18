@@ -29,6 +29,7 @@ extension MetricsUploaderModel {
             buildDirectory: self.buildDirectory,
             projectName: self.projectName,
             serviceURL: self.serviceURL,
+            additionalHeaders: self.additionalHeaders,
             timeout: self.timeout,
             isCI: self.isCI,
             plugins: self.plugins,

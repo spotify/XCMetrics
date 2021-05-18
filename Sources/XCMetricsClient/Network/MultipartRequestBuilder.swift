@@ -27,6 +27,7 @@ class MultipartRequestBuilder {
 
     public let request: MetricsUploadRequest
     public let url: URL
+    public let additionalHeaders: [String: String]
     public let machineName: String
     public let projectName: String
     public let isCI: Bool
@@ -34,12 +35,14 @@ class MultipartRequestBuilder {
 
     public init(request: MetricsUploadRequest,
                 url: URL,
+                additionalHeaders: [String: String],
                 machineName: String,
                 projectName: String,
                 isCI: Bool,
                 skipNotes: Bool) {
         self.request = request
         self.url = url
+        self.additionalHeaders = additionalHeaders
         self.machineName = machineName
         self.projectName = projectName
         self.isCI = isCI
@@ -52,6 +55,7 @@ class MultipartRequestBuilder {
         let boundary = "Boundary-\(uuid)"
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
+        additionalHeaders.forEach { request.addValue($1, forHTTPHeaderField: $0) }
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         // If this is a retry for a previously failed request, simply set the body. Otherwise compute it.
         let body: Data

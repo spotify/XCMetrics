@@ -72,6 +72,7 @@ struct Command {
     let serviceURL: String
     let isCI: Bool
     let skipNotes: Bool
+    let additionalHeaders: [String: String]
 }
 
 
@@ -109,6 +110,14 @@ public struct XCMetrics: ParsableCommand {
     @Option(name: [.customLong("skipNotes")], help: "Notes found in logs won't be processed")
     public var skipNotes: Bool = false
 
+    /// An optional authorization/token header **key** to be included in the upload request. Must be used in conjunction with `authorizationValue.`
+    @Option(name: [.customLong("authorizationKey"), .customShort("k")], help: "An optional authorization header key to be included in the upload request e.g 'Authorization' or 'x-api-key' etc. Must be used in conjunction with `authorizationValue`")
+    public var authorizationKey: String?
+
+    /// An optional authorization/token header **value** to be included in the upload request. Must be used in conjunction with `authorizationKey.`
+    @Option(name: [.customLong("authorizationValue"), .customShort("a")], help: "An optional authorization header value to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc. Must be used in conjunction with `authorizationKey`")
+    public var authorizationValue: String?
+
     private static let loop = XCMetricsLoop()
 
     /// The default initializer for the `XCMetrics` object.
@@ -139,6 +148,7 @@ public struct XCMetrics: ParsableCommand {
         The --timeout argument is optional and defaults to 5 seconds.
         The --isCI argument is optional and defaults to false.
         The --skipNotes argument is optional and defaults to false.
+        The --authorizationKey must be used in conjunction with --authorizationValue. One cannot be used without the other.
         Type 'XCMetrics --help' for more information.
         """)
     }
@@ -168,13 +178,29 @@ public struct XCMetrics: ParsableCommand {
             throw argumentError()
         }
 
+        var authorizationKey = ""
+        var authorizationValue = ""
+
+        switch (self.authorizationKey, self.authorizationValue) {
+        case (let .some(authKey), let .some(authValue)):
+            authorizationKey = authKey
+            authorizationValue = authValue
+        case (.none, .none):
+            break
+        default:
+            throw argumentError()
+        }
+
         let command = Command(
             buildDirectory: directoryBuild,
             projectName: name,
             timeout: timeout,
             serviceURL: serviceURLValue,
             isCI: isCI,
-            skipNotes: skipNotes
+            skipNotes: skipNotes,
+            additionalHeaders: [
+                authorizationKey: authorizationValue
+            ]
         )
         return command
     }
