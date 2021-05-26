@@ -178,15 +178,13 @@ public struct XCMetrics: ParsableCommand {
             throw argumentError()
         }
 
-        var authorizationKey = ""
-        var authorizationValue = ""
-
+        let authorization: (String, String)?
+        
         switch (self.authorizationKey, self.authorizationValue) {
         case (let .some(authKey), let .some(authValue)):
-            authorizationKey = authKey
-            authorizationValue = authValue
+            authorization = (authKey, authValue)
         case (.none, .none):
-            break
+            authorization = nil
         default:
             throw argumentError()
         }
@@ -198,9 +196,9 @@ public struct XCMetrics: ParsableCommand {
             serviceURL: serviceURLValue,
             isCI: isCI,
             skipNotes: skipNotes,
-            additionalHeaders: [
-                authorizationKey: authorizationValue
-            ]
+            additionalHeaders: authorization.map { (key, value) in
+                [key: value]
+            } ?? [:]
         )
         return command
     }
