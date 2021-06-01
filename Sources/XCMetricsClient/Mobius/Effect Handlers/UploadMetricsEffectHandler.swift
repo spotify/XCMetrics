@@ -38,16 +38,12 @@ struct UploadMetricsEffectHandler: EffectHandler {
             projectName: effectParameters.projectName,
             isCI: effectParameters.isCI,
             skipNotes: effectParameters.skipNotes,
-            uploadRequests: effectParameters.logs) { successfulURLs, failedURLs in
-            var effects = [MetricsUploaderEvent]()
-            // Handle failed log uploads. Skip if empty.
-            if !failedURLs.isEmpty {
-                effects.append(.logsUploadFailed(logs: failedURLs))
-            }
-            // Handle successful log uploads.
-            effects.append(.logsUploaded(logs: successfulURLs))
-
-            callback.end(with: effects)
+            uploadRequests: effectParameters.logs
+        ) { successfulURLs, failedURLs in
+            callback.end(with: [
+                .logsUploadFailed(logs: failedURLs),
+                .logsUploaded(logs: successfulURLs)
+            ])
         }
         return AnonymousDisposable {}
     }
