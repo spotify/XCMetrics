@@ -49,7 +49,9 @@ struct LocalLogFileRepository: LogFileRepository {
     }
 
     func get(logURL: URL) throws -> URL {
-        return logURL
+        let tmp = try TemporaryFile(creatingTempDirectoryForFilename: "\(UUID().uuidString).xcactivitylog")
+        try FileManager.default.copyItem(atPath: logURL.path, toPath: tmp.fileURL.path)
+        return tmp.fileURL
     }
 
 }
