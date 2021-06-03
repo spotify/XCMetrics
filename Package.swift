@@ -63,6 +63,10 @@ let package = Package(
             dependencies: ["GRPC", "NIO", "NIOHTTP2"]
         ),
         .target(
+            name: "PublishBuildEventProto",
+            dependencies: ["GRPC", "NIO", "NIOHTTP2"]
+        ),
+        .target(
             name: "XCMetricsApp",
             dependencies: ["XCMetricsClient"]
         ),
@@ -73,6 +77,10 @@ let package = Package(
        .target(
             name: "XCMetricsBackendLib",
             dependencies: [
+                "PublishBuildEventProto",
+                "GRPC",
+                "NIO",
+                "NIOHTTP2",
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
                 .product(name: "Vapor", package: "vapor"),

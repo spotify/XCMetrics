@@ -10,3 +10,10 @@ DerivedData/
 
 # Documentation temporary directory
 docs_temp/
+
+# protodep up should be used to fetch these as needed
+/managed_proto
+
+/.idea
+
+.env

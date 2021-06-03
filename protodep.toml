@@ -1,0 +1,35 @@
+proto_outdir = "./managed_proto"
+
+[[dependencies]]
+  target = "github.com/google/protobuf/src/google/protobuf"
+  branch = "master"
+  path = "google/protobuf"
+
+[[dependencies]]
+  target = "github.com/googleapis/googleapis"
+  branch = "master"
+
+[[dependencies]]
+  target = "github.com/googleapis/googleapis/google/devtools/build/v1"
+  branch = "master"
+  path = "google/devtools/build/v1"
+
+[[dependencies]]
+  target = "github.com/bazelbuild/bazel/src/main/java/com/google/devtools/build/lib/buildeventstream/proto"
+  branch = "master"
+  path = "build_event_stream"
+
+[[dependencies]]
+  target = "github.com/bazelbuild/bazel/src/main/protobuf"
+  branch = "master"
+  path = "src/main/protobuf"
+  ignores = [
+    "analysis_v2.proto",
+    # don't really care about this for now, and ignoring it let's us avoid pulling in the reapis
+    "remote_execution_log.proto"
+  ]
+
+[[dependencies]]
+  target = "github.com/bazelbuild/remote-apis/build/bazel"
+  branch = "master"
+  path = "build/bazel"
