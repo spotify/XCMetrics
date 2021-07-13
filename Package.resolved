@@ -384,8 +384,8 @@
         "repositoryURL": "https://github.com/spotify/xclogparser",
         "state": {
           "branch": null,
-          "revision": "171247366dd1bcd9bf61f9699867b18282eea842",
-          "version": "0.2.27"
+          "revision": "e463154a481c2e8162dec482296aae852f474728",
+          "version": "0.2.28"
         }
       },
       {
