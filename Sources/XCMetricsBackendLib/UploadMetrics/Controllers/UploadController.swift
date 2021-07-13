@@ -95,6 +95,7 @@ public struct UploadMetricsController: RouteCollection {
         // 1. Decode request as raw data
         let payload = try req.content.decode(UploadMetricsPayload.self)
 
+        var localFile: LogFile? = nil
         // Storing the log and decoding the request are blocking, we execute them in a background thread
         // to not block the eventloop
         return req.application.threadPool.runIfActive(eventLoop: req.eventLoop) { () -> BuildMetrics in
@@ -106,13 +107,21 @@ public struct UploadMetricsController: RouteCollection {
                 throw Abort(.badRequest)
             }
 
-            // 4. Parse an process the metrics
-            let localURL = try self.fileLogRepository.get(logURL: logURL)
+            // 4. Parse and process the metrics
+            let logFile = try self.fileLogRepository.get(logURL: logURL)
+            localFile = logFile
             return try MetricsProcessor.process(metricsRequest: metricsRequest,
-                                                logURL: localURL,
+                                                logFile: logFile,
                                                 redactUserData: self.redactUserData)
         }.flatMap { buildMetrics -> EventLoopFuture<HTTPStatus> in
-            self.metricsRepository.insertBuildMetrics(buildMetrics, using: req.application.eventLoopGroup.next())
+            if let localFile = localFile {
+                do {
+                    try self.fileLogRepository.delete(log: localFile, wasProcessed: true)
+                } catch {
+                    req.application.logger.error("Error deleting local log file \(error.localizedDescription)")
+                }
+            }
+            return self.metricsRepository.insertBuildMetrics(buildMetrics, using: req.application.eventLoopGroup.next())
                 .transform(to: HTTPStatus.created)
         }
     }
