@@ -86,7 +86,7 @@ struct LogFileGCSRepository: LogFileRepository {
         return fileURL
     }
 
-    func get(logURL: URL) throws -> URL {
+    func get(logURL: URL) throws -> LogFile {
         logger.info("[LogFileGCSRepository] get \(logURL), bucket: \(bucketName), object: \(logURL.lastPathComponent)")
         let httpClient = HTTPClient(eventLoopGroupProvider: .shared(group))
         defer {
@@ -114,7 +114,7 @@ struct LogFileGCSRepository: LogFileRepository {
                 return groupEventLoop.makeFailedFuture(error)
             }
         }.wait()
-        return localURL
+        return LogFile(remoteURL: logURL, localURL: localURL)
     }
 
 }

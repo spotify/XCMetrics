@@ -59,15 +59,15 @@ class ProcessMetricsJob: Job {
             defer {
                 self.semaphore.signal()
             }
-            let localURL: URL
+            let logFile: LogFile
             let buildMetrics: BuildMetrics
             do {
                 logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] fetching log from \(payload.logURL)")
-                localURL = try self.logFileRepository.get(logURL: payload.logURL)
-                logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log fetched to \(localURL)")
+                logFile = try self.logFileRepository.get(logURL: payload.logURL)
+                logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log fetched to \(logFile.localURL)")
                 buildMetrics = try MetricsProcessor.process(metricsRequest: payload,
-                                                                logURL: localURL,
-                                                                redactUserData: self.redactUserData)
+                                                            logFile: logFile,
+                                                            redactUserData: self.redactUserData)
             } catch {
                 context.logger.error("[ProcessMetricsJob] error processing log from \(payload.logURL): \(error)")
                 promise.fail(error)
@@ -77,16 +77,21 @@ class ProcessMetricsJob: Job {
             let metricsWithRequestData = self.addBuildRequest(buildMetrics: buildMetrics, payload: payload)
             logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log parsed \(payload.logURL)")
             _ = self.metricsRepository.insertBuildMetrics(metricsWithRequestData, using: eventLoop)
-                .flatMapAlways({ (result) -> EventLoopFuture<Void> in
+                .flatMapAlways { (result) -> EventLoopFuture<Void> in
+                    var wasProcessed: Bool = false
                     switch result {
                     case .failure(let error):
                         context.logger.error("[ProcessMetricsJob] error inserting log from \(payload.logURL): \(error)")
+                        wasProcessed = false
                         promise.fail(error)
                     case .success:
+                        wasProcessed = true
                         promise.succeed(())
                     }
-                    return self.removeLocalLog(from: localURL, using: eventLoop, context)
-                })
+                    return self.removeLocalLog(logFile,
+                                               wasProcessed: wasProcessed,
+                                               using: eventLoop, context)
+                }
                 .map { _ -> Void in
                     context.logger.info("[ProcessMetricsJob] finished processing \(payload.logURL)")
                     return ()
@@ -104,13 +109,15 @@ class ProcessMetricsJob: Job {
             .withXcodeVersion(payload.xcodeVersion?.withBuildIdentifier(buildIdentifier))
     }
 
-    private func removeLocalLog(from url: URL, using eventLoop: EventLoop, _ context: QueueContext) -> EventLoopFuture<Void> {
+    private func removeLocalLog(_ log: LogFile,
+                                wasProcessed: Bool,
+                                using eventLoop: EventLoop,
+                                _ context: QueueContext) -> EventLoopFuture<Void> {
         return eventLoop.submit { () -> Void in
-            context.logger.error("[ProcessMetricsJob] removing log from \(url)")
             do {
-                try FileManager.default.removeItem(at: url)
+                try self.logFileRepository.delete(log: log, wasProcessed: wasProcessed)
             } catch {
-                context.logger.error("[ProcessMetricsJob] Error removing log from \(url): \(error)")
+                context.logger.error("[ProcessMetricsJob] Error removing log from \(log.localURL): \(error)")
             }
         }
     }
