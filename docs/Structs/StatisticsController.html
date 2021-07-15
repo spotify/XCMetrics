@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>XCMetricsPlugin Structure Reference</title>
+    <title>StatisticsController Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -11,8 +11,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Struct/XCMetricsPlugin" class="dashAnchor"></a>
-    <a title="XCMetricsPlugin Structure Reference"></a>
+    <a name="//apple_ref/swift/Struct/StatisticsController" class="dashAnchor"></a>
+    <a title="StatisticsController Structure Reference"></a>
     <header>
       <div class="content-wrapper">
         <p>
@@ -36,7 +36,7 @@
             <a href="../index.html"> Reference</a>
             <img id="carat" src="../img/carat.png" />
           </span>
-          XCMetricsPlugin Structure Reference
+          StatisticsController Structure Reference
         </p>
       </div>
     </div>
@@ -45,15 +45,15 @@
         <article class="main-content">
           <section>
             <section class="section">
-              <h1>XCMetricsPlugin</h1>
+              <h1>StatisticsController</h1>
                 <div class="declaration">
                   <div class="language">
                     
-                    <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">XCMetricsPlugin</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span></code></pre>
+                    <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">StatisticsController</span> <span class="p">:</span> <span class="kt">RouteCollection</span></code></pre>
 
                   </div>
                 </div>
-              <p>A plugin executed by XCMetrics that collects custom metrics.</p>
+              <p>Controller with endpoints that return statistics for build related data</p>
 
             </section>
             <section class="section task-group-section">
@@ -62,9 +62,9 @@
                   <li class="item">
                     <div>
                       <code>
-                      <a name="/s:15XCMetricsClient0A6PluginV0C4Bodya"></a>
-                      <a name="//apple_ref/swift/Alias/PluginBody" class="dashAnchor"></a>
-                      <a class="token" href="#/s:15XCMetricsClient0A6PluginV0C4Bodya">PluginBody</a>
+                      <a name="/s:19XCMetricsBackendLib20StatisticsControllerV4boot6routesy5Vapor13RoutesBuilder_p_tKF"></a>
+                      <a name="//apple_ref/swift/Method/boot(routes:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib20StatisticsControllerV4boot6routesy5Vapor13RoutesBuilder_p_tKF">boot(routes:<wbr>)</a>
                       </code>
                     </div>
                     <div class="height-container">
@@ -72,42 +72,20 @@
                       <section class="section">
                         <div class="pointer"></div>
                         <div class="abstract">
-                          <p>The body implementation of a plugin which takes a dictionary of the environment variable provided to it and
-should return a dictionary of key-value pairs to be attached to the build metadata of the build.</p>
+                          <p>Returns the routes supported by this Controller.
+All the routes are in the <code>v1/statistics</code> path</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code>Error</code> if something goes wrong
+
+</div>
 
                         </div>
                         <div class="declaration">
                           <h4>Declaration</h4>
                           <div class="language">
                             <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">PluginBody</span> <span class="o">=</span> <span class="p">([</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">]</span></code></pre>
-
-                          </div>
-                        </div>
-                      </section>
-                    </div>
-                  </li>
-                  <li class="item">
-                    <div>
-                      <code>
-                      <a name="/s:15XCMetricsClient0A6PluginV4name4bodyACSS_SDyS2SGAFctcfc"></a>
-                      <a name="//apple_ref/swift/Method/init(name:body:)" class="dashAnchor"></a>
-                      <a class="token" href="#/s:15XCMetricsClient0A6PluginV4name4bodyACSS_SDyS2SGAFctcfc">init(name:<wbr>body:<wbr>)</a>
-                      </code>
-                    </div>
-                    <div class="height-container">
-                      <div class="pointer-container"></div>
-                      <section class="section">
-                        <div class="pointer"></div>
-                        <div class="abstract">
-                          <p>Initializer for XCMetricsPlugin.</p>
-
-                        </div>
-                        <div class="declaration">
-                          <h4>Declaration</h4>
-                          <div class="language">
-                            <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Structs/XCMetricsPlugin.html#/s:15XCMetricsClient0A6PluginV0C4Bodya">PluginBody</a></span><span class="p">)</span></code></pre>
+                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">boot</span><span class="p">(</span><span class="nv">routes</span><span class="p">:</span> <span class="kt">RoutesBuilder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                           </div>
                         </div>
@@ -118,24 +96,12 @@ should return a dictionary of key-value pairs to be attached to the build metada
                               <tr>
                                 <td>
                                   <code>
-                                  <em>name</em>
+                                  <em>routes</em>
                                   </code>
                                 </td>
                                 <td>
                                   <div>
-                                    <p>A unique name for this plugin.</p>
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <code>
-                                  <em>body</em>
-                                  </code>
-                                </td>
-                                <td>
-                                  <div>
-                                    <p>The closure that contains the implementation of this plugin.</p>
+                                    <p>RoutesBuilder to which the routes will be added</p>
                                   </div>
                                 </td>
                               </tr>
@@ -148,9 +114,9 @@ should return a dictionary of key-value pairs to be attached to the build metada
                   <li class="item">
                     <div>
                       <code>
-                      <a name="/s:15XCMetricsClient0A6PluginV2eeoiySbAC_ACtFZ"></a>
-                      <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
-                      <a class="token" href="#/s:15XCMetricsClient0A6PluginV2eeoiySbAC_ACtFZ">==(_:<wbr>_:<wbr>)</a>
+                      <a name="/s:19XCMetricsBackendLib20StatisticsControllerV11buildStatus3req3NIO15EventLoopFutureCy9FluentKit4PageVyAA05BuildG6ResultVGG5Vapor7RequestC_tKF"></a>
+                      <a name="//apple_ref/swift/Method/buildStatus(req:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib20StatisticsControllerV11buildStatus3req3NIO15EventLoopFutureCy9FluentKit4PageVyAA05BuildG6ResultVGG5Vapor7RequestC_tKF">buildStatus(req:<wbr>)</a>
                       </code>
                     </div>
                     <div class="height-container">
@@ -158,41 +124,42 @@ should return a dictionary of key-value pairs to be attached to the build metada
                       <section class="section">
                         <div class="pointer"></div>
                         <div class="abstract">
-                          <p>Equatable implementation for XCMetricsPlugin.</p>
+                          <p>Endpoint that returns the paginated list of <code><a href="../Other%20Structs.html#/s:19XCMetricsBackendLib17BuildStatusResultV">BuildStatusResult</a></code>
+to minimize payload size when many statuses are required</p>
+
+<ul>
+<li>Method: <code>GET</code></li>
+<li>Route: <code>/v1/statistics/build/status?page=1&amp;per=10</code></li>
+<li><p>Request parameters</p>
+
+<ul>
+<li><code>page</code>. Optional. Page number to fetch. Default is <code>1</code></li>
+<li><code>per</code>. Optional. Number of items to fetch per page. Default is <code>10</code></li>
+</ul></li>
+<li><p>Response:</p>
+<pre class="highlight swift"><code><span class="p">{</span>
+<span class="s">"metadata"</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s">"per"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="s">"total"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+  <span class="s">"page"</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">},</span>
+<span class="s">"items"</span><span class="p">:</span> <span class="p">[</span>
+ <span class="p">{</span>
+   <span class="s">"id"</span><span class="p">:</span> <span class="s">"MyMac_34580469-5792-40F3-BEFB-7C5925996F23_1"</span><span class="p">,</span>
+   <span class="s">"buildStatus"</span><span class="p">:</span> <span class="s">"succeeded"</span><span class="p">,</span>
+ <span class="p">},</span>
+ <span class="o">...</span>
+<span class="p">]</span>
+<span class="p">}</span>
+</code></pre></li>
+</ul>
 
                         </div>
                         <div class="declaration">
                           <h4>Declaration</h4>
                           <div class="language">
                             <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">XCMetricsPlugin</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">XCMetricsPlugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
-
-                          </div>
-                        </div>
-                      </section>
-                    </div>
-                  </li>
-                  <li class="item">
-                    <div>
-                      <code>
-                      <a name="/s:15XCMetricsClient0A6PluginV4hash4intoys6HasherVz_tF"></a>
-                      <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
-                      <a class="token" href="#/s:15XCMetricsClient0A6PluginV4hash4intoys6HasherVz_tF">hash(into:<wbr>)</a>
-                      </code>
-                    </div>
-                    <div class="height-container">
-                      <div class="pointer-container"></div>
-                      <section class="section">
-                        <div class="pointer"></div>
-                        <div class="abstract">
-                          <p>Hashable implementation for XCMetricsPlugin.</p>
-
-                        </div>
-                        <div class="declaration">
-                          <h4>Declaration</h4>
-                          <div class="language">
-                            <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">buildStatus</span><span class="p">(</span><span class="nv">req</span><span class="p">:</span> <span class="kt">Request</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt">Page</span><span class="o">&lt;</span><span class="kt"><a href="../Other%20Structs.html#/s:19XCMetricsBackendLib17BuildStatusResultV">BuildStatusResult</a></span><span class="o">&gt;&gt;</span></code></pre>
 
                           </div>
                         </div>

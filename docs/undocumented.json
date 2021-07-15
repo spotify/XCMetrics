@@ -232,6 +232,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/BuildStatusResult.swift",
+      "line": 22,
+      "symbol": "BuildStatusResult",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/UploadMetrics/Controllers/JobLogController.swift",
       "line": 24,
       "symbol": "JobLogController",
