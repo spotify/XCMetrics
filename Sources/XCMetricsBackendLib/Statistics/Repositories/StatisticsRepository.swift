@@ -18,8 +18,6 @@
 // under the License.
 
 import Fluent
-import FluentSQL
-import NIO
 
 /// Repository to insert and query statistics
 public protocol StatisticsRepository {
