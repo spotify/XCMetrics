@@ -17,6 +17,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import Foundation
 import Fluent
 
 /// Repository to insert and query statistics

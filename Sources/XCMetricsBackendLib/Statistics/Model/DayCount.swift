@@ -35,7 +35,7 @@ public final class DayCount: Model, Content {
 
     public init() { }
 
-    init(day: Date?, builds: Int, errors: Int) {
+    init(day: Date?, builds: Int = 0, errors: Int = 0) {
         self.id = day;
         self.builds = builds;
         self.errors = errors;
