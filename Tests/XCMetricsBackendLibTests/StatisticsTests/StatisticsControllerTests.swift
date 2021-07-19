@@ -29,8 +29,8 @@ final class StatisticsControllerTests: XCTestCase {
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }
 
-        let firstDay = Date().truncateTime()!.ago(days: 13)! // Since today is supposed to be included
-        let lastDay = Date().truncateTime()!
+        let firstDay = Date().truncateTime().ago(days: 13)! // Since today is supposed to be included
+        let lastDay = Date().truncateTime()
 
         try app.test(.GET, "v1/statistics/build/count?days=14", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)

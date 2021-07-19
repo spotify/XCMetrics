@@ -20,12 +20,6 @@
 import Foundation
 
 extension Date {
-    func truncateTime() -> Date? {
-        var components = Calendar.current.dateComponents([.year, .month, .day], from: self)
-        components.timeZone = TimeZone(abbreviation: "UTC")
-        return Calendar.current.date(from: components)!
-    }
-
     func ago(days: Int) -> Date? {
         return Calendar.current.date(byAdding: .day, value: -days, to: self)
     }
