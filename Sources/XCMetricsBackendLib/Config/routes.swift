@@ -52,7 +52,7 @@ func routes(_ app: Application) throws {
                                                          metricsRepository: PostgreSQLMetricsRepository(db: app.db, logger: app.logger),
                                                          useAsyncProcessing: config.useAsyncLogProcessing))
     try app.register(collection: JobLogController(repository: PostgreSQLJobLogRepository(db: app.db)))
-    try app.register(collection: StatisticsController())
+    try app.register(collection: StatisticsController(repository: SQLStatisticsRepository(db: app.db)))
 
     // Run Job queues
     if config.useAsyncLogProcessing {
