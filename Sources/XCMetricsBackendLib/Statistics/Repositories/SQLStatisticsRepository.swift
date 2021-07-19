@@ -39,7 +39,7 @@ class SQLStatisticsRepository: StatisticsRepository {
         return Build.query(on: self.db)
             .field(\.$id)
             .field(\.$buildStatus)
-            .sort(\.$id, .descending)
+            .sort(\.$startTimestampMicroseconds, .descending)
             .paginate(PageRequest(page: page, per: per))
             .map { $0.map { BuildStatusResult(id: $0.id!, buildStatus: $0.buildStatus) } }
     }
