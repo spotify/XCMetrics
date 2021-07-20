@@ -39,7 +39,7 @@ extension Date {
     /// Sets the time components of a date to 0, with no regards to time zone
     /// which can be useful when comparing to database dates (with no time information)
     /// - Returns: A `Date` with time components at 0
-    func truncateTime() -> Date {
+    func xcm_truncateTime() -> Date {
         var components = Calendar.current.dateComponents([.year, .month, .day], from: self)
         components.timeZone = TimeZone(abbreviation: "UTC")
         return Calendar.current.date(from: components)!

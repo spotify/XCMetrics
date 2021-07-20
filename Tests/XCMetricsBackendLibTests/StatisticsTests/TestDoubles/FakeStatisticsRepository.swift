@@ -48,23 +48,23 @@ class FakeStatisticsRepository: StatisticsRepository {
     }
 
     func createDayCount(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<Void> {
-        self.dayCounts.append(DayCount(day: day.truncateTime(), builds: 1, errors: 1))
+        self.dayCounts.append(DayCount(day: day.xcm_truncateTime(), builds: 1, errors: 1))
         return eventLoop.makeSucceededFuture(())
     }
 
     func getCount(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<DayCount> {
-        let count = dayCounts.first(where: { $0.id == day.truncateTime() })
+        let count = dayCounts.first(where: { $0.id == day.xcm_truncateTime() })
 
         if let count = count {
             return eventLoop.makeSucceededFuture(count)
         }
 
-        return eventLoop.makeSucceededFuture(DayCount(day: day.truncateTime(), builds: 0, errors: 0))
+        return eventLoop.makeSucceededFuture(DayCount(day: day.xcm_truncateTime(), builds: 0, errors: 0))
     }
 
     func getDayCounts(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayCount]> {
         let counts = self.dayCounts
-            .filter { $0.id! >= from.truncateTime() && $0.id! <= to.truncateTime() }
+            .filter { $0.id! >= from.xcm_truncateTime() && $0.id! <= to.xcm_truncateTime() }
             .reversed()
             .map { $0 }
         return eventLoop.makeSucceededFuture(counts)
@@ -78,7 +78,7 @@ class FakeStatisticsRepository: StatisticsRepository {
 
     func generateDayCounts() -> [DayCount] {
         return stride(from: 1, to: 30, by: 1).map {
-            DayCount(day: Date().truncateTime().ago(days: $0)!, builds: 10, errors: 2)
+            DayCount(day: Date().xcm_truncateTime().xcm_ago(days: $0)!, builds: 10, errors: 2)
         }
     }
 }

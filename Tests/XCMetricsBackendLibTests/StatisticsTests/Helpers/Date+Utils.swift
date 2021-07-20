@@ -20,7 +20,7 @@
 import Foundation
 
 extension Date {
-    func ago(days: Int) -> Date? {
+    func xcm_ago(days: Int) -> Date? {
         return Calendar.current.date(byAdding: .day, value: -days, to: self)
     }
 }

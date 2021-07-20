@@ -91,14 +91,14 @@ class SQLStatisticsRepository: StatisticsRepository {
     /// we need to fill days without build information with zero values to keep the format consistent.
     /// Performance of this method should be considered for large date ranges.
     private func fillDayCounts(counts: [DayCount], from: Date, to: Date) -> [DayCount] {
-        let from = from.truncateTime()
-        let days = Calendar.current.dateComponents([.day], from: from, to: to.truncateTime()).day! + 1
+        let from = from.xcm_truncateTime()
+        let days = Calendar.current.dateComponents([.day], from: from, to: to.xcm_truncateTime()).day! + 1
 
         guard days > 0 && counts.count != days else { return counts }
 
         var filled = [DayCount]()
 
-        for dayOffset in stride(from: 0, to: days, by: 1) {
+        for dayOffset in 0..<days {
             let day = Calendar.current.date(byAdding: .day, value: dayOffset, to: from)!
 
             if let dayCount = counts.first(where: { $0.id == day }) {

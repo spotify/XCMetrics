@@ -29,8 +29,8 @@ final class StatisticsControllerTests: XCTestCase {
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }
 
-        let firstDay = Date().truncateTime().ago(days: 13)! // Since today is supposed to be included
-        let lastDay = Date().truncateTime()
+        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 13)! // Since today is supposed to be included
+        let lastDay = Date().xcm_truncateTime()
 
         try app.test(.GET, "v1/statistics/build/count?days=14", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
@@ -60,6 +60,16 @@ final class StatisticsControllerTests: XCTestCase {
         try app.test(.GET, "v1/statistics/build/status", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             XCTAssertNoThrow(try res.content.decode(Page<BuildStatusResult>.self))
+        })
+
+        // Pagination parameters
+        try app.test(.GET, "v1/statistics/build/status?page=1&per=1", afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+        })
+
+        // Invalid parameter
+        try app.test(.GET, "v1/statistics/build/status?page=invalid", afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
         })
     }
 }

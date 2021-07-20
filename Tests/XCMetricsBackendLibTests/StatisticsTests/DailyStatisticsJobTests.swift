@@ -39,6 +39,6 @@ final class DailyStatisticsJobTests: XCTestCase {
         ).wait()
 
         XCTAssertEqual(dayCounts.count, 1)
-        XCTAssertEqual(dayCounts.first!.id, yesterday.truncateTime())
+        XCTAssertEqual(dayCounts.first!.id, yesterday.xcm_truncateTime())
     }
 }

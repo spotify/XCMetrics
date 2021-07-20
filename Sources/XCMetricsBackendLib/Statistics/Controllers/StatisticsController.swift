@@ -66,7 +66,7 @@ public struct StatisticsController: RouteCollection {
         let to = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
 
         return self.repository.getDayCounts(from: from, to: to, using: req.eventLoop).flatMap { counts in
-            self.repository.getCount(day: Date().truncateTime(), using: req.eventLoop).flatMap { count in
+            self.repository.getCount(day: Date().xcm_truncateTime(), using: req.eventLoop).flatMap { count in
                 req.eventLoop.makeSucceededFuture(counts + [count])
             }
         }
@@ -98,8 +98,10 @@ public struct StatisticsController: RouteCollection {
     /// }
     /// ```
     public func buildStatus(req: Request) throws -> EventLoopFuture<Page<BuildStatusResult>> {
-        let page = Int(req.query["page"] ?? "") ?? 1
-        let per = Int(req.query["per"] ?? "") ?? 10
+        guard let page = Int(req.query["page"] ?? "1"),
+              let per = Int(req.query["per"] ?? "10")
+        else { throw Abort(.badRequest) }
+
         return self.repository.getBuildStatuses(page: page, per: per, using: req.eventLoop)
     }
 }

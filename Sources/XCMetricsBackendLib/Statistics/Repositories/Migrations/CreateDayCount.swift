@@ -22,7 +22,7 @@ import Fluent
 struct CreateDayCount: Migration {
     // Adds a relation for DayCount models.
     func prepare(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("statistics_day_counts")
+        database.schema(DayCount.schema)
             .field("day", .date, .identifier(auto: false))
             .field("build_count", .int, .required)
             .field("error_count", .int, .required)
