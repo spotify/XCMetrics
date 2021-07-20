@@ -33,9 +33,11 @@ public final class DayCount: Model, Content {
     @Field(key: "error_count")
     var errors: Int;
 
-    public init() { }
+    public convenience init() {
+        self.init(day: Date().xcm_truncateTime())
+    }
 
-    init(day: Date?, builds: Int = 0, errors: Int = 0) {
+    init(day: Date, builds: Int = 0, errors: Int = 0) {
         self.id = day;
         self.builds = builds;
         self.errors = errors;
