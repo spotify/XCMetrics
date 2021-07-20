@@ -110,7 +110,12 @@ public func configure(_ app: Application) throws {
     }
 
     // Scheduled jobs
-    app.queues.schedule(DailyStatisticsJob(repository: SQLStatisticsRepository(db: app.db))).daily().at(.midnight)
+    if config.scheduleStatisticsJobs {
+        app.queues
+            .schedule(DailyStatisticsJob(repository: SQLStatisticsRepository(db: app.db)))
+            .daily()
+            .at(.midnight)
+    }
 
     // register routes
     try routes(app)

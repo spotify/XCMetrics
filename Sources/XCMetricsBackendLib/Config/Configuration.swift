@@ -22,6 +22,12 @@ class Configuration {
         return (Environment.get("XCMETRICS_START_JOBS_SAME_INSTANCE") ?? "1") == "1"
     }()
 
+    /// If "1", a job for collecting and storing statistics (build count, error count etc.) from the
+    /// previous day will be scheduled to run every day at midnight
+    lazy var scheduleStatisticsJobs: Bool = {
+        return (Environment.get("XCMETRICS_SCHEDULE_STATISTICS_JOBS") ?? "0") == "1"
+    }()
+
     /// Connect to CloudSQL using Sockets. This is the preferred way to connect to it when running in CloudSQL
     lazy var useCloudSQLSocket: Bool = {
         return (Environment.get("XCMETRICS_USE_CLOUDSQL_SOCKET") ?? "0") == "1"
