@@ -23,13 +23,53 @@ import Vapor
 
 /// Controller with endpoints that return statistics for build related data
 public struct StatisticsController: RouteCollection {
+
+    let repository: StatisticsRepository;
+
+    init(repository: StatisticsRepository) {
+        self.repository = repository;
+    }
     
     /// Returns the routes supported by this Controller.
     /// All the routes are in the `v1/statistics` path
     /// - Parameter routes: RoutesBuilder to which the routes will be added
     /// - Throws: An `Error` if something goes wrong
     public func boot(routes: RoutesBuilder) throws {
+        routes.get("v1", "statistics", "build", "count", use: buildCounts)
         routes.get("v1", "statistics", "build", "status", use: buildStatus)
+    }
+
+    /// Endpoint that returns a list of `DayCount` which includes
+    /// the sum of errors and builds during a given day
+    /// - Method: `GET`
+    /// - Route: `/v1/statistics/build/count?days=14`
+    /// - Request parameters
+    ///     - `days`. How many days to include in the past, starting
+    ///     from the current date
+    ///
+    /// - Response:
+    /// ```
+    /// [
+    ///   {
+    ///      "id": "2021-07-14",
+    ///      "builds": 197,
+    ///      "errors": 4,
+    ///   },
+    ///   ...
+    /// ]
+    /// ```
+    public func buildCounts(req: Request) throws -> EventLoopFuture<[DayCount]> {
+        guard let days = Int(req.query["days"] ?? "") else { throw Abort(.badRequest) }
+        guard days > 0 else { throw Abort(.badRequest) }
+
+        let from = Calendar.current.date(byAdding: .day, value: -days + 1, to: Date())!
+        let to = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+
+        return self.repository.getDayCounts(from: from, to: to, using: req.eventLoop).flatMap { counts in
+            self.repository.getCount(day: Date().xcm_truncateTime(), using: req.eventLoop).flatMap { count in
+                req.eventLoop.makeSucceededFuture(counts + [count])
+            }
+        }
     }
 
     /// Endpoint that returns the paginated list of `BuildStatusResult`
@@ -58,10 +98,10 @@ public struct StatisticsController: RouteCollection {
     /// }
     /// ```
     public func buildStatus(req: Request) throws -> EventLoopFuture<Page<BuildStatusResult>> {
-        return Build.query(on: req.db)
-            .field(\.$id)
-            .field(\.$buildStatus)
-            .paginate(for: req)
-            .map { $0.map { BuildStatusResult(id: $0.id!, buildStatus: $0.buildStatus) } }
+        guard let page = Int(req.query["page"] ?? "1"),
+              let per = Int(req.query["per"] ?? "10")
+        else { throw Abort(.badRequest) }
+
+        return self.repository.getBuildStatuses(page: page, per: per, using: req.eventLoop)
     }
 }

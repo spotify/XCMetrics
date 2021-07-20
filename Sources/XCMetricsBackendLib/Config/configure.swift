@@ -91,7 +91,8 @@ public func configure(_ app: Application) throws {
                        AddBuildIdentifierIndexToBuildMetadata(),
                        AddTargetIdentifierIndexToSteps(),
                        AddStepIdentifierIndexToSwiftFunctions(),
-                       AddStepIdentifierIndexToSwiftTypeChecks()
+                       AddStepIdentifierIndexToSwiftTypeChecks(),
+                       CreateDayCount()
                        )
 
 
@@ -106,6 +107,14 @@ public func configure(_ app: Application) throws {
         app.queues.use(.redis(redisConfig))
     } else {
         app.logger.info("Async log processing is disabled")
+    }
+
+    // Scheduled jobs
+    if config.scheduleStatisticsJobs {
+        app.queues
+            .schedule(DailyStatisticsJob(repository: SQLStatisticsRepository(db: app.db)))
+            .daily()
+            .at(.midnight)
     }
 
     // register routes
