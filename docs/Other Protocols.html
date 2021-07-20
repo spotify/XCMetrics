@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Run the Backend Locally  Reference</title>
+    <title>Other Protocols  Reference</title>
     <link rel="stylesheet" type="text/css" href="css/jazzy.css">
     <link rel="stylesheet" type="text/css" href="css/highlight.css">
     <meta charset="utf-8">
@@ -12,7 +12,8 @@
     
   </head>
   <body>
-    <a title="Run the Backend Locally  Reference"></a>
+    <a name="//apple_ref/swift/Section/Other%20Protocols" class="dashAnchor"></a>
+    <a title="Other Protocols  Reference"></a>
     <header>
       <div class="content-wrapper">
         <p>
@@ -36,7 +37,7 @@
             <a href="index.html"> Reference</a>
             <img id="carat" src="img/carat.png">
           </span>
-          Run the Backend Locally  Reference
+          Other Protocols  Reference
         </p>
       </div>
     </div>
@@ -45,99 +46,43 @@
         <article class="main-content">
           <section>
             <section class="section">
-              
-              <h1 id="running-the-backend-locally" class="heading">Running the backend locally</h1>
+              <h1>Other Protocols</h1>
+              <p>The following protocols are available globally.</p>
 
-<p>It’s useful to run the backend locally to test that you can ingest data to it before deploying your changes. This guide will walk you through the necessary steps.</p>
+            </section>
+            <section class="section task-group-section">
+              <div class="task-group">
+                <ul>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib20StatisticsRepositoryP"></a>
+                      <a name="//apple_ref/swift/Protocol/StatisticsRepository" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib20StatisticsRepositoryP">StatisticsRepository</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Repository to insert and query statistics</p>
 
-<p>The Backend is built using the <a href="https://vapor.codes">Vapor 4.0 framework</a>. We advise to read the <a href="https://docs.vapor.codes/4.0/">official documentation</a> if you plan to contribute to it. Another good resource for learning it, is <a href="https://www.raywenderlich.com/11555468-getting-started-with-server-side-swift-with-vapor-4">this tutorial</a></p>
-<h2 id="1-running-it-from-our-docker-image" class="heading">1. Running it from our Docker Image</h2>
+                          <a href="Protocols/StatisticsRepository.html" class="slightly-smaller">See more</a>
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">StatisticsRepository</span></code></pre>
 
-<p>The easiest way to run it is to use our prebuilt <a href="https://hub.docker.com/r/spotify/xcmetrics">Docker Image</a>. Because it requires a Redis and a Postgres instance, we provide a Docker compose file that configures them for you. The file is called <code>docker-compose-local.yml</code>.</p>
-
-<ol>
-<li>If you haven’t, install <a href="https://docs.docker.com/docker-for-mac/">Docker for Mac</a>.</li>
-<li>From the command line, run this command:</li>
-</ol>
-<pre class="highlight plaintext"><code>docker-compose -f docker-compose-local.yml up
-</code></pre>
-
-<p>The command will start the Postgres database, Redis and the XCMetrics backend. 
-The XCMetrics backend should be available in the port <strong>8080</strong>.</p>
-
-<p>To check that it works you can simply run</p>
-<pre class="highlight plaintext"><code>curl -I http://localhost:8080/hello
-</code></pre>
-<h2 id="2-running-it-from-xcode" class="heading">2. Running it from Xcode</h2>
-
-<p>The Backend needs Redis and Postgresql to run. This repo contains a <code>docker-compose.yml</code> file that you can use to start them. From the command line run
-<code>docker-compose up -d</code></p>
-
-<p><strong>Note:</strong> Remember to stop the docker instances when you’re done using the Backend locally with <code>docker-compose stop</code></p>
-<h3 id="2-1-database-migrations" class="heading">2.1 Database migrations</h3>
-
-<p>The migrations will create the tables that the project uses in the Database. You only need to run them the first time you’re going to start the backend or if a table changed since the last time you ran it. That information can be found in the Changelog.</p>
-
-<p>From the command line</p>
-<pre class="highlight plaintext"><code>swift run XCMetricsBackend migrate
-</code></pre>
-
-<p>Or from Xcode, select the <strong>XCMetricsBackend</strong> schema and setup <code>migrate</code> as an Argument:</p>
-
-<p><img src="img/backend-migrate.png" alt="Xcode Schema argument"></p>
-
-<p><strong>Note:</strong> You will get a prompt to confirm the migrations. Just press <code>y</code>.</p>
-<h3 id="2-2-start-the-backend" class="heading">2.2 Start the backend</h3>
-
-<p>From the command line:</p>
-<pre class="highlight plaintext"><code>swift run XCMetricsBackend
-</code></pre>
-
-<p>Or from Xcode: remove the <code>migrate</code> argument and run the <strong>XCMetricsBackend</strong> schema</p>
-<h3 id="2-3-verify-that-is-running" class="heading">2.3 Verify that is running</h3>
-
-<p>The backend will start at port 8080. </p>
-
-<p>Run </p>
-
-<p><code>curl -I http://localhost:8080/hello</code></p>
-<h2 id="3-insert-xcode-build-log-data-using-the-xcmetrics-client" class="heading">3. Insert Xcode build log data using the XCMetrics Client</h2>
-
-<p>Configure a Xcode project to use <code><a href="Structs/XCMetrics.html">XCMetrics</a></code> as described in our <a href="https://github.com/spotify/XCMetrics/blob/main/docs/Getting%20Started.md">Getting Started guide</a>. Double check that in the Post-build action you pass localhost to the <code>--serviceURL</code> parameter: <code>--serviceURL http://localhost:8080/v1/metrics</code>.</p>
-
-<p>Once you send data to the backend by building the Xcode project where you configured <code><a href="Structs/XCMetrics.html">XCMetrics</a></code>, verify that it was inserted by inspecting the database. You can use any Postgres client like <a href="https://eggerapps.at/postico/">Postico</a>. The Postgres instance is running in localhost, port 5432. Check the <code>docker-compose.yml</code> file for the database name and the default user and password. The main table is called <code>builds</code>. You will see the build data in that table.</p>
-
-<blockquote>
-<p>Note: make sure to change the authentication values when deploying your service to production not to use the default values.</p>
-</blockquote>
-<h2 id="common-pitfalls" class="heading">Common pitfalls</h2>
-<h3 id="address-already-in-use" class="heading">Address already in use</h3>
-
-<p><code>[ ERROR ] bind(descriptor:ptr:bytes:): Address already in use (errno: 48)</code></p>
-
-<p>Sometimes, Xcode fails to stop the Backend properly. And the next time you try to run it you get that error. You will need to kill it manually:</p>
-
-<p>Run <code>ps -ax | grep -i XCMetricsBackend</code>, look for a process that is run from DerivedData, like this:</p>
-
-<p><code>86981 ??         0:02.85 /Users/user/Library/Developer/Xcode/DerivedData/XCMetrics-aqdxosbxjtygdlhkquzojjjgxwce/Build/Products/Debug/XCMetricsBackend</code></p>
-
-<p>Kill the process using its PID: <code>kill -9 86981</code></p>
-<h3 id="connection-reset-error" class="heading">Connection reset error</h3>
-
-<p>When you start the backend you get errors like <code>[ ERROR ] Job run failed: connection reset (error set): Connection refused (errno: 61)</code> that means that docker compose did not start correctly.</p>
-
-<p>To check the reason:</p>
-
-<ol>
-<li>Stop the instances with <code>docker-compose stop</code>.</li>
-<li>Run <code>docker-compose up</code> (No <code>- d</code>) to check the output of the command.</li>
-</ol>
-
-<p>Things to verify: Redis will try to start in Port <code>6379</code> and Postgres in <code>5432</code>. If you are already using those ports in other processes, change them in the <code>docker-compose.yml</code>. In this example we’re changing the Redis port to <strong>6500</strong>. In docker compose, the left port is the port that will be used in your host, the right port is the port of the docker instance that will be bound to the left port.</p>
-<pre class="highlight plaintext"><code>    ports:
-       - "6500:6379"
-</code></pre>
-
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </section>
           </section>
         </article>

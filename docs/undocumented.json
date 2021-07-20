@@ -239,6 +239,34 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
+      "line": 23,
+      "symbol": "DayCount",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
+      "line": 25,
+      "symbol": "DayCount.schema",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
+      "line": 28,
+      "symbol": "DayCount.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
+      "line": 36,
+      "symbol": "DayCount.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/UploadMetrics/Controllers/JobLogController.swift",
       "line": 24,
       "symbol": "JobLogController",
