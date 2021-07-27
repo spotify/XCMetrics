@@ -51,6 +51,34 @@ final class StatisticsControllerTests: XCTestCase {
         })
     }
 
+    func testBuildTimes() throws {
+        let app = Application(.testing)
+        try configure(app)
+        try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
+        defer { app.shutdown() }
+
+        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 13)! // Since today is supposed to be included
+        let lastDay = Date().xcm_truncateTime()
+
+        try app.test(.GET, "v1/statistics/build/time?days=14", afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            let dayCounts = try res.content.decode([DayBuildTime].self)
+            XCTAssertEqual(dayCounts.count, 14)
+            XCTAssertEqual(dayCounts.first!.id, firstDay)
+            XCTAssertEqual(dayCounts.last!.id, lastDay)
+        })
+
+        // Missing parameter
+        try app.test(.GET, "v1/statistics/build/time", afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+        })
+
+        // Invalid parameter
+        try app.test(.GET, "v1/statistics/build/time?days=0", afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+        })
+    }
+
     func testBuildStatus() throws {
         let app = Application(.testing)
         try configure(app)

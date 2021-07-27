@@ -37,6 +37,7 @@ public struct StatisticsController: RouteCollection {
     public func boot(routes: RoutesBuilder) throws {
         routes.get("v1", "statistics", "build", "count", use: buildCounts)
         routes.get("v1", "statistics", "build", "status", use: buildStatus)
+        routes.get("v1", "statistics", "build", "time", use: buildTimes)
     }
 
     /// Endpoint that returns a list of `DayCount` which includes
@@ -59,11 +60,7 @@ public struct StatisticsController: RouteCollection {
     /// ]
     /// ```
     public func buildCounts(req: Request) throws -> EventLoopFuture<[DayCount]> {
-        guard let days = Int(req.query["days"] ?? "") else { throw Abort(.badRequest) }
-        guard days > 0 else { throw Abort(.badRequest) }
-
-        let from = Calendar.current.date(byAdding: .day, value: -days + 1, to: Date())!
-        let to = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        let (from, to) = try getDatesFromDaysParameter(req)
 
         return self.repository.getDayCounts(from: from, to: to, using: req.eventLoop).flatMap { counts in
             self.repository.getCount(day: Date().xcm_truncateTime(), using: req.eventLoop).flatMap { count in
@@ -104,4 +101,48 @@ public struct StatisticsController: RouteCollection {
 
         return self.repository.getBuildStatuses(page: page, per: per, using: req.eventLoop)
     }
+
+    /// Endpoint that returns a list of `DayBuildTime` which includes
+    /// the build times for a number of procentiles of the builds and the total
+    /// build time for each day, in seconds
+    /// - Method: `GET`
+    /// - Route: `/v1/statistics/build/time?days=14`
+    /// - Request parameters
+    ///     - `days`. How many days to include in the past, starting
+    ///     from the current date
+    ///
+    /// - Response:
+    /// ```
+    /// [
+    ///   {
+    ///      "id": "2021-07-26",
+    ///      "durationP50": 18473.21,
+    ///      "durationP95": 54431313.32
+    ///      "totalDuration": 10983982398.549,
+    ///   },
+    ///   ...
+    /// ]
+    /// ```
+    public func buildTimes(req: Request) throws -> EventLoopFuture<[DayBuildTime]> {
+        let (from, to) = try getDatesFromDaysParameter(req)
+
+        return self.repository.getDayBuildTimes(from: from, to: to, using: req.eventLoop).flatMap { times in
+            self.repository.getBuildTime(day: Date().xcm_truncateTime(), using: req.eventLoop).flatMap { time in
+                req.eventLoop.makeSucceededFuture(times + [time])
+            }
+        }
+    }
+
+    // MARK: - Private Methods
+
+    private func getDatesFromDaysParameter(_ req: Request) throws -> (from: Date, to: Date) {
+        guard let days = Int(req.query["days"] ?? "") else { throw Abort(.badRequest) }
+        guard days > 0 else { throw Abort(.badRequest) }
+
+        let from = Calendar.current.date(byAdding: .day, value: -days + 1, to: Date())!
+        let to = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+
+        return (from, to)
+    }
+
 }
