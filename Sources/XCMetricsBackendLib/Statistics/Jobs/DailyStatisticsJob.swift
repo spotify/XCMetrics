@@ -33,5 +33,7 @@ struct DailyStatisticsJob: ScheduledJob {
     func run(context: QueueContext) -> EventLoopFuture<Void> {
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         return repository.createDayCount(day: yesterday, using: context.eventLoop)
+            .and(repository.createDayBuildTime(day: yesterday, using: context.eventLoop))
+            .transform(to: context.eventLoop.makeSucceededFuture(()))
     }
 }
