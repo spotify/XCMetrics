@@ -35,6 +35,8 @@ class SQLStatisticsRepository: StatisticsRepository {
         self.db = db;
     }
 
+    // MARK: - Build Status
+
     func getBuildStatuses(page: Int, per: Int, using eventLoop: EventLoop) -> EventLoopFuture<Page<BuildStatusResult>> {
         return Build.query(on: self.db)
             .field(\.$id)
@@ -43,6 +45,8 @@ class SQLStatisticsRepository: StatisticsRepository {
             .paginate(PageRequest(page: page, per: per))
             .map { $0.map { BuildStatusResult(id: $0.id!, buildStatus: $0.buildStatus) } }
     }
+
+    // MARK: - Day Count
 
     func getDayCounts(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayCount]> {
         return DayCount.query(on: db)
@@ -82,6 +86,53 @@ class SQLStatisticsRepository: StatisticsRepository {
     func createDayCount(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<Void> {
         return self.getCount(day: day, using: eventLoop).flatMap { count in
             count.create(on: self.db)
+        }
+    }
+
+    // MARK: - Day Build Times
+
+    func getDayBuildTimes(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayBuildTime]> {
+        return DayBuildTime.query(on: db)
+            .filter(\.$id >= from)
+            .filter(\.$id <= to)
+            .sort(\.$id)
+            .all()
+            .flatMap { times in
+                return eventLoop.makeSucceededFuture(
+                    self.fillDays(dayStatistics: times, from: from, to: to)
+                )
+            }
+
+    }
+
+    func getBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<DayBuildTime> {
+        return Build.query(on: db)
+            .filter(\.$day == day)
+            .sort(\.$duration)
+            .all(\.$duration)
+            .flatMap { durations in
+                let count = Float(durations.count)
+
+                guard durations.count > 0 else {
+                    return eventLoop.makeSucceededFuture(
+                        DayBuildTime(day: day, durationP50: 0, durationP95: 0, totalDuration: 0)
+                    )
+                }
+
+                let durationP50 = durations[Int((0.50 * count).rounded(.up)) - 1]
+                let durationP95 = durations[Int((0.95 * count).rounded(.up)) - 1]
+                let totalDuration = durations.reduce(0, +)
+
+                return eventLoop.makeSucceededFuture(
+                    DayBuildTime(day: day, durationP50: durationP50, durationP95: durationP95, totalDuration: totalDuration)
+                )
+            }
+    }
+
+
+    func createDayBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        return self.getBuildTime(day: day, using: eventLoop).flatMap { time in
+            time.create(on: self.db)
         }
     }
 
