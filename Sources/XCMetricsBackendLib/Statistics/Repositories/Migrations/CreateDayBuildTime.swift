@@ -20,7 +20,7 @@
 import Fluent
 
 struct CreateDayBuildTime: Migration {
-    // Adds fields for build times to DayCount model
+    // Adds a relation for DayBuildTime models
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema(DayBuildTime.schema)
             .field("day", .date, .identifier(auto: false))

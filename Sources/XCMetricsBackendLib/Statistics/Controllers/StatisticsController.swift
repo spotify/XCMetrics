@@ -104,7 +104,9 @@ public struct StatisticsController: RouteCollection {
 
     /// Endpoint that returns a list of `DayBuildTime` which includes
     /// the build times for a number of procentiles of the builds and the total
-    /// build time for each day, in seconds
+    /// build time for each day, in seconds.
+    /// The `durationPX` fields indicate that X % of the builds of the a day
+    /// had a duration less or equal to the value.
     /// - Method: `GET`
     /// - Route: `/v1/statistics/build/time?days=14`
     /// - Request parameters

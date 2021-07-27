@@ -119,6 +119,7 @@ class SQLStatisticsRepository: StatisticsRepository {
                     )
                 }
 
+                // Nearest-rank percentiles
                 let durationP50 = durations[Int((0.50 * count).rounded(.up)) - 1]
                 let durationP95 = durations[Int((0.95 * count).rounded(.up)) - 1]
                 let totalDuration = durations.reduce(0, +)

@@ -27,8 +27,10 @@ public final class DayBuildTime: DayData {
     @ID(custom: "day")
     public var id: Date?;
 
+    // Fields with suffix PX represent X-th percentiles
+
     @Field(key: "duration_p50")
-    var durationP50: Double
+    var durationP50: Double;
 
     @Field(key: "duration_p95")
     var durationP95: Double;
