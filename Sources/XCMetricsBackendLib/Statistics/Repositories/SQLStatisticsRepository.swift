@@ -52,7 +52,7 @@ class SQLStatisticsRepository: StatisticsRepository {
             .all()
             .flatMap { counts in
                 return eventLoop.makeSucceededFuture(
-                    self.fillDayCounts(counts: counts, from: from, to: to)
+                    self.fillDays(dayStatistics: counts, from: from, to: to)
                 )
             }
 
@@ -90,21 +90,21 @@ class SQLStatisticsRepository: StatisticsRepository {
     /// Since days without any build information potentially could exist (for instance if a job has failed or not been run)
     /// we need to fill days without build information with zero values to keep the format consistent.
     /// Performance of this method should be considered for large date ranges.
-    private func fillDayCounts(counts: [DayCount], from: Date, to: Date) -> [DayCount] {
+    private func fillDays<T: DayData>(dayStatistics: [T], from: Date, to: Date) -> [T] {
         let from = from.xcm_truncateTime()
         let days = Calendar.current.dateComponents([.day], from: from, to: to.xcm_truncateTime()).day! + 1
 
-        guard days > 0 && counts.count != days else { return counts }
+        guard days > 0 && dayStatistics.count != days else { return dayStatistics }
 
-        var filled = [DayCount]()
+        var filled = [T]()
 
         for dayOffset in 0..<days {
             let day = Calendar.current.date(byAdding: .day, value: dayOffset, to: from)!
 
-            if let dayCount = counts.first(where: { $0.id == day }) {
-                filled.append(dayCount)
+            if let dayStatistic = dayStatistics.first(where: { $0.id == day }) {
+                filled.append(dayStatistic)
             } else {
-                filled.append(DayCount(day: day))
+                filled.append(T(day: day))
             }
         }
 

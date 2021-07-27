@@ -20,7 +20,7 @@
 import Vapor
 import Fluent
 
-public final class DayBuildTime: Model, Content {
+public final class DayBuildTime: DayData {
 
     public static let schema = "statistics_day_build_time";
 
