@@ -106,11 +106,23 @@ class SQLStatisticsRepository: StatisticsRepository {
     }
 
     func getBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<DayBuildTime> {
-        return Build.query(on: db)
-            .filter(\.$day == day)
-            .sort(\.$duration)
-            .all(\.$duration)
-            .flatMap { durations in
+        var durations: EventLoopFuture<[Double]>;
+
+        if let sql = db as? SQLDatabase {
+            // Optimization to speed up queries if we're using tables sharded by day
+            durations = sql.select()
+                .column("duration")
+                .from("\(Build.schema)_\(day.xcm_toPartitionedTableFormat())")
+                .orderBy("duration")
+                .all()
+                .flatMapError { _ in return eventLoop.makeSucceededFuture([]) }
+                .mapEach { (try? $0.decode(column: "duration", as: Double.self)) ?? 0 }
+        } else {
+            durations = Build.query(on: db).filter(\.$day == day).sort(\.$duration).all(\.$duration)
+        }
+
+        return
+            durations.flatMap { durations in
                 let count = Float(durations.count)
 
                 guard durations.count > 0 else {
