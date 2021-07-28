@@ -20,30 +20,9 @@
 import Vapor
 import Fluent
 
-public final class DayCount: DayData {
+public protocol DayData: Model, Content {
 
-    public static let schema = "statistics_day_counts";
+    var id: Date? { get set }
 
-    @ID(custom: "day")
-    public var id: Date?;
-
-    @Field(key: "build_count")
-    var builds: Int;
-
-    @Field(key: "error_count")
-    var errors: Int;
-
-    public convenience init() {
-        self.init(day: Date().xcm_truncateTime())
-    }
-
-    public convenience init(day: Date) {
-        self.init(day: day, builds: 0, errors: 0)
-    }
-
-    init(day: Date, builds: Int = 0, errors: Int = 0) {
-        self.id = day;
-        self.builds = builds;
-        self.errors = errors;
-    }
+    init(day: Date)
 }

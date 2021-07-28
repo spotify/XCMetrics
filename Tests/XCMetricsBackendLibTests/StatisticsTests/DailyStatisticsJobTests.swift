@@ -34,11 +34,19 @@ final class DailyStatisticsJobTests: XCTestCase {
         )
         
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+
         let dayCounts = try repository.getDayCounts(
             from: yesterday, to: yesterday, using: app.queues.queue.context.eventLoop
         ).wait()
 
         XCTAssertEqual(dayCounts.count, 1)
         XCTAssertEqual(dayCounts.first!.id, yesterday.xcm_truncateTime())
+
+        let dayBuildTimes = try repository.getDayBuildTimes(
+            from: yesterday, to: yesterday, using: app.queues.queue.context.eventLoop
+        ).wait()
+
+        XCTAssertEqual(dayBuildTimes.count, 1)
+        XCTAssertEqual(dayBuildTimes.first!.id, yesterday.xcm_truncateTime())
     }
 }

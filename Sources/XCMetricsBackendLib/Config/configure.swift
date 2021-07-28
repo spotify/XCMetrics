@@ -92,7 +92,8 @@ public func configure(_ app: Application) throws {
                        AddTargetIdentifierIndexToSteps(),
                        AddStepIdentifierIndexToSwiftFunctions(),
                        AddStepIdentifierIndexToSwiftTypeChecks(),
-                       CreateDayCount()
+                       CreateDayCount(),
+                       CreateDayBuildTime()
                        )
 
 

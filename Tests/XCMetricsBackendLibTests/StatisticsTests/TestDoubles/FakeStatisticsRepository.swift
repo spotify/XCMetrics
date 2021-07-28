@@ -24,9 +24,11 @@ import Fluent
 class FakeStatisticsRepository: StatisticsRepository {
 
     var dayCounts: [DayCount] = []
+    var dayBuildTimes: [DayBuildTime] = []
 
     init() {
         self.dayCounts = generateDayCounts()
+        self.dayBuildTimes = generateDayBuildTimes()
     }
 
     func getBuildStatuses(page: Int, per: Int, using eventLoop: EventLoop) -> EventLoopFuture<Page<BuildStatusResult>> {
@@ -59,7 +61,7 @@ class FakeStatisticsRepository: StatisticsRepository {
             return eventLoop.makeSucceededFuture(count)
         }
 
-        return eventLoop.makeSucceededFuture(DayCount(day: day.xcm_truncateTime(), builds: 0, errors: 0))
+        return eventLoop.makeSucceededFuture(DayCount(day: day.xcm_truncateTime()))
     }
 
     func getDayCounts(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayCount]> {
@@ -70,8 +72,35 @@ class FakeStatisticsRepository: StatisticsRepository {
         return eventLoop.makeSucceededFuture(counts)
     }
 
+    func createDayBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        self.dayBuildTimes.append(
+            DayBuildTime(day: day.xcm_truncateTime(), durationP50: 123, durationP95: 12345, totalDuration: 12345678)
+        )
+
+        return eventLoop.makeSucceededFuture(())
+    }
+
+    func getBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<DayBuildTime> {
+        let time = dayBuildTimes.first(where: { $0.id == day.xcm_truncateTime() })
+
+        if let time = time {
+            return eventLoop.makeSucceededFuture(time)
+        }
+
+        return eventLoop.makeSucceededFuture(DayBuildTime(day: day.xcm_truncateTime()))
+    }
+
+    func getDayBuildTimes(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayBuildTime]> {
+        let times = self.dayBuildTimes
+            .filter { $0.id! >= from.xcm_truncateTime() && $0.id! <= to.xcm_truncateTime() }
+            .reversed()
+            .map { $0 }
+        return eventLoop.makeSucceededFuture(times)
+    }
+
     func reset() {
         self.dayCounts = []
+        self.dayBuildTimes = []
     }
 
     // MARK: - Private Methods
@@ -79,6 +108,12 @@ class FakeStatisticsRepository: StatisticsRepository {
     func generateDayCounts() -> [DayCount] {
         return stride(from: 1, to: 30, by: 1).map {
             DayCount(day: Date().xcm_truncateTime().xcm_ago(days: $0)!, builds: 10, errors: 2)
+        }
+    }
+
+    func generateDayBuildTimes() -> [DayBuildTime] {
+        return stride(from: 1, to: 30, by: 1).map {
+            DayBuildTime(day: Date().xcm_truncateTime().xcm_ago(days: $0)!, durationP50: 123.45, durationP95: 234.56, totalDuration: 7890.12)
         }
     }
 }

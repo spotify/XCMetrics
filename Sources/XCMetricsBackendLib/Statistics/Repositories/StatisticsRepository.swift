@@ -48,4 +48,24 @@ public protocol StatisticsRepository {
     ///   - day: Date to calculate
     ///   - eventLoop: Eventloop to use
     func createDayCount(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<Void>
+
+    /// Fetches build times for a date range, sorted by date
+    /// - Parameters:
+    ///   - from: Start of date range, inclusive.
+    ///   - to: End of date range, inclusive.
+    ///   - eventLoop: Eventloop to use
+    func getDayBuildTimes(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayBuildTime]>
+
+    /// Calculates and returns build time information for a given day
+    /// - Parameters:
+    ///   - day: Date to calculate
+    ///   - eventLoop: Eventloop to use
+    func getBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<DayBuildTime>
+
+    /// Calculates and stores build time information for a given day
+    /// - Parameters:
+    ///   - day: Date to calculate
+    ///   - eventLoop: Eventloop to use
+    func createDayBuildTime(day: Date, using eventLoop: EventLoop) -> EventLoopFuture<Void>
+
 }

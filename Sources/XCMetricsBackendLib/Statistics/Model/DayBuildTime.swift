@@ -20,30 +20,41 @@
 import Vapor
 import Fluent
 
-public final class DayCount: DayData {
+public final class DayBuildTime: DayData {
 
-    public static let schema = "statistics_day_counts";
+    public static let schema = "statistics_day_build_time";
 
     @ID(custom: "day")
     public var id: Date?;
 
-    @Field(key: "build_count")
-    var builds: Int;
+    // Fields with suffix PX represent X-th percentiles
 
-    @Field(key: "error_count")
-    var errors: Int;
+    @Field(key: "duration_p50")
+    var durationP50: Double;
+
+    @Field(key: "duration_p95")
+    var durationP95: Double;
+
+    @Field(key: "total_duration")
+    var totalDuration: Double;
 
     public convenience init() {
         self.init(day: Date().xcm_truncateTime())
     }
 
     public convenience init(day: Date) {
-        self.init(day: day, builds: 0, errors: 0)
+        self.init(day: day, durationP50: 0, durationP95: 0, totalDuration: 0)
     }
 
-    init(day: Date, builds: Int = 0, errors: Int = 0) {
+    init(
+        day: Date,
+        durationP50: Double = 0,
+        durationP95: Double = 0,
+        totalDuration: Double = 0
+    ) {
         self.id = day;
-        self.builds = builds;
-        self.errors = errors;
+        self.durationP50 = durationP50;
+        self.durationP95 = durationP95;
+        self.totalDuration = totalDuration;
     }
 }

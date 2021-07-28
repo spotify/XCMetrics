@@ -17,33 +17,20 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Vapor
 import Fluent
 
-public final class DayCount: DayData {
-
-    public static let schema = "statistics_day_counts";
-
-    @ID(custom: "day")
-    public var id: Date?;
-
-    @Field(key: "build_count")
-    var builds: Int;
-
-    @Field(key: "error_count")
-    var errors: Int;
-
-    public convenience init() {
-        self.init(day: Date().xcm_truncateTime())
+struct CreateDayBuildTime: Migration {
+    // Adds a relation for DayBuildTime models
+    func prepare(on database: Database) -> EventLoopFuture<Void> {
+        database.schema(DayBuildTime.schema)
+            .field("day", .date, .identifier(auto: false))
+            .field("duration_p50", .double, .required)
+            .field("duration_p95", .double, .required)
+            .field("total_duration", .double, .required)
+            .create()
     }
 
-    public convenience init(day: Date) {
-        self.init(day: day, builds: 0, errors: 0)
-    }
-
-    init(day: Date, builds: Int = 0, errors: Int = 0) {
-        self.id = day;
-        self.builds = builds;
-        self.errors = errors;
+    func revert(on database: Database) -> EventLoopFuture<Void> {
+        return database.schema(DayBuildTime.schema).delete()
     }
 }
