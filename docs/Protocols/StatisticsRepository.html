@@ -17,7 +17,7 @@
       <div class="content-wrapper">
         <p>
           <a href="../index.html"> Docs</a>
-          <span class="no-mobile"> (67% documented)</span>
+          <span class="no-mobile"> (64% documented)</span>
         </p>
     
         <p class="header-right">
@@ -315,6 +315,192 @@
                       </section>
                     </div>
                   </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib20StatisticsRepositoryP16getDayBuildTimes4from2to5using3NIO15EventLoopFutureCySayAA0gH4TimeCGG10Foundation4DateV_AqH0nO0_ptF"></a>
+                      <a name="//apple_ref/swift/Method/getDayBuildTimes(from:to:using:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib20StatisticsRepositoryP16getDayBuildTimes4from2to5using3NIO15EventLoopFutureCySayAA0gH4TimeCGG10Foundation4DateV_AqH0nO0_ptF">getDayBuildTimes(from:<wbr>to:<wbr>using:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Fetches build times for a date range, sorted by date</p>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">getDayBuildTimes</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="kt">Date</span><span class="p">,</span> <span class="nv">to</span><span class="p">:</span> <span class="kt">Date</span><span class="p">,</span> <span class="n">using</span> <span class="nv">eventLoop</span><span class="p">:</span> <span class="kt">EventLoop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Classes/DayBuildTime.html">DayBuildTime</a></span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                        <div>
+                          <h4>Parameters</h4>
+                          <table class="graybox">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>from</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>Start of date range, inclusive.</p>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>to</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>End of date range, inclusive.</p>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>eventLoop</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>Eventloop to use</p>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib20StatisticsRepositoryP12getBuildTime3day5using3NIO15EventLoopFutureCyAA03DaygH0CG10Foundation4DateV_AG0lM0_ptF"></a>
+                      <a name="//apple_ref/swift/Method/getBuildTime(day:using:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib20StatisticsRepositoryP12getBuildTime3day5using3NIO15EventLoopFutureCyAA03DaygH0CG10Foundation4DateV_AG0lM0_ptF">getBuildTime(day:<wbr>using:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Calculates and returns build time information for a given day</p>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">getBuildTime</span><span class="p">(</span><span class="nv">day</span><span class="p">:</span> <span class="kt">Date</span><span class="p">,</span> <span class="n">using</span> <span class="nv">eventLoop</span><span class="p">:</span> <span class="kt">EventLoop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/DayBuildTime.html">DayBuildTime</a></span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                        <div>
+                          <h4>Parameters</h4>
+                          <table class="graybox">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>day</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>Date to calculate</p>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>eventLoop</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>Eventloop to use</p>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib20StatisticsRepositoryP18createDayBuildTime3day5using3NIO15EventLoopFutureCyytG10Foundation4DateV_AG0mN0_ptF"></a>
+                      <a name="//apple_ref/swift/Method/createDayBuildTime(day:using:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib20StatisticsRepositoryP18createDayBuildTime3day5using3NIO15EventLoopFutureCyytG10Foundation4DateV_AG0mN0_ptF">createDayBuildTime(day:<wbr>using:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Calculates and stores build time information for a given day</p>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createDayBuildTime</span><span class="p">(</span><span class="nv">day</span><span class="p">:</span> <span class="kt">Date</span><span class="p">,</span> <span class="n">using</span> <span class="nv">eventLoop</span><span class="p">:</span> <span class="kt">EventLoop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">EventLoopFuture</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
+
+                          </div>
+                        </div>
+                        <div>
+                          <h4>Parameters</h4>
+                          <table class="graybox">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>day</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>Date to calculate</p>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <code>
+                                  <em>eventLoop</em>
+                                  </code>
+                                </td>
+                                <td>
+                                  <div>
+                                    <p>Eventloop to use</p>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
                 </ul>
               </div>
             </section>
@@ -377,6 +563,9 @@
                   <a href="../Classes/BuildWarning.html">BuildWarning</a>
                 </li>
                 <li class="nav-group-task">
+                  <a href="../Classes/DayBuildTime.html">DayBuildTime</a>
+                </li>
+                <li class="nav-group-task">
                   <a href="../Classes/DayCount.html">DayCount</a>
                 </li>
                 <li class="nav-group-task">
@@ -424,6 +613,9 @@
             <li class="nav-group-name">
               <a href="../Other%20Protocols.html">Other Protocols</a>
               <ul class="nav-group-tasks">
+                <li class="nav-group-task">
+                  <a href="../Protocols/DayData.html">DayData</a>
+                </li>
                 <li class="nav-group-task">
                   <a href="../Protocols/StatisticsRepository.html">StatisticsRepository</a>
                 </li>
@@ -501,7 +693,7 @@
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-07-20)</p>
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external">Spotify</a>. All rights reserved. (Last updated: 2021-07-28)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.7</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </div>

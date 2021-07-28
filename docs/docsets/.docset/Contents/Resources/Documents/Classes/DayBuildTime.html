@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>BuildWarning Class Reference</title>
+    <title>DayBuildTime Class Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -11,8 +11,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Class/BuildWarning" class="dashAnchor"></a>
-    <a title="BuildWarning Class Reference"></a>
+    <a name="//apple_ref/swift/Class/DayBuildTime" class="dashAnchor"></a>
+    <a title="DayBuildTime Class Reference"></a>
     <header>
       <div class="content-wrapper">
         <p>
@@ -36,7 +36,7 @@
             <a href="../index.html"> Reference</a>
             <img id="carat" src="../img/carat.png" />
           </span>
-          BuildWarning Class Reference
+          DayBuildTime Class Reference
         </p>
       </div>
     </div>
@@ -45,11 +45,11 @@
         <article class="main-content">
           <section>
             <section class="section">
-              <h1>BuildWarning</h1>
+              <h1>DayBuildTime</h1>
                 <div class="declaration">
                   <div class="language">
                     
-                    <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">BuildWarning</span> <span class="p">:</span> <span class="kt">Model</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">PartitionedByDay</span></code></pre>
+                    <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DayBuildTime</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/DayData.html">DayData</a></span></code></pre>
 
                   </div>
                 </div>
@@ -62,9 +62,9 @@
                   <li class="item">
                     <div>
                       <code>
-                      <a name="/s:19XCMetricsBackendLib12BuildWarningC6schemaSSvpZ"></a>
+                      <a name="/s:19XCMetricsBackendLib12DayBuildTimeC6schemaSSvpZ"></a>
                       <a name="//apple_ref/swift/Variable/schema" class="dashAnchor"></a>
-                      <a class="token" href="#/s:19XCMetricsBackendLib12BuildWarningC6schemaSSvpZ">schema</a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib12DayBuildTimeC6schemaSSvpZ">schema</a>
                       </code>
                     </div>
                     <div class="height-container">
@@ -89,9 +89,9 @@
                   <li class="item">
                     <div>
                       <code>
-                      <a name="/s:19XCMetricsBackendLib12BuildWarningCACycfc"></a>
-                      <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
-                      <a class="token" href="#/s:19XCMetricsBackendLib12BuildWarningCACycfc">init()</a>
+                      <a name="/s:19XCMetricsBackendLib12DayBuildTimeC2id10Foundation4DateVSgvp"></a>
+                      <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib12DayBuildTimeC2id10Foundation4DateVSgvp">id</a>
                       </code>
                     </div>
                     <div class="height-container">
@@ -106,7 +106,8 @@
                           <h4>Declaration</h4>
                           <div class="language">
                             <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+                            <pre class="highlight swift"><code><span class="kd">@DayBuildTime</span>
+<span class="o">.</span><span class="kt">ID</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                           </div>
                         </div>
@@ -116,9 +117,9 @@
                   <li class="item">
                     <div>
                       <code>
-                      <a name="/s:19XCMetricsBackendLib12BuildWarningC2id10Foundation4UUIDVSgvp"></a>
-                      <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
-                      <a class="token" href="#/s:19XCMetricsBackendLib12BuildWarningC2id10Foundation4UUIDVSgvp">id</a>
+                      <a name="/s:19XCMetricsBackendLib12DayBuildTimeCACycfc"></a>
+                      <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib12DayBuildTimeCACycfc">init()</a>
                       </code>
                     </div>
                     <div class="height-container">
@@ -133,8 +134,34 @@
                           <h4>Declaration</h4>
                           <div class="language">
                             <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">@BuildWarning</span>
-<span class="o">.</span><span class="kt">ID</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <div>
+                      <code>
+                      <a name="/s:19XCMetricsBackendLib12DayBuildTimeC3dayAC10Foundation4DateV_tcfc"></a>
+                      <a name="//apple_ref/swift/Method/init(day:)" class="dashAnchor"></a>
+                      <a class="token" href="#/s:19XCMetricsBackendLib12DayBuildTimeC3dayAC10Foundation4DateV_tcfc">init(day:<wbr>)</a>
+                      </code>
+                    </div>
+                    <div class="height-container">
+                      <div class="pointer-container"></div>
+                      <section class="section">
+                        <div class="pointer"></div>
+                        <div class="abstract">
+                          <p>Undocumented</p>
+
+                        </div>
+                        <div class="declaration">
+                          <h4>Declaration</h4>
+                          <div class="language">
+                            <p class="aside-title">Swift</p>
+                            <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">(</span><span class="nv">day</span><span class="p">:</span> <span class="kt">Date</span><span class="p">)</span></code></pre>
 
                           </div>
                         </div>

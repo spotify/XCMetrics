@@ -239,6 +239,41 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayBuildTime.swift",
+      "line": 23,
+      "symbol": "DayBuildTime",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayBuildTime.swift",
+      "line": 25,
+      "symbol": "DayBuildTime.schema",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayBuildTime.swift",
+      "line": 28,
+      "symbol": "DayBuildTime.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayBuildTime.swift",
+      "line": 41,
+      "symbol": "DayBuildTime.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayBuildTime.swift",
+      "line": 45,
+      "symbol": "DayBuildTime.init(day:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
       "line": 23,
       "symbol": "DayCount",
@@ -263,6 +298,34 @@
       "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
       "line": 36,
       "symbol": "DayCount.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayCount.swift",
+      "line": 40,
+      "symbol": "DayCount.init(day:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayData.swift",
+      "line": 23,
+      "symbol": "DayData",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayData.swift",
+      "line": 25,
+      "symbol": "DayData.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsBackendLib/Statistics/Model/DayData.swift",
+      "line": 27,
+      "symbol": "DayData.init(day:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
