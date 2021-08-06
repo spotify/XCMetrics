@@ -321,6 +321,38 @@ footer {
   margin-bottom: 100px;
 }
 
+.screenshot-container {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.screenshot {
+  display: none;
+}
+
+.screenshot img {
+  height: 500px;
+}
+
+.screenshot div {
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: -30px;
+  width: 100%;
+  text-align: center;
+}
+
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
 @media only screen and (max-width: 700px) {
   body {
     font-size: 14px;
