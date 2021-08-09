@@ -111,8 +111,8 @@ public struct BuildController: RouteCollection {
     ///  ```
     ///
     ///  - Body Parameters
-    ///     - `from`. Optional. Lower limit creation date of the `Build`
-    ///     - `to`. Optional. Upper limit creation date of the `Build`
+    ///     - `from`. Lower limit creation date of the `Build`
+    ///     - `to`. Upper limit creation date of the `Build`
     ///     - `projectName`. Optional. Name of the project that was built
     ///     - `status`. Optional. Status of the `Build`. Possible values: `succeeded`, `failed` or `stopped`
     ///     - `page`. Optional. Page number to fetch. Default is `1`

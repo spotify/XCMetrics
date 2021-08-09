@@ -159,6 +159,34 @@
           </div>
         </div>
       </div>
+      <div class="info">
+        <div class="container">
+            <div class="info-item">
+              <h2>Backstage integration</h2>
+              <p>
+                The XCMetrics <a href="https://backstage.io">Backstage</a> plugin offers a powerful
+                web interface enabling you to get a visual overview and to dig deep into most of the
+                collected metrics.
+              </p>
+              <div class="screenshot-container">
+                <div class="screenshot fade">
+                  <img src="images/xcmetrics-backstage-overview.png" />
+                  <div>See everything at a glance</div>
+                </div>
+              
+                <div class="screenshot fade">
+                  <img src="images/xcmetrics-backstage-trends.png" />
+                  <div>Analyze trends</div>
+                </div>
+              
+                <div class="screenshot fade">
+                  <img src="images/xcmetrics-backstage-details.png" />
+                  <div>Dig into the details</div>
+                </div>
+              </div>
+            </div>
+          </div>  
+      </div>
     </main>
     <footer>
       <div class="footer-notice">
@@ -170,5 +198,23 @@
         <span class="footer-copyright">Copyright © 2021 Spotify AB</span>
       </div>
     </footer>
+    <script type="text/javascript">
+      var currentSlide = 0;
+
+      function slideShow() {
+        var slides = document.getElementsByClassName("screenshot");
+
+        for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+
+        slides[currentSlide].style.display = "block";
+
+        currentSlide = ((currentSlide + 1) % slides.length)
+        setTimeout(slideShow, 3000);
+      }
+      
+      slideShow();
+    </script>
   </body>
 </html>
