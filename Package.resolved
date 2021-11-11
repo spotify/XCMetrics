@@ -344,21 +344,21 @@
         }
       },
       {
-        "package": "SwiftPM",
-        "repositoryURL": "https://github.com/apple/swift-package-manager.git",
-        "state": {
-          "branch": null,
-          "revision": "235aacc514cb81a6881364b0fedcb3dd083228f3",
-          "version": "0.3.0"
-        }
-      },
-      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
           "branch": null,
           "revision": "0279688c9fc5a40028e1b5bb0cb56534a45a6020",
           "version": "1.12.0"
+        }
+      },
+      {
+        "package": "swift-tools-support-core",
+        "repositoryURL": "https://github.com/apple/swift-tools-support-core.git",
+        "state": {
+          "branch": null,
+          "revision": "3b6b97d612b56e25d80d0807f5bc38ea08b7bdf3",
+          "version": "0.2.3"
         }
       },
       {

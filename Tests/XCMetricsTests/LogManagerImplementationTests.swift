@@ -18,8 +18,8 @@
 // under the License.
 
 import XCTest
-import Basic
-import Utility
+import TSCBasic
+import TSCUtility
 @testable import XCMetricsClient
 
 class LogManagerImplementationTests: XCTestCase {
@@ -341,8 +341,8 @@ class LogManagerImplementationTests: XCTestCase {
     }
 
     func testLogsToUploadRetrieval() throws {
-        let log1 = try! TemporaryFile(prefix: "log1", suffix: ".xcactivitylog")
-        let log2 = try! TemporaryFile(prefix: "log2", suffix: ".xcactivitylog")
+        let log1 = try! TemporaryFile.newFile(prefix: "log1", suffix: ".xcactivitylog")
+        let log2 = try! TemporaryFile.newFile(prefix: "log2", suffix: ".xcactivitylog")
         let log1UploadRequestURL = writeUploadBuildMetricsRequest(at: log1.url)
         let log2UploadRequestURL = writeUploadBuildMetricsRequest(at: log2.url)
         mockFileAccessor.entriesOfDirectoryToReturn = [
