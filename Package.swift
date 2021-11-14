@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/spotify/xclogparser", from: "0.2.28"),
-        .package(url: "https://github.com/apple/swift-package-manager.git", .exact("0.3.0")),
+        .package(url: "https://github.com/apple/swift-tools-support-core.git", .exact("0.2.3")),
         .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.9")),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.23.0"),
         .package(url: "https://github.com/apple/swift-nio-http2.git", from: "1.15.0"),
@@ -95,7 +95,7 @@ let package = Package(
         .target(name: "XCMetricsBackend", dependencies: [.target(name: "XCMetricsBackendLib")]),
         .testTarget(
             name: "XCMetricsTests",
-            dependencies: ["XCMetricsClient", "XCMetricsProto", "MobiusTest", .product(name: "Utility", package: "SwiftPM")]
+            dependencies: ["XCMetricsClient", "XCMetricsProto", "MobiusTest", "SwiftToolsSupport"]
         ),
         .testTarget(
             name: "XCMetricsPluginsTests",

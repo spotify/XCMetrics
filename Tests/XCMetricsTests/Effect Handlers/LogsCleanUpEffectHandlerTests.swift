@@ -17,10 +17,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
 import MobiusCore
 import MobiusTest
-import Utility
+import TSCBasic
+import TSCUtility
 import XCTest
 @testable import XCMetricsClient
 
@@ -30,14 +30,14 @@ final class UploadedLogTaggerEffectHandlerTests: XCTestCase {
 
         var evictedLogsURL: Set<URL> {
             return Set(evictedLogs.map {
-                URL(fileURLWithPath: $0.path.asString)
+                URL(fileURLWithPath: $0.path.pathString)
             })
         }
 
         private let evictedLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log20", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log30", suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log20", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log30", suffix: ".xcactivitylog")
         )
 
         func retrieveXcodeLogs(in buildDirectory: String, timeout: Int) throws -> (currentLog: URL?, otherLogs: Set<URL>) {

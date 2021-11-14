@@ -17,9 +17,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
 import MobiusCore
-import Utility
+import TSCBasic
+import TSCUtility
 import XCTest
 @testable import XCMetricsClient
 
@@ -30,33 +30,33 @@ final class LogsFinderEffectHandlerTests: XCTestCase {
     struct MockLogManager: LogManager {
         var xcodeLogsURL: Set<URL> {
             return Set(xcodeLogs.map {
-                URL(fileURLWithPath: $0.path.asString)
+                URL(fileURLWithPath: $0.path.pathString)
             })
         }
 
         var lastXcodeLogURL: URL? {
-            return URL(fileURLWithPath: lastXcodeLog.path.asString)
+            return URL(fileURLWithPath: lastXcodeLog.path.pathString)
         }
 
         var cachedLogsURL: Set<URL> {
             return Set(cachedLogs.map {
-                URL(fileURLWithPath: $0.path.asString)
+                URL(fileURLWithPath: $0.path.pathString)
             })
         }
 
         private let xcodeLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log1", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log2", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log3", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log4", suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: "log1", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log2", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log3", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log4", suffix: ".xcactivitylog")
         )
 
-        private var lastXcodeLog = try! TemporaryFile(prefix: "log5", suffix: ".xcactivitylog")
+        private var lastXcodeLog = try! TemporaryFile.newFile(prefix: "log5", suffix: ".xcactivitylog")
 
         private let cachedLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log20", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log30", suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log20", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log30", suffix: ".xcactivitylog")
         )
 
         func retrieveXcodeLogs(in buildDirectory: String, timeout: Int) throws -> (currentLog: URL?, otherLogs: Set<URL>) {

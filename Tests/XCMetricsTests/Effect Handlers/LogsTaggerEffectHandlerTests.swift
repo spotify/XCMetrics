@@ -17,10 +17,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
 import MobiusCore
 import MobiusTest
-import Utility
+import TSCBasic
+import TSCUtility
 import XCTest
 @testable import XCMetricsClient
 
@@ -84,8 +84,8 @@ final class LogsTaggerEffectHandlerTests: XCTestCase {
         super.setUp()
 
         uploadedLogs = [
-            try! TemporaryFile(prefix: UUID().uuidString, suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: UUID().uuidString, suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: UUID().uuidString, suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: UUID().uuidString, suffix: ".xcactivitylog")
         ]
 
         uploadedTaggedLogs = [

@@ -17,12 +17,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
-import Utility
+import TSCBasic
+import TSCUtility
 
 extension TemporaryFile {
 
     var url: URL {
-        return URL(fileURLWithPath: self.path.asString)
+        return URL(fileURLWithPath: self.path.pathString)
+    }
+
+    static func newFile(prefix: String, suffix: String) throws -> Self {
+        return try withTemporaryFile(dir: nil, prefix: prefix, suffix: suffix, deleteOnClose: false) { return $0 }
     }
 }
