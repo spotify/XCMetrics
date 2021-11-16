@@ -12,13 +12,11 @@ struct MetricsProcessor {
         let isCI = metricsRequest.extraInfo.isCI
         return try LogParser.parseFromURL(
             logFile.localURL,
+            metricsRequest: metricsRequest,
             machineName: machineName,
-            projectName: metricsRequest.extraInfo.projectName,
             userId: userId,
             userIdSHA256: userIdSHA256,
-            isCI: isCI,
-            sleepTime: metricsRequest.extraInfo.sleepTime,
-            skipNotes: metricsRequest.extraInfo.skipNotes
+            isCI: isCI
         )
     }
 
