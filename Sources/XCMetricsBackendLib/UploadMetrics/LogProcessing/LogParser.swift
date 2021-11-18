@@ -80,7 +80,7 @@ struct LogParser {
         build.projectName = projectName
         build.userid = userId
         build.userid256 = userIdSHA256
-        build.tag = ""
+        build.tag = metricsRequest.extraInfo.tag
         build.isCi = isCI
 
         if let sleepTime = sleepTime {
