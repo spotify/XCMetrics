@@ -40,17 +40,22 @@ public final class UploadRequestExtraInfo: Codable {
     /// while providing little value
     public let skipNotes: Bool?
 
+    /// Build tag
+    public let tag: String
+
     public init(projectName: String,
                 machineName: String,
                 user: String,
                 isCI: Bool,
                 sleepTime: Int?,
-                skipNotes: Bool?) {
+                skipNotes: Bool?,
+                tag: String) {
         self.projectName = projectName
         self.machineName = machineName
         self.user = user
         self.isCI = isCI
         self.sleepTime = sleepTime
         self.skipNotes = skipNotes
+        self.tag = tag
     }
 }
