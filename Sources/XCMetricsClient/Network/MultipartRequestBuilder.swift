@@ -85,11 +85,12 @@ class MultipartRequestBuilder {
         let user = MacOSUsernameReader().userID ?? "unknown"
         let sleepTime = HardwareFactsFetcherImplementation().sleepTime
         let extraInfo = UploadRequestExtraInfo(projectName: projectName,
-                                                machineName: machineName,
-                                                user: user,
-                                                isCI: isCI,
-                                                sleepTime: sleepTime,
-                                                skipNotes: skipNotes)
+                                               machineName: machineName,
+                                               user: user,
+                                               isCI: isCI,
+                                               sleepTime: sleepTime,
+                                               skipNotes: skipNotes,
+                                               tag: request.request.build.tag)
         let extraJson = try jsonEncoder.encode(extraInfo)
         if let extraData = toJSONFormField(named: "extraInfo", jsonData: extraJson, using: boundary) {
           httpBody.append(extraData)
