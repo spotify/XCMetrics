@@ -51,7 +51,9 @@ class XCMetricsArgumentTests: XCTestCase {
             "--authorizationKey",
             "Authorization",
             "--authorizationValue",
-            "Bearer XXXXXXXXXXXXXXX"
+            "Bearer XXXXXXXXXXXXXXX",
+            "--truncateLargeIssues",
+            "true",
         ]))
 
         XCTAssertNoThrow(try XCMetrics.parse([

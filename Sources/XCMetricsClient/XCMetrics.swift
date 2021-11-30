@@ -73,6 +73,7 @@ struct Command {
     let isCI: Bool
     let skipNotes: Bool
     let additionalHeaders: [String: String]
+    let truncLargeIssues: Bool
 }
 
 
@@ -117,6 +118,11 @@ public struct XCMetrics: ParsableCommand {
     /// An optional authorization/token header **value** to be included in the upload request. Must be used in conjunction with `authorizationKey.`
     @Option(name: [.customLong("authorizationValue"), .customShort("a")], help: "An optional authorization header value to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc. Must be used in conjunction with `authorizationKey`")
     public var authorizationValue: String?
+
+    /// If an individual task have more than a 100 issues (Warnings, Notes and/or Errors) this flag will instruct the parser to
+    /// truncate them to a 100. This is useful to fix memory issues in the backend and speed up log processing.
+    @Option(name: [.customLong("truncateLargeIssues")], help: "If a task have more than a 100 issues (Warnings, Notes and/or Errors), the parser will truncate them to a 100")
+    public var truncLargeIssues: Bool = false
 
     private static let loop = XCMetricsLoop()
 
@@ -198,7 +204,8 @@ public struct XCMetrics: ParsableCommand {
             skipNotes: skipNotes,
             additionalHeaders: authorization.map { (key, value) in
                 [key: value]
-            } ?? [:]
+            } ?? [:],
+            truncLargeIssues: truncLargeIssues
         )
         return command
     }

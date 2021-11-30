@@ -52,7 +52,9 @@ struct LogParser {
         let activityLog = try ActivityParser().parseActivityLogInURL(url, redacted: true, withoutBuildSpecificInformation: true)
         let buildSteps = try ParserBuildSteps(machineName: machineName,
                                               omitWarningsDetails: false,
-                                              omitNotesDetails: metricsRequest.extraInfo.skipNotes ?? false)
+                                              omitNotesDetails: metricsRequest.extraInfo.skipNotes ?? false,
+                                              truncLargeIssues: metricsRequest.extraInfo.truncLargeIssues ?? false
+        )
             .parse(activityLog: activityLog)
             .flatten()
         return toBuildMetrics(

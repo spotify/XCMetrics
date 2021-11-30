@@ -88,6 +88,7 @@ enum MetricsUploaderLogic {
                 projectName: model.projectName,
                 isCI: model.isCI,
                 skipNotes: model.skipNotes,
+                truncLargeIssues: model.truncLargeIssues,
                 logs: uploadRequests
             ))
         }
@@ -103,6 +104,7 @@ enum MetricsUploaderLogic {
                 projectName: model.projectName,
                 isCI: model.isCI,
                 skipNotes: model.skipNotes,
+                truncLargeIssues: model.truncLargeIssues,
                 logs: updatedModel.parsedRequests
             )])
         }
@@ -122,6 +124,7 @@ enum MetricsUploaderLogic {
                 projectName: model.projectName,
                 isCI: model.isCI,
                 skipNotes: model.skipNotes,
+                truncLargeIssues: model.truncLargeIssues,
                 logs: updatedModel.parsedRequests
             )
         ])

@@ -36,7 +36,8 @@ enum ControllerFactory {
             timeout: command.timeout,
             isCI: command.isCI,
             plugins: plugins,
-            skipNotes: command.skipNotes
+            skipNotes: command.skipNotes,
+            truncLargeIssues: command.truncLargeIssues
         )
         let initEffect = MetricsUploaderEffect.findLogs(buildDirectory: model.buildDirectory, timeout: model.timeout)
         let logManager = LogManagerImplementation(projectName: model.projectName)

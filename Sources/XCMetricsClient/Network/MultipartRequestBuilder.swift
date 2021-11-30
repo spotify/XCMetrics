@@ -32,6 +32,7 @@ class MultipartRequestBuilder {
     public let projectName: String
     public let isCI: Bool
     public let skipNotes: Bool
+    public let truncLargeIssues: Bool
 
     public init(request: MetricsUploadRequest,
                 url: URL,
@@ -39,7 +40,8 @@ class MultipartRequestBuilder {
                 machineName: String,
                 projectName: String,
                 isCI: Bool,
-                skipNotes: Bool) {
+                skipNotes: Bool,
+                truncLargeIssues: Bool) {
         self.request = request
         self.url = url
         self.additionalHeaders = additionalHeaders
@@ -47,6 +49,7 @@ class MultipartRequestBuilder {
         self.projectName = projectName
         self.isCI = isCI
         self.skipNotes = skipNotes
+        self.truncLargeIssues = truncLargeIssues
     }
 
     public func build() throws -> URLRequest {
@@ -90,7 +93,8 @@ class MultipartRequestBuilder {
                                                isCI: isCI,
                                                sleepTime: sleepTime,
                                                skipNotes: skipNotes,
-                                               tag: request.request.build.tag)
+                                               tag: request.request.build.tag,
+                                               truncLargeIssues: truncLargeIssues)
         let extraJson = try jsonEncoder.encode(extraInfo)
         if let extraData = toJSONFormField(named: "extraInfo", jsonData: extraJson, using: boundary) {
           httpBody.append(extraData)
