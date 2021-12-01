@@ -41,7 +41,11 @@ public final class UploadRequestExtraInfo: Codable {
     public let skipNotes: Bool?
 
     /// Build tag
-    public let tag: String
+    public let tag: String?
+
+    /// If true, individual tasks with more than a 100 issues (Warnings, Notes, Errors) will be truncated
+    /// to have only 100. This is useful to fix memory issues and speed up log processing.
+    public let truncLargeIssues: Bool?
 
     public init(projectName: String,
                 machineName: String,
@@ -49,7 +53,8 @@ public final class UploadRequestExtraInfo: Codable {
                 isCI: Bool,
                 sleepTime: Int?,
                 skipNotes: Bool?,
-                tag: String) {
+                tag: String?,
+                truncLargeIssues: Bool?) {
         self.projectName = projectName
         self.machineName = machineName
         self.user = user
@@ -57,5 +62,6 @@ public final class UploadRequestExtraInfo: Codable {
         self.sleepTime = sleepTime
         self.skipNotes = skipNotes
         self.tag = tag
+        self.truncLargeIssues = truncLargeIssues
     }
 }

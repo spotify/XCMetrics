@@ -73,10 +73,8 @@ class ProcessMetricsJob: Job {
                 promise.fail(error)
                 return
             }
-
-            let metricsWithRequestData = self.addBuildRequest(buildMetrics: buildMetrics, payload: payload)
             logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log parsed \(payload.logURL)")
-            _ = self.metricsRepository.insertBuildMetrics(metricsWithRequestData, using: eventLoop)
+            _ = self.metricsRepository.insertBuildMetrics(buildMetrics, using: eventLoop)
                 .flatMapAlways { (result) -> EventLoopFuture<Void> in
                     var wasProcessed: Bool = false
                     switch result {
@@ -98,15 +96,6 @@ class ProcessMetricsJob: Job {
                 }
         }
         return promise.futureResult
-    }
-
-    private func addBuildRequest(buildMetrics: BuildMetrics, payload: UploadMetricsRequest) -> BuildMetrics {
-        guard let buildIdentifier = buildMetrics.build.id else {
-            return buildMetrics
-        }
-        return buildMetrics.withHost(payload.buildHost.withBuildIdentifier(buildIdentifier))
-            .withBuildMetadata(payload.buildMetadata?.withBuildIdentifier(buildIdentifier))
-            .withXcodeVersion(payload.xcodeVersion?.withBuildIdentifier(buildIdentifier))
     }
 
     private func removeLocalLog(_ log: LogFile,

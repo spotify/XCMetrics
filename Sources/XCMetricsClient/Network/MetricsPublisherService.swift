@@ -39,6 +39,7 @@ protocol MetricsPublisherService {
         projectName: String,
         isCI: Bool,
         skipNotes: Bool,
+        truncLargeIssues: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
         completion: @escaping (_ successfulURLs: Set<URL>, _ failedURLs: [URL: Data]) -> Void
     )

@@ -30,7 +30,13 @@ struct UploadMetricsEffectHandler: EffectHandler {
         self.metricsPublisher = metricsPublisher
     }
 
-    func handle(_ effectParameters: (serviceURL: URL, additionalHeaders: [String: String], projectName: String, isCI: Bool, skipNotes: Bool, logs: Set<MetricsUploadRequest>), _ callback: EffectCallback<MetricsUploaderEvent>) -> Disposable {
+    func handle(_ effectParameters: (serviceURL: URL,
+                                     additionalHeaders: [String: String],
+                                     projectName: String,
+                                     isCI: Bool,
+                                     skipNotes: Bool,
+                                     truncLargeIssues: Bool,
+                                     logs: Set<MetricsUploadRequest>), _ callback: EffectCallback<MetricsUploaderEvent>) -> Disposable {
         log("Started uploading metrics.")
         metricsPublisher.uploadMetrics(
             serviceURL: effectParameters.serviceURL,
@@ -38,6 +44,7 @@ struct UploadMetricsEffectHandler: EffectHandler {
             projectName: effectParameters.projectName,
             isCI: effectParameters.isCI,
             skipNotes: effectParameters.skipNotes,
+            truncLargeIssues: effectParameters.truncLargeIssues,
             uploadRequests: effectParameters.logs
         ) { successfulURLs, failedURLs in
             callback.end(with: [

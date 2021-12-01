@@ -101,23 +101,11 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
         }
     }
 
-    struct MockLogParser: LogParser {
-        func parseBuildSteps(_ buildSteps: [BuildStep], projectName: String, isCI: Bool, userID: String) -> UploadBuildMetricsRequest {
-            return UploadBuildMetricsRequest()
-        }
-
-        let metricsRequest = try! UploadBuildMetricsRequest(jsonString: "{}")
-        func parseLog(at logURL: URL, projectName: String, isCI: Bool, userID: String, completion: @escaping (Swift.Result<UploadBuildMetricsRequest, Error>) -> Void) {
-            completion(.success(metricsRequest))
-        }
-    }
-
     private var effectHandler: CacheLogsEffectHandler!
     private var effectCallback: EffectCallback<MetricsUploaderEvent>!
     private var send: ((MetricsUploaderEvent) -> Void)?
 
     private var mockLogManager = MockLogManager()
-    private var mockLogParser = MockLogParser()
 
     override func setUp() {
         super.setUp()

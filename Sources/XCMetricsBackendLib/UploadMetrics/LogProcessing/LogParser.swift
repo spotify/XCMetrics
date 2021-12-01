@@ -52,7 +52,9 @@ struct LogParser {
         let activityLog = try ActivityParser().parseActivityLogInURL(url, redacted: true, withoutBuildSpecificInformation: true)
         let buildSteps = try ParserBuildSteps(machineName: machineName,
                                               omitWarningsDetails: false,
-                                              omitNotesDetails: metricsRequest.extraInfo.skipNotes ?? false)
+                                              omitNotesDetails: metricsRequest.extraInfo.skipNotes ?? false,
+                                              truncLargeIssues: metricsRequest.extraInfo.truncLargeIssues ?? false
+        )
             .parse(activityLog: activityLog)
             .flatten()
         return toBuildMetrics(
@@ -77,7 +79,7 @@ struct LogParser {
         build.projectName = metricsRequest.extraInfo.projectName
         build.userid = userId
         build.userid256 = userIdSHA256
-        build.tag = metricsRequest.extraInfo.tag
+        build.tag = metricsRequest.extraInfo.tag ?? ""
         build.isCi = isCI
 
         if let sleepTime = metricsRequest.extraInfo.sleepTime {
