@@ -13,6 +13,7 @@ You can pass the setting of those servers as Environment Variables:
 - **`REDIS_HOST`** IP of the Redis server. Example: `127.0.0.1`
 - **`REDIS_PORT`** Port of the Redis server. Example: `6379`
 - **`REDIS_PASSWORD`** Password for the Redis server. The default value is nil (unset).
+- **`REDIS_CONNECTION_TIMEOUT`** Number of seconds to timeout the connection to Redis. The default value is `3`.
 - **`DB_HOST`** PostgreSQL host. The default value is `localhost`
 - **`DB_PORT`** PostgreSQL port. The default value is `5036`
 - **`DB_USER`** PostgreSQL user. The default value is `xcmetrics-dev`
@@ -251,6 +252,12 @@ kubectl create -f xcmetrics-jobs-deployment.yaml
 kubectl create -f xcmetrics-jobs-service.yaml
 ```
 
+If you want to use our [Web UI for Backstage](https://github.com/backstage/backstage/tree/master/plugins/xcmetrics), deploy the Scheduled Jobs:
+```shell
+kubectl create -f xcmetrics-scheduled-jobs-deployment.yaml
+kubectl create -f xcmetrics-scheduled-jobs-service.yaml
+```
+
 ### 6. Verify the deployment
 
 Run the command `kubectl get services`. You should get the list of the Services deployed and the External IP for the XCMetrics Backend:
@@ -260,6 +267,7 @@ NAME               TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        A
 kubernetes         ClusterIP      10.12.0.1     <none>          443/TCP        5h4m
 redis              ClusterIP      10.12.10.21   <none>          6379/TCP       139m
 xcmetrics-jobs     ClusterIP      10.12.1.144   <none>          80/TCP         116m
+xcmetrics-scheduled-jobs     ClusterIP      10.12.1.124   <none>          80/TCP         116m
 xcmetrics-server   LoadBalancer   10.12.5.86    35.187.83.33   80:30969/TCP   139m
 ```
 

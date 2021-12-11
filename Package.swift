@@ -104,6 +104,7 @@ let package = Package(
         .testTarget(name: "XCMetricsBackendLibTests", dependencies: [
             .target(name: "XCMetricsBackendLib"),
             .product(name: "XCTVapor", package: "vapor"),
+            .product(name: "XCTQueues", package: "queues")
         ]),
     ]
 )

@@ -17,17 +17,26 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Foundation
+import Vapor
 import Queues
 
-final class HealthCheckJob: Job {
+protocol JobHealthChecker {
+    func check() -> EventLoopFuture<HTTPStatus>
+}
 
-    typealias Payload = String
+final class JobHealthCheckerImpl: JobHealthChecker {
 
-    func dequeue(_ context: QueueContext, _ payload: String) -> EventLoopFuture<Void> {
-        let eventLoop = context.application.eventLoopGroup.next()
-        let promise = eventLoop.makePromise(of: Void.self)
-        return promise.futureResult
+    let queue: Queue
+
+    init(queue: Queue) {
+        self.queue = queue
+    }
+
+    func check() -> EventLoopFuture<HTTPStatus> {
+        return queue.dispatch(HealthCheckJob.self,
+                              "PING",
+                              maxRetryCount: 1)
+        .transform(to: HTTPStatus.ok)
     }
 
 }

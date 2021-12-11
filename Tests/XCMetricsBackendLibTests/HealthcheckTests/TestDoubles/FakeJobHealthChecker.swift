@@ -17,17 +17,32 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Foundation
+@testable import XCMetricsBackendLib
+
+import Vapor
 import Queues
 
-final class HealthCheckJob: Job {
+enum JobHealthCheckerFakeError: Error {
+    case error(String)
+}
 
-    typealias Payload = String
+final class JobHealthCheckerFake: JobHealthChecker {
 
-    func dequeue(_ context: QueueContext, _ payload: String) -> EventLoopFuture<Void> {
-        let eventLoop = context.application.eventLoopGroup.next()
-        let promise = eventLoop.makePromise(of: Void.self)
-        return promise.futureResult
+    var returnError: Bool
+
+    var eventLoop: EventLoop
+
+    init(returnError: Bool, eventLoop: EventLoop) {
+        self.returnError = returnError
+        self.eventLoop = eventLoop
+    }
+
+    func check() -> EventLoopFuture<HTTPStatus> {
+        if returnError {
+            return eventLoop.makeFailedFuture(JobHealthCheckerFakeError.error("Error connecting to Redis"))
+        } else {
+            return eventLoop.makeSucceededFuture(HTTPStatus.ok)
+        }
     }
 
 }

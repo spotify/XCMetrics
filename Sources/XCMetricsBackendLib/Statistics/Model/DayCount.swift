@@ -41,7 +41,7 @@ public final class DayCount: DayData {
         self.init(day: day, builds: 0, errors: 0)
     }
 
-    init(day: Date, builds: Int = 0, errors: Int = 0) {
+    init(day: Date, builds: Int = 0, errors: Int = 0) {        
         self.id = day;
         self.builds = builds;
         self.errors = errors;

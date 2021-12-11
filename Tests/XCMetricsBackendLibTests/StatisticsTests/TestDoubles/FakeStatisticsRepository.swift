@@ -66,9 +66,12 @@ class FakeStatisticsRepository: StatisticsRepository {
 
     func getDayCounts(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayCount]> {
         let counts = self.dayCounts
-            .filter { $0.id! >= from.xcm_truncateTime() && $0.id! <= to.xcm_truncateTime() }
+            .filter {
+                 $0.id! >= from.xcm_truncateTime() && $0.id! <= to.xcm_truncateTime()
+            }
             .reversed()
             .map { $0 }
+
         return eventLoop.makeSucceededFuture(counts)
     }
 
@@ -106,13 +109,13 @@ class FakeStatisticsRepository: StatisticsRepository {
     // MARK: - Private Methods
 
     func generateDayCounts() -> [DayCount] {
-        return stride(from: 1, to: 30, by: 1).map {
-            DayCount(day: Date().xcm_truncateTime().xcm_ago(days: $0)!, builds: 10, errors: 2)
+        return stride(from: 0, to: 29, by: 1).map {
+            return DayCount(day: Date().xcm_truncateTime().xcm_ago(days: $0)!, builds: 10, errors: 2)
         }
     }
 
     func generateDayBuildTimes() -> [DayBuildTime] {
-        return stride(from: 1, to: 30, by: 1).map {
+        return stride(from: 0, to: 29, by: 1).map {
             DayBuildTime(day: Date().xcm_truncateTime().xcm_ago(days: $0)!, durationP50: 123.45, durationP95: 234.56, totalDuration: 7890.12)
         }
     }

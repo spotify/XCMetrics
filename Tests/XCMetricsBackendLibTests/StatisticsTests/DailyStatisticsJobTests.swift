@@ -24,6 +24,7 @@ final class DailyStatisticsJobTests: XCTestCase {
     func testCreatesDailyCount() throws {
         let app = Application(.testing)
         defer { app.shutdown() }
+        app.queues.use(.test)
         try configure(app)
         let repository = FakeStatisticsRepository();
         repository.reset()
