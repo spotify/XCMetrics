@@ -31,14 +31,13 @@ final class StatisticsControllerTests: XCTestCase {
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }
 
-        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 13)!
+        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 14)!
         let lastDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!.xcm_truncateTime()
 
         try app.test(.GET, "v1/statistics/build/count?days=14", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             let dayCounts = try res.content.decode([DayCount].self)
-            dayCounts.forEach { print($0) }
-            XCTAssertEqual(dayCounts.count, 14)
+            XCTAssertEqual(dayCounts.count, 15)
             XCTAssertEqual(dayCounts.first!.id, firstDay)
             XCTAssertEqual(dayCounts.last!.id, lastDay)
         })
@@ -61,13 +60,13 @@ final class StatisticsControllerTests: XCTestCase {
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }
 
-        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 13)! // Since today is supposed to be included
+        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 14)! // Since today is supposed to be included
         let lastDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!.xcm_truncateTime()
 
         try app.test(.GET, "v1/statistics/build/time?days=14", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             let dayCounts = try res.content.decode([DayBuildTime].self)
-            XCTAssertEqual(dayCounts.count, 14)
+            XCTAssertEqual(dayCounts.count, 15)
             XCTAssertEqual(dayCounts.first!.id, firstDay)
             XCTAssertEqual(dayCounts.last!.id, lastDay)
         })

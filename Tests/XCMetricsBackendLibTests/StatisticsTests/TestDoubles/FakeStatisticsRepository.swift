@@ -95,7 +95,10 @@ class FakeStatisticsRepository: StatisticsRepository {
 
     func getDayBuildTimes(from: Date, to: Date, using eventLoop: EventLoop) -> EventLoopFuture<[DayBuildTime]> {
         let times = self.dayBuildTimes
-            .filter { $0.id! >= from.xcm_truncateTime() && $0.id! <= to.xcm_truncateTime() }
+            .filter { $0.id!.timeIntervalSince1970 >=
+                from.xcm_truncateTime().timeIntervalSince1970
+                && $0.id!.timeIntervalSince1970 <=
+                to.xcm_truncateTime().timeIntervalSince1970 }
             .reversed()
             .map { $0 }
         return eventLoop.makeSucceededFuture(times)

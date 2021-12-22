@@ -141,8 +141,8 @@ public struct StatisticsController: RouteCollection {
         guard let days = Int(req.query["days"] ?? "") else { throw Abort(.badRequest) }
         guard days > 0 else { throw Abort(.badRequest) }
 
-        let from = Calendar.current.date(byAdding: .day, value: -days + 1, to: Date())!
-        let to = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        let from = Calendar.current.date(byAdding: .day, value: -days + 1, to: Date())!.xcm_truncateTime()
+        let to = Date().xcm_truncateTime()
 
         return (from, to)
     }
