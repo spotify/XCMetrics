@@ -26,16 +26,21 @@ struct CacheLogsEffectHandler: EffectHandler {
 
     private let logManager: LogManager
     private let logCopyRetries = 5
+    private let uploadCurrentLogOnly: Bool
 
-    init(logManager: LogManager) {
+    init(logManager: LogManager, uploadCurrentLogOnly: Bool) {
         self.logManager = logManager
+        self.uploadCurrentLogOnly = uploadCurrentLogOnly
     }
 
     func handle(_ effectParameters: (currentLog: URL?, previousLogs: Set<URL>, cachedLogs: Set<URL>, projectName: String),
                 _ callback: EffectCallback<MetricsUploaderEvent>) -> Disposable {
         do {
-            // Cache other logs that Xcode produced.
-            var cachedLogsURLs = try logManager.cacheLogs(effectParameters.previousLogs, cachedLogs: effectParameters.cachedLogs, retries: 0)
+            var cachedLogsURLs: Set<URL> = []
+            if (!uploadCurrentLogOnly) {
+              // Cache other logs that Xcode produced.
+              cachedLogsURLs = try logManager.cacheLogs(effectParameters.previousLogs, cachedLogs: effectParameters.cachedLogs, retries: 0)
+            }
             // Cache currentLog separately, to keep track of its cached location.
             var cachedCurrentLogURLs: Set<URL> = []
             if let currentLog = effectParameters.currentLog {

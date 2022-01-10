@@ -37,14 +37,15 @@ enum ControllerFactory {
             isCI: command.isCI,
             plugins: plugins,
             skipNotes: command.skipNotes,
-            truncLargeIssues: command.truncLargeIssues
+            truncLargeIssues: command.truncLargeIssues,
+            uploadCurrentLogOnly: command.uploadCurrentLogOnly
         )
         let initEffect = MetricsUploaderEffect.findLogs(buildDirectory: model.buildDirectory, timeout: model.timeout)
         let logManager = LogManagerImplementation(projectName: model.projectName)
 
         let effectRouter = EffectRouter<MetricsUploaderEffect, MetricsUploaderEvent>()
             .routeCase(MetricsUploaderEffect.findLogs).to(LogsFinderEffectHandler(logManager: logManager))
-            .routeCase(MetricsUploaderEffect.cacheLogs).to(CacheLogsEffectHandler(logManager: logManager))
+            .routeCase(MetricsUploaderEffect.cacheLogs).to(CacheLogsEffectHandler(logManager: logManager, uploadCurrentLogOnly: command.uploadCurrentLogOnly))
             .routeCase(MetricsUploaderEffect.appendMetadata).to(AddMetadataEffectHandler())
             .routeCase(MetricsUploaderEffect.executePlugins).to(ExecutePluginsEffectHandler())
             .routeCase(MetricsUploaderEffect.uploadLogs).to(UploadMetricsEffectHandler())

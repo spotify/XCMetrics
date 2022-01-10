@@ -36,7 +36,8 @@ extension MetricsUploaderModel {
             parsedRequests: parsedRequests ?? self.parsedRequests,
             awaitingParsingLogResponses: awaitingParsingLogResponses ?? self.awaitingParsingResultsCount,
             skipNotes: self.skipNotes,
-            truncLargeIssues: self.truncLargeIssues
+            truncLargeIssues: self.truncLargeIssues,
+            uploadCurrentLogOnly: self.uploadCurrentLogOnly
         )
     }
 }

@@ -45,7 +45,9 @@ struct MetricsUploaderModel: Equatable, Hashable {
     /// If true, the Notes found in the log won't be inserted into the database
     let skipNotes: Bool
     /// If true, individual tasks with more than 100 issues, will get their issues truncated to a 100
-    let truncLargeIssues:Bool
+    let truncLargeIssues: Bool
+    /// If true, only the current log will be uploaded if it's found. If it isn't found no logs will be uploaded.
+    let uploadCurrentLogOnly: Bool
 
     init(
         buildDirectory: String,
@@ -58,7 +60,8 @@ struct MetricsUploaderModel: Equatable, Hashable {
         parsedRequests: Set<MetricsUploadRequest> = Set(),
         awaitingParsingLogResponses: Int = 0,
         skipNotes: Bool = false,
-        truncLargeIssues: Bool
+        truncLargeIssues: Bool,
+        uploadCurrentLogOnly: Bool
     ) {
         self.buildDirectory = buildDirectory
         self.projectName = projectName
@@ -71,6 +74,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         self.awaitingParsingResultsCount = awaitingParsingLogResponses
         self.skipNotes = skipNotes
         self.truncLargeIssues = truncLargeIssues
+        self.uploadCurrentLogOnly = uploadCurrentLogOnly
     }
 
     init() {
@@ -85,6 +89,7 @@ struct MetricsUploaderModel: Equatable, Hashable {
         self.awaitingParsingResultsCount = 0
         self.skipNotes = false
         self.truncLargeIssues = false
+        self.uploadCurrentLogOnly = false
     }
 }
 
@@ -100,6 +105,8 @@ extension MetricsUploaderModel: CustomDebugStringConvertible {
         parsedRequests: \(parsedRequests.count),
         awaitingParsingLogResponses: \(awaitingParsingResultsCount)
         skipNotes: \(skipNotes)
+        truncLargeIssues: \(truncLargeIssues)
+        uploadCurrentLogOnly: \(uploadCurrentLogOnly)
         """
     }
 }
