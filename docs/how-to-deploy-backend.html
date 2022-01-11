@@ -70,7 +70,7 @@
 <strong><code>DB_HOST</code></strong> PostgreSQL host. The default value is <code>localhost</code>
 </li>
 <li>
-<strong><code>DB_PORT</code></strong> PostgreSQL port. The default value is <code>5036</code>
+<strong><code>DB_PORT</code></strong> PostgreSQL port. The default value is <code>5432</code>
 </li>
 <li>
 <strong><code>DB_USER</code></strong> PostgreSQL user. The default value is <code>xcmetrics-dev</code>
@@ -90,7 +90,7 @@
 </ul>
 <h2 id="single-instance-deployment" class="heading">Single instance deployment</h2>
 
-<p>The easiest way to deploy the Backend is using only one instance that have both the Endpoints and the Job in the same process. </p>
+<p>The easiest way to deploy the Backend is using only one instance that have both the Endpoints and the Job in the same process.</p>
 
 <p>In this case, you don’t need Google Cloud Storage. The Endpoint’s controller will store the log files in disk and, because the Job will be running in the same machine, the Job will just read them from there.</p>
 
@@ -105,9 +105,9 @@
 <p>You can check an example Kubernetes deployment files of this scenario in the folder <code>DeploymentExamples/SingleInstance</code></p>
 <h2 id="multi-instance-deployment" class="heading">Multi instance deployment</h2>
 
-<p>Having multiple instances will make the Backend to be more fault tolerant and more performant. You can process more logs in parallel. </p>
+<p>Having multiple instances will make the Backend to be more fault tolerant and more performant. You can process more logs in parallel.</p>
 
-<p>By far, the most resource-consuming task that the Backend does is parsing the Xcode logs. So it’s advisable to deploy more instances that only run the ProcessLogJob than instances with the Endpoint to upload the Logs.</p>
+<p>By far, the most resource-consuming task that the Backend does is parsing the Xcode logs. So it’s advisable to deploy more instances that only run the ProcessMetricsJob than instances with the Endpoint to upload the Logs.</p>
 
 <p>This diagram shows how such a deployment will look like:</p>
 
@@ -117,7 +117,7 @@
 
 <ul>
 <li>
-<strong><code>XCMETRICS_START_JOBS_SAME_PROCESS</code></strong> Should be set to <code>"0"</code>. This will instruct the backend to not start the ProcessLogJob in the same instance than the Endpoints.</li>
+<strong><code>XCMETRICS_START_JOBS_SAME_INSTANCE</code></strong> Should be set to <code>"0"</code>. This will instruct the backend to not start the ProcessMetricsJob in the same instance than the Endpoints.</li>
 </ul>
 
 <p>In this configuation, the Controller needs to store the logs in the Cloud, not in disk. So the Jobs can download them from there. XCMetrics supports two Cloud Storage Systems: <strong>Amazon S3</strong> and <strong>Google Cloud Storage</strong></p>
@@ -145,7 +145,7 @@
 <li>
 <strong><code>XCMETRICS_GOOGLE_PROJECT</code></strong> Identifier of the Google Project where the GCS Bucket lives.</li>
 <li>
-<strong><code>XCMETRICS_GCS_CREDENTIALS</code></strong> Path to the <code>.json</code> Google Cloud credentials file. The service account to which the credentials belong to, should have write and read permisions on the GCS Bucket</li>
+<strong><code>GOOGLE_APPLICATION_CREDENTIALS</code></strong> Path to the <code>.json</code> Google Cloud credentials file. The service account to which the credentials belong to, should have write and read permisions on the GCS Bucket</li>
 <li>
 <strong><code>XCMETRICS_GCS_BUCKET</code></strong> Name of the Bucket where the log files will be stored.</li>
 </ul>
@@ -181,7 +181,7 @@
 <li>
 <strong><code>XCMETRICS_USE_ASYNC_LOG_PROCESSING="0"</code></strong> Should be 0, Cloud Run can’t run Asynchronous jobs.</li>
 <li>
-<strong><code>XCMETRICS_USE_CLOUDSQL_SOCKET="1"</code></strong> Cloud Run uses Unix Sockets to connect to Cloud Run.</li>
+<strong><code>XCMETRICS_USE_CLOUDSQL_SOCKET="1"</code></strong> Cloud Run uses Unix Sockets to connect to Cloud SQL.</li>
 <li>
 <strong><code>XCMETRICS_CLOUDSQL_CONNECTION_NAME</code></strong>. You can find this name in the Cloud SQL console. It’s usually <code>my_project:gcp_region:cloudql_instance_name</code>
 </li>
@@ -238,7 +238,7 @@
 <p>Don’t forget to select the same Region where the Cloud SQL database and the Cloud Storage bucket are for the cluster.</p>
 
 <p>In the wizard, open the <code>Nodes Groups</code> and select the <code>Default Pool</code>. Change the number of nodes to be 5. (By default is set to 3).
-Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medium</code>, also change the Disk to use SSD</p>
+Open the <code>Nodes</code> menu and change the Machine Type to be <code>n2-standard-2</code>, also change the Disk to use SSD</p>
 
 <p><img src="img/gke-nodes.jpg" alt=""></p>
 <h3 id="2-setup-the-kubernetes-tools" class="heading">2. Setup the Kubernetes Tools.</h3>
@@ -261,7 +261,7 @@ Open the <code>Nodes</code> menu and change the Machine Type to be <code>e2-medi
 
 <p>You will need to edit some values.</p>
 
-<p>In <code>xcmetrics-service.yaml</code>:</p>
+<p>In <code>xcmetrics-deployment.yaml</code>:</p>
 
 <ol>
 <li>Replace the name of your Cloud SQL connection name here:
@@ -313,8 +313,8 @@ xcmetrics-jobs     ClusterIP      10.12.1.144   &lt;none&gt;          80/TCP    
 xcmetrics-server   LoadBalancer   10.12.5.86    35.187.83.33   80:30969/TCP   139m
 </code></pre>
 
-<p>You can run <code>curl -i http://external ip/v1/builds</code> to verify that everything is working. You should get a response like:</p>
-<pre class="highlight shell"><code>curl -i http://35.187.83.38/v1/builds
+<p>You can run <code>curl -i http://external ip/v1/build</code> to verify that everything is working. You should get a response like:</p>
+<pre class="highlight shell"><code>curl -i http://35.187.83.38/v1/build
 HTTP/1.1 200 OK
 content-type: application/json; <span class="nv">charset</span><span class="o">=</span>utf-8
 content-length: 53
@@ -519,7 +519,7 @@ date: Wed, 14 Oct 2020 17:48:00 GMT
       </div>
       <div class="footer-wrapper">
         <section id="footer">
-          <p>© 2022 <a class="link" href="" target="_blank" rel="external noopener">Spotify</a>. All rights reserved. (Last updated: 2022-01-10)</p>
+          <p>© 2022 <a class="link" href="" target="_blank" rel="external noopener">Spotify</a>. All rights reserved. (Last updated: 2022-01-11)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </div>
