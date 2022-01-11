@@ -74,6 +74,7 @@ struct Command {
     let skipNotes: Bool
     let additionalHeaders: [String: String]
     let truncLargeIssues: Bool
+    let uploadCurrentLogOnly: Bool
 }
 
 
@@ -123,6 +124,10 @@ public struct XCMetrics: ParsableCommand {
     /// truncate them to a 100. This is useful to fix memory issues in the backend and speed up log processing.
     @Option(name: [.customLong("truncateLargeIssues")], help: "If a task have more than a 100 issues (Warnings, Notes and/or Errors), the parser will truncate them to a 100")
     public var truncLargeIssues: Bool = false
+
+    /// If only the log of the current build should be uploaded.
+    @Option(name: [.customLong("uploadCurrentLogOnly")], help: "If only the log of the current build should be uploaded")
+    public var uploadCurrentLogOnly: Bool = false
 
     private static let loop = XCMetricsLoop()
 
@@ -205,7 +210,8 @@ public struct XCMetrics: ParsableCommand {
             additionalHeaders: authorization.map { (key, value) in
                 [key: value]
             } ?? [:],
-            truncLargeIssues: truncLargeIssues
+            truncLargeIssues: truncLargeIssues,
+            uploadCurrentLogOnly: uploadCurrentLogOnly
         )
         return command
     }

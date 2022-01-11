@@ -51,7 +51,8 @@ class MetricsUploaderLogicTests: XCTestCase {
                                                isCI: false,
                                                plugins: [],
                                                skipNotes: false,
-                                               truncLargeIssues: false)
+                                               truncLargeIssues: false,
+                                               uploadCurrentLogOnly: false)
 
     func testInitiator() {
         let initEffect = MetricsUploaderEffect.findLogs(buildDirectory: initial.buildDirectory, timeout: 1)

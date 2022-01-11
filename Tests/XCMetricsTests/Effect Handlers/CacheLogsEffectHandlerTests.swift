@@ -110,7 +110,7 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        effectHandler = CacheLogsEffectHandler(logManager: mockLogManager)
+        effectHandler = CacheLogsEffectHandler(logManager: mockLogManager, uploadCurrentLogOnly: false)
         effectCallback = EffectCallback<MetricsUploaderEvent>(
             onSend: { event in
                 if let send = self.send {
@@ -124,6 +124,20 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
             if case .logsCached(let currentLog, let previousLogs, _) = event {
                 XCTAssertNil(currentLog)
                 XCTAssertEqual(previousLogs, self.mockLogManager.xcodeLogsURL)
+            } else {
+                XCTFail("Expected .logsCached, got: \(event)")
+            }
+        }
+        _ = effectHandler.handle((currentLog: nil, previousLogs: mockLogManager.xcodeLogsURL, cachedLogs: mockLogManager.cachedLogsURL, projectName: "Project Name"), effectCallback)
+        XCTAssertTrue(effectCallback.ended)
+    }
+
+    func testCacheLogsNotCachesPreviousLogsIfUploadCurrentLogOnly() {
+        effectHandler = CacheLogsEffectHandler(logManager: mockLogManager, uploadCurrentLogOnly: true)
+        send = { event in
+            if case .logsCached(let currentLog, let previousLogs, _) = event {
+                XCTAssertNil(currentLog)
+                XCTAssertEqual(previousLogs, [])
             } else {
                 XCTFail("Expected .logsCached, got: \(event)")
             }
