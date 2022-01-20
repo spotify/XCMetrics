@@ -356,6 +356,13 @@
       "symbol": "JobLogEntry.init()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/XCMetrics/XCMetrics/Sources/XCMetricsClient/XCMetrics.swift",
+      "line": 130,
+      "symbol": "XCMetrics.additionalHeaderJson",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
     }
   ],
   "source_directory": "/Users/runner/work/XCMetrics/XCMetrics"
