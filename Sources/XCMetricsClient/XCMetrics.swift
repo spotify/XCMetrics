@@ -123,6 +123,11 @@ public struct XCMetrics: ParsableCommand {
     /// truncate them to a 100. This is useful to fix memory issues in the backend and speed up log processing.
     @Option(name: [.customLong("truncateLargeIssues")], help: "If a task have more than a 100 issues (Warnings, Notes and/or Errors), the parser will truncate them to a 100")
     public var truncLargeIssues: Bool = false
+    
+    @Option(name: [.customLong("additionalHeaderJson")],
+            help: "Additional header in JSON format",
+            transform: JSONArgument.transformer)
+    public var additionalHeaderJson: [String: String] = [:]
 
     private static let loop = XCMetricsLoop()
 
@@ -183,17 +188,10 @@ public struct XCMetrics: ParsableCommand {
         } else {
             throw argumentError()
         }
-
-        let authorization: (String, String)?
         
-        switch (self.authorizationKey, self.authorizationValue) {
-        case (let .some(authKey), let .some(authValue)):
-            authorization = (authKey, authValue)
-        case (.none, .none):
-            authorization = nil
-        default:
-            throw argumentError()
-        }
+        let additionalHeader: [String: String] = try AdditionalHeaderFactory.make(authorizationKey: authorizationKey,
+                                                                                  authorizationValue: authorizationValue,
+                                                                                  additionalHeader: additionalHeaderJson)
 
         let command = Command(
             buildDirectory: directoryBuild,
@@ -202,9 +200,7 @@ public struct XCMetrics: ParsableCommand {
             serviceURL: serviceURLValue,
             isCI: isCI,
             skipNotes: skipNotes,
-            additionalHeaders: authorization.map { (key, value) in
-                [key: value]
-            } ?? [:],
+            additionalHeaders: additionalHeader,
             truncLargeIssues: truncLargeIssues
         )
         return command
