@@ -18,18 +18,37 @@
 // under the License.
 
 @testable import XCMetricsBackendLib
-import XCTVapor
 
-final class AppTests: XCTestCase {
-    func testHelloWorld() throws {
+import XCTVapor
+import XCTQueues
+
+final class HealthcheckTests: XCTestCase {
+
+    func testJobsAreHealthy() throws {
         let app = Application(.testing)
-        defer { app.shutdown() }
         app.queues.use(.test)
+        defer { app.shutdown() }
         try configure(app)
 
-        try app.test(.GET, "hello", afterResponse: { res in
+        let healthChecker = JobHealthCheckerFake(returnError: false,
+                                                 eventLoop: app.eventLoopGroup.next())
+        try app.register(collection: HealthCheckController(healthChecker: healthChecker))
+
+        try app.test(.GET, "v1/health/jobs") { res in
             XCTAssertEqual(res.status, .ok)
-            XCTAssertEqual(res.body.string, "Hello, world!")
-        })
+        }
+    }
+
+    func testJobsAreNotRunning() throws {
+        let app = Application(.testing)
+        app.queues.use(.test)
+        defer { app.shutdown() }
+        try configure(app)
+        let healthChecker = JobHealthCheckerFake(returnError: true,
+                                                 eventLoop: app.eventLoopGroup.next())
+        try app.register(collection: HealthCheckController(healthChecker: healthChecker))
+        try app.test(.GET, "v1/health/jobs") { res in
+            XCTAssertEqual(res.status, .internalServerError)
+        }
     }
 }

@@ -55,11 +55,20 @@ class BuildHostFetcherTests: XCTestCase {
     }
 
     func testCPUSpeedGhz() {
-        guard let cpuSpeedValue = Self.sysCtlKernelState[SysctlProperty.cpuFrequencyMax.rawValue],
-        let expectedCpuSpeed = Float(cpuSpeedValue) else {
-            XCTFail("\(SysctlProperty.cpuFrequencyMax.rawValue) property not found in sysctl output or is not a Float")
-            return
+        let expectedCpuSpeed: Float
+
+        if let cpuSpeedValue = Self.sysCtlKernelState[SysctlProperty.cpuFrequencyMax.rawValue] {
+            guard let cpuSpeed = Float(cpuSpeedValue) else {
+                XCTFail("\(cpuSpeedValue) returned by sysctl output or is not a Float")
+                return
+            }
+            expectedCpuSpeed = cpuSpeed
+        } else {
+            // Apple Silicon reports a nil value for CPU frequencies
+            // https://github.com/giampaolo/psutil/issues/1892
+            expectedCpuSpeed = 0.0
         }
+
         XCTAssertEqual(Self.buildHost.cpuSpeedGhz,
                        expectedCpuSpeed / 1_000_000_000,
                        "The CPU speed does not match what sysctl reported")

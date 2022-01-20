@@ -25,17 +25,19 @@ final class StatisticsControllerTests: XCTestCase {
 
     func testBuildCounts() throws {
         let app = Application(.testing)
+        app.queues.use(.test)
         try configure(app)
+
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }
 
-        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 13)! // Since today is supposed to be included
+        let firstDay = Date().xcm_truncateTime().xcm_ago(days: 13)!
         let lastDay = Date().xcm_truncateTime()
 
         try app.test(.GET, "v1/statistics/build/count?days=14", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             let dayCounts = try res.content.decode([DayCount].self)
-            XCTAssertEqual(dayCounts.count, 14)
+            XCTAssertEqual(dayCounts.count, 15)
             XCTAssertEqual(dayCounts.first!.id, firstDay)
             XCTAssertEqual(dayCounts.last!.id, lastDay)
         })
@@ -53,6 +55,7 @@ final class StatisticsControllerTests: XCTestCase {
 
     func testBuildTimes() throws {
         let app = Application(.testing)
+        app.queues.use(.test)
         try configure(app)
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }
@@ -63,7 +66,7 @@ final class StatisticsControllerTests: XCTestCase {
         try app.test(.GET, "v1/statistics/build/time?days=14", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             let dayCounts = try res.content.decode([DayBuildTime].self)
-            XCTAssertEqual(dayCounts.count, 14)
+            XCTAssertEqual(dayCounts.count, 15)
             XCTAssertEqual(dayCounts.first!.id, firstDay)
             XCTAssertEqual(dayCounts.last!.id, lastDay)
         })
@@ -81,6 +84,7 @@ final class StatisticsControllerTests: XCTestCase {
 
     func testBuildStatus() throws {
         let app = Application(.testing)
+        app.queues.use(.test)
         try configure(app)
         try app.register(collection: StatisticsController(repository: FakeStatisticsRepository()))
         defer { app.shutdown() }

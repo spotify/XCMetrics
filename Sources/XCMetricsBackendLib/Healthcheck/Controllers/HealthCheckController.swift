@@ -17,19 +17,25 @@
 // specific language governing permissions and limitations
 // under the License.
 
-@testable import XCMetricsBackendLib
-import XCTVapor
+import Foundation
+import Vapor
+import Redis
+import Queues
 
-final class AppTests: XCTestCase {
-    func testHelloWorld() throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        app.queues.use(.test)
-        try configure(app)
+final class HealthCheckController: RouteCollection {
 
-        try app.test(.GET, "hello", afterResponse: { res in
-            XCTAssertEqual(res.status, .ok)
-            XCTAssertEqual(res.body.string, "Hello, world!")
-        })
+    let healthChecker: JobHealthChecker
+
+    init(healthChecker: JobHealthChecker) {
+        self.healthChecker = healthChecker
     }
+
+    func boot(routes: RoutesBuilder) throws {
+        routes.get("v1", "health", "jobs", use: healthJobs)
+    }
+
+    public func healthJobs(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        return healthChecker.check()
+    }
+    
 }

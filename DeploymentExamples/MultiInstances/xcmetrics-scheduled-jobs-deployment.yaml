@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: xcmetrics-server
+    name: xcmetrics-scheduled-jobs
 spec:
-  replicas: 1 # Create only one instance. This version uses local storage, it can only run in one instance
+  replicas: 1
   selector:
     matchLabels:
-      app: xcmetrics-server
-      tier: frontend
+      app: xcmetrics-scheduled-jobs
+      tier: backend
   template:
     metadata:
       labels:
-        app: xcmetrics-server
-        tier: frontend
+        app: xcmetrics-scheduled-jobs
+        tier: backend
     spec:
       volumes:
         - name: service-account-volume
@@ -41,13 +41,14 @@ spec:
         resources:
           requests:
             cpu: 100m
-            memory: 256M
+            memory: 100M
           limits:
             cpu: 100m
-            memory: 256M
+            memory: 100M
+          limits:
 
 
-      - name: xcmetrics-server
+      - name: xcmetrics-jobs
         image: spotify/xcmetrics:latest
         command: ["./XCMetricsBackend",
                   "queues",
@@ -55,12 +56,12 @@ spec:
                   "--env",
                   "production"]
         env:
-        - name: XCMETRICS_START_JOBS_SAME_INSTANCE
-          value: "1" # Jobs will run in this same instance
-        - name: XCMETRICS_USE_ASYNC_LOG_PROCESSING
-          value: "1"
         - name: XCMETRICS_SCHEDULE_STATISTICS_JOBS
           value: "1" # Turn on the Scheduled jobs in this instance
+        - name: XCMETRICS_START_JOBS_SAME_INSTANCE
+          value: "0" # Jobs will be run in other process
+        - name: XCMETRICS_USE_ASYNC_LOG_PROCESSING
+          value: "0" # We won't process Logs in this instance
         - name: XCMETRICS_REDACT_USER_DATA
           value: "1"
         - name: REDIS_HOST
@@ -68,10 +69,16 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         - name: XCMETRICS_USE_GCS_REPOSITORY
-          value: "0"
+          value: "1"
+        - name: XCMETRICS_GOOGLE_PROJECT
+          value: "Replace with the name of your GCP project"
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/secrets/service_account.json"
+        - name: XCMETRICS_GCS_BUCKET
+          value: "Replace with the name of your bucket"
         - name: DB_HOST
           value: 127.0.0.1
-        - name: DB_POST
+        - name: DB_PORT
           value: "5432"
         - name: DB_USER
           value: "xcmetrics"
@@ -90,16 +97,16 @@ spec:
           containerPort: 8080
           protocol: TCP
 
-        readinessProbe:
-          httpGet:
-            path: /hello
-            port: http
+        volumeMounts:
+        - name: service-account-volume
+          mountPath: /secrets/
+          readOnly: true
 
         resources:
           requests:
-            cpu: 2
-            memory: 2G
+            cpu: 1
+            memory: 1G
           limits:
-            cpu: 2
-            memory: 2G
+            cpu: 1
+            memory: 1G
 

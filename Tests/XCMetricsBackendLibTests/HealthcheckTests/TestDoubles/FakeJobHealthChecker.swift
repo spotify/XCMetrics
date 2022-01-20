@@ -18,18 +18,31 @@
 // under the License.
 
 @testable import XCMetricsBackendLib
-import XCTVapor
 
-final class AppTests: XCTestCase {
-    func testHelloWorld() throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        app.queues.use(.test)
-        try configure(app)
+import Vapor
+import Queues
 
-        try app.test(.GET, "hello", afterResponse: { res in
-            XCTAssertEqual(res.status, .ok)
-            XCTAssertEqual(res.body.string, "Hello, world!")
-        })
+enum JobHealthCheckerFakeError: Error {
+    case error(String)
+}
+
+final class JobHealthCheckerFake: JobHealthChecker {
+
+    var returnError: Bool
+
+    var eventLoop: EventLoop
+
+    init(returnError: Bool, eventLoop: EventLoop) {
+        self.returnError = returnError
+        self.eventLoop = eventLoop
     }
+
+    func check() -> EventLoopFuture<HTTPStatus> {
+        if returnError {
+            return eventLoop.makeFailedFuture(JobHealthCheckerFakeError.error("Error connecting to Redis"))
+        } else {
+            return eventLoop.makeSucceededFuture(HTTPStatus.ok)
+        }
+    }
+
 }

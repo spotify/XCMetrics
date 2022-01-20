@@ -18,14 +18,14 @@ let package = Package(
         .package(url: "https://github.com/spotify/xclogparser", from: "0.2.31"),
         .package(url: "https://github.com/apple/swift-tools-support-core.git", .exact("0.2.3")),
         .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.9")),
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.23.0"),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.32.3"),
         .package(url: "https://github.com/apple/swift-nio-http2.git", from: "1.15.0"),
         .package(url: "https://github.com/apple/swift-nio-ssl.git", .upToNextMajor(from: "2.10.0")),
         .package(url: "https://github.com/Spotify/Mobius.swift", .exact("0.3.0")),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.0"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "3.0.0"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.1.0"),
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.48.7"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.1.0"),
         .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),
@@ -33,6 +33,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/redis.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor-community/google-cloud-kit.git", from: "1.0.0-rc.2"),
         .package(url: "https://github.com/soto-project/soto.git", from: "4.0.0"),
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.8.1"),
     ],
     targets: [
         .target(
@@ -104,6 +105,7 @@ let package = Package(
         .testTarget(name: "XCMetricsBackendLibTests", dependencies: [
             .target(name: "XCMetricsBackendLib"),
             .product(name: "XCTVapor", package: "vapor"),
+            .product(name: "XCTQueues", package: "queues")
         ]),
     ]
 )

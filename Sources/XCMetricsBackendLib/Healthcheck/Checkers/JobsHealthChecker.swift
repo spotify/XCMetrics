@@ -17,19 +17,26 @@
 // specific language governing permissions and limitations
 // under the License.
 
-@testable import XCMetricsBackendLib
-import XCTVapor
+import Vapor
+import Queues
 
-final class AppTests: XCTestCase {
-    func testHelloWorld() throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        app.queues.use(.test)
-        try configure(app)
+protocol JobHealthChecker {
+    func check() -> EventLoopFuture<HTTPStatus>
+}
 
-        try app.test(.GET, "hello", afterResponse: { res in
-            XCTAssertEqual(res.status, .ok)
-            XCTAssertEqual(res.body.string, "Hello, world!")
-        })
+final class JobHealthCheckerImpl: JobHealthChecker {
+
+    let queue: Queue
+
+    init(queue: Queue) {
+        self.queue = queue
     }
+
+    func check() -> EventLoopFuture<HTTPStatus> {
+        return queue.dispatch(HealthCheckJob.self,
+                              "PING",
+                              maxRetryCount: 1)
+        .transform(to: HTTPStatus.ok)
+    }
+
 }
