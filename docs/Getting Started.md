@@ -52,6 +52,7 @@ This is how the post-action scheme should look like. Let's break it down:
     - `--authorizationKey`: An optional authorization header **key** to be included in the upload request e.g 'Authorization' or 'x-api-key' etc. This is ignored by the XCMetrics backend service, but can be consumed by a 3rd party service to facilitate a basic level of authentication. An example of this would be using an AWS API Gateway API Key. **Must** be used in conjunction with `authorizationValue`.
     - `--authorizationValue`: An optional authorization header **value** to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc. This is ignored by the XCMetrics backend service, but can be consumed by a 3rd party service to facilitate a basic level of authentication. An example of this would be using an AWS API Gateway API Key. **Must** be used in conjunction with `authorizationKey`.
     - `--truncateLargeIssues`: Optional flag. If `true`, individual tasks with more than a 100 issues (either Warnings, Errors or Notes) will get their issues truncated to a 100. This is useful to save up database space, fix memory issues in the backend and speed up log processing.
+    - `--additionalHeaderJson`: Optinal flag. Wiht this, is possible to define aditional headers with a stringfied json. This option will be merged with `--authorizationKey` and `--authorizationValue` when they exists. Usage: `XCMetrics --additionalHeaderJson  '{"Api-Key":"123","Authorization":"bearer 456"}'`.
 
 
 ![](img/post-action-scheme.png)
