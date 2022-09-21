@@ -12,8 +12,10 @@ You can pass the setting of those servers as Environment Variables:
 
 - **`REDIS_HOST`** IP of the Redis server. Example: `127.0.0.1`
 - **`REDIS_PORT`** Port of the Redis server. Example: `6379`
+- **`REDIS_PASSWORD`** Password for the Redis server. The default value is nil (unset).
+- **`REDIS_CONNECTION_TIMEOUT`** Number of seconds to timeout the connection to Redis. The default value is `3`.
 - **`DB_HOST`** PostgreSQL host. The default value is `localhost`
-- **`DB_PORT`** PostgreSQL port. The default value is `5036`
+- **`DB_PORT`** PostgreSQL port. The default value is `5432`
 - **`DB_USER`** PostgreSQL user. The default value is `xcmetrics-dev`
 - **`DB_PASSWORD`** PostgreSQL user's password. The default value is `xcmetrics-dev`
 - **`DB_NAME`** Name of the database. The default value is `xcmetrics-dev`
@@ -24,7 +26,7 @@ You can pass the setting of those servers as Environment Variables:
 
 ## Single instance deployment
 
-The easiest way to deploy the Backend is using only one instance that have both the Endpoints and the Job in the same process. 
+The easiest way to deploy the Backend is using only one instance that have both the Endpoints and the Job in the same process.
 
 In this case, you don't need Google Cloud Storage. The Endpoint's controller will store the log files in disk and, because the Job will be running in the same machine, the Job will just read them from there.
 
@@ -40,9 +42,9 @@ You can check an example Kubernetes deployment files of this scenario in the fol
 
 ## Multi instance deployment
 
-Having multiple instances will make the Backend to be more fault tolerant and more performant. You can process more logs in parallel. 
+Having multiple instances will make the Backend to be more fault tolerant and more performant. You can process more logs in parallel.
 
-By far, the most resource-consuming task that the Backend does is parsing the Xcode logs. So it's advisable to deploy more instances that only run the ProcessLogJob than instances with the Endpoint to upload the Logs.
+By far, the most resource-consuming task that the Backend does is parsing the Xcode logs. So it's advisable to deploy more instances that only run the ProcessMetricsJob than instances with the Endpoint to upload the Logs.
 
 This diagram shows how such a deployment will look like:
 
@@ -52,7 +54,7 @@ This diagram shows how such a deployment will look like:
 
 For this to work, you'll need to configure an extra Set of Environment Variables:
 
-- **`XCMETRICS_START_JOBS_SAME_PROCESS`** Should be set to `"0"`. This will instruct the backend to not start the ProcessLogJob in the same instance than the Endpoints.
+- **`XCMETRICS_START_JOBS_SAME_INSTANCE`** Should be set to `"0"`. This will instruct the backend to not start the ProcessMetricsJob in the same instance than the Endpoints.
 
 In this configuation, the Controller needs to store the logs in the Cloud, not in disk. So the Jobs can download them from there. XCMetrics supports two Cloud Storage Systems: **Amazon S3** and **Google Cloud Storage**
 
@@ -70,7 +72,7 @@ You will need to create a new S3 Bucket and a new User with permissions to write
 
 - **`XCMETRICS_USE_GCS_REPOSITORY`** Should be set to `"1"`.
 - **`XCMETRICS_GOOGLE_PROJECT`** Identifier of the Google Project where the GCS Bucket lives.
-- **`XCMETRICS_GCS_CREDENTIALS`** Path to the `.json` Google Cloud credentials file. The service account to which the credentials belong to, should have write and read permisions on the GCS Bucket
+- **`GOOGLE_APPLICATION_CREDENTIALS`** Path to the `.json` Google Cloud credentials file. The service account to which the credentials belong to, should have write and read permisions on the GCS Bucket
 - **`XCMETRICS_GCS_BUCKET`** Name of the Bucket where the log files will be stored.
 
 You can find example Kubernetes deployment's files of this scenario in the folder `DeploymentExamples/MultiInstances`
@@ -108,8 +110,8 @@ The easiest way to start is to click on the following "Run on Google Cloud" butt
 
 You will need some specific Env Variables setup so the App can run in this environment:
 
-- **`XCMETRICS_USE_ASYNC_LOG_PROCESSING="0"`** Should be 0, Cloud Run can't run Asynchronous jobs. 
-- **`XCMETRICS_USE_CLOUDSQL_SOCKET="1"`** Cloud Run uses Unix Sockets to connect to Cloud Run.
+- **`XCMETRICS_USE_ASYNC_LOG_PROCESSING="0"`** Should be 0, Cloud Run can't run Asynchronous jobs.
+- **`XCMETRICS_USE_CLOUDSQL_SOCKET="1"`** Cloud Run uses Unix Sockets to connect to Cloud SQL.
 - **`XCMETRICS_CLOUDSQL_CONNECTION_NAME`**. You can find this name in the Cloud SQL console. It's usually `my_project:gcp_region:cloudql_instance_name`
 - **`DB_NAME="database name"`**. The name of the database
 - **`DB_USER="database user"`**. The name of the user with permissions on the database
@@ -177,7 +179,7 @@ Create [a new GKE Cluster](https://cloud.google.com/kubernetes-engine/docs/how-t
 Don't forget to select the same Region where the Cloud SQL database and the Cloud Storage bucket are for the cluster.
 
 In the wizard, open the `Nodes Groups` and select the `Default Pool`. Change the number of nodes to be 5. (By default is set to 3).
-Open the `Nodes` menu and change the Machine Type to be `e2-medium`, also change the Disk to use SSD
+Open the `Nodes` menu and change the Machine Type to be `n2-standard-2`, also change the Disk to use SSD
 
 ![](img/gke-nodes.jpg)
 
@@ -210,7 +212,7 @@ Go to the **DeploymentExamples** folder and choose one type: either SingleInstan
 
 You will need to edit some values.
 
-In `xcmetrics-service.yaml`:
+In `xcmetrics-deployment.yaml`:
 
 1. Replace the name of your Cloud SQL connection name here:
 ```yaml
@@ -250,6 +252,12 @@ kubectl create -f xcmetrics-jobs-deployment.yaml
 kubectl create -f xcmetrics-jobs-service.yaml
 ```
 
+If you want to use our [Web UI for Backstage](https://github.com/backstage/backstage/tree/master/plugins/xcmetrics), deploy the Scheduled Jobs:
+```shell
+kubectl create -f xcmetrics-scheduled-jobs-deployment.yaml
+kubectl create -f xcmetrics-scheduled-jobs-service.yaml
+```
+
 ### 6. Verify the deployment
 
 Run the command `kubectl get services`. You should get the list of the Services deployed and the External IP for the XCMetrics Backend:
@@ -259,13 +267,14 @@ NAME               TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        A
 kubernetes         ClusterIP      10.12.0.1     <none>          443/TCP        5h4m
 redis              ClusterIP      10.12.10.21   <none>          6379/TCP       139m
 xcmetrics-jobs     ClusterIP      10.12.1.144   <none>          80/TCP         116m
+xcmetrics-scheduled-jobs     ClusterIP      10.12.1.124   <none>          80/TCP         116m
 xcmetrics-server   LoadBalancer   10.12.5.86    35.187.83.33   80:30969/TCP   139m
 ```
 
-You can run `curl -i http://external ip/v1/builds` to verify that everything is working. You should get a response like:
+You can run `curl -i http://external ip/v1/build` to verify that everything is working. You should get a response like:
 
 ```shell
-curl -i http://35.187.83.38/v1/builds
+curl -i http://35.187.83.38/v1/build
 HTTP/1.1 200 OK
 content-type: application/json; charset=utf-8
 content-length: 53

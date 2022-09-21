@@ -24,7 +24,7 @@ extension Double {
     /// from https://stackoverflow.com/a/38036978
     func xcm_roundToDecimal(_ fractionDigits: Int) -> Double {
         let multiplier = pow(10, Double(fractionDigits))
-        return (self * 1000).rounded(.toNearestOrEven) / multiplier
+        return (self * multiplier).rounded(.toNearestOrEven) / multiplier
     }
 
 }

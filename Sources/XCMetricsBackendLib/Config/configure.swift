@@ -20,6 +20,7 @@
 import Fluent
 import FluentPostgresDriver
 import QueuesRedisDriver
+import Redis
 import Vapor
 
 // configures your application
@@ -58,8 +59,6 @@ public func configure(_ app: Application) throws {
         ), as: .psql)
     }
 
-
-
     // Add database migrations
     app.migrations.add(CreateBuild(),
                        CreateBuildMetadata(),
@@ -81,7 +80,6 @@ public func configure(_ app: Application) throws {
                        AddBuildIdentifierIndexToTarget(),
                        AddBuildIdentifierIndexToBuildErrors(),
                        AddBuildIdentifierIndexToStep(),
-                       AddBuildIdentifierIndexToBuildErrors(),
                        AddBuildIdentifierIndexToBuildWarnings(),
                        AddBuildIdentifierIndexToBuildNotes(),
                        AddBuildIdentifierIndexToBuildHost(),
@@ -91,18 +89,36 @@ public func configure(_ app: Application) throws {
                        AddBuildIdentifierIndexToBuildMetadata(),
                        AddTargetIdentifierIndexToSteps(),
                        AddStepIdentifierIndexToSwiftFunctions(),
-                       AddStepIdentifierIndexToSwiftTypeChecks()
+                       AddStepIdentifierIndexToSwiftTypeChecks(),
+                       CreateDayCount(),
+                       CreateDayBuildTime()
                        )
 
 
-    if config.useAsyncLogProcessing {
-        let redisURL = "redis://\(config.redisHost):\(config.redisPort)"
-        app.logger.info("Using redis queue \(redisURL)")
+    if config.useAsyncLogProcessing && app.environment != .testing {
+        app.logger.info("Using redis host \(config.redisHost) and port \(config.redisPort)")
         app.queues.add(JobLogEventDelegate(logger: app.logger,
                                            repository: PostgreSQLJobLogRepository(db: app.db)))
-        try app.queues.use(.redis(url: redisURL))
+        let redisConfig = try RedisConfiguration(
+            hostname: config.redisHost,
+            port: config.redisPort,
+            password: config.redisPassword,
+            pool: RedisConfiguration.PoolOptions(maximumConnectionCount: .maximumActiveConnections(2),
+                                                 minimumConnectionCount: 0,
+                                                 connectionBackoffFactor: 2,
+                                                 initialConnectionBackoffDelay: .milliseconds(100),
+                                                 connectionRetryTimeout: config.redisConnectionTimeout))
+        app.queues.use(.redis(redisConfig))
     } else {
         app.logger.info("Async log processing is disabled")
+    }
+
+    // Scheduled jobs
+    if config.scheduleStatisticsJobs && app.environment != .testing {
+        app.queues
+            .schedule(DailyStatisticsJob(repository: SQLStatisticsRepository(db: app.db)))
+            .daily()
+            .at(.midnight)
     }
 
     // register routes

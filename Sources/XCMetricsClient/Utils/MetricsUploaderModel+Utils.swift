@@ -29,11 +29,14 @@ extension MetricsUploaderModel {
             buildDirectory: self.buildDirectory,
             projectName: self.projectName,
             serviceURL: self.serviceURL,
+            additionalHeaders: self.additionalHeaders,
             timeout: self.timeout,
             isCI: self.isCI,
             plugins: self.plugins,
             parsedRequests: parsedRequests ?? self.parsedRequests,
-            awaitingParsingLogResponses: awaitingParsingLogResponses ?? self.awaitingParsingResultsCount
+            awaitingParsingLogResponses: awaitingParsingLogResponses ?? self.awaitingParsingResultsCount,
+            skipNotes: self.skipNotes,
+            truncLargeIssues: self.truncLargeIssues
         )
     }
 }

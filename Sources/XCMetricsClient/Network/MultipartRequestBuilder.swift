@@ -18,6 +18,7 @@
 // under the License.
 
 import Foundation
+import XCMetricsCommon
 
 /// Creates a Nested Multipart Request to send the
 /// `xcactivitylog` and the Metadata associated to it as `JSON` documents
@@ -26,16 +27,29 @@ class MultipartRequestBuilder {
 
     public let request: MetricsUploadRequest
     public let url: URL
+    public let additionalHeaders: [String: String]
     public let machineName: String
     public let projectName: String
     public let isCI: Bool
+    public let skipNotes: Bool
+    public let truncLargeIssues: Bool
 
-    public init(request: MetricsUploadRequest, url: URL, machineName: String, projectName: String, isCI: Bool) {
+    public init(request: MetricsUploadRequest,
+                url: URL,
+                additionalHeaders: [String: String],
+                machineName: String,
+                projectName: String,
+                isCI: Bool,
+                skipNotes: Bool,
+                truncLargeIssues: Bool) {
         self.request = request
         self.url = url
+        self.additionalHeaders = additionalHeaders
         self.machineName = machineName
         self.projectName = projectName
         self.isCI = isCI
+        self.skipNotes = skipNotes
+        self.truncLargeIssues = truncLargeIssues
     }
 
     public func build() throws -> URLRequest {
@@ -44,6 +58,7 @@ class MultipartRequestBuilder {
         let boundary = "Boundary-\(uuid)"
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
+        additionalHeaders.forEach { request.addValue($1, forHTTPHeaderField: $0) }
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         // If this is a retry for a previously failed request, simply set the body. Otherwise compute it.
         let body: Data
@@ -72,8 +87,14 @@ class MultipartRequestBuilder {
         /// Backend will decide if the username will be stored hashed or not based on its configuration
         let user = MacOSUsernameReader().userID ?? "unknown"
         let sleepTime = HardwareFactsFetcherImplementation().sleepTime
-        let extraInfo = ExtraInfo(projectName: projectName, machineName: machineName, user: user, isCI: isCI,
-                                  sleepTime: sleepTime)
+        let extraInfo = UploadRequestExtraInfo(projectName: projectName,
+                                               machineName: machineName,
+                                               user: user,
+                                               isCI: isCI,
+                                               sleepTime: sleepTime,
+                                               skipNotes: skipNotes,
+                                               tag: request.request.build.tag,
+                                               truncLargeIssues: truncLargeIssues)
         let extraJson = try jsonEncoder.encode(extraInfo)
         if let extraData = toJSONFormField(named: "extraInfo", jsonData: extraJson, using: boundary) {
           httpBody.append(extraData)

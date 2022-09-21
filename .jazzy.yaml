@@ -15,3 +15,4 @@ custom_categories:
     - BuildController
     - JobLogController
     - UploadMetricsController
+    - StatisticsController

@@ -20,6 +20,12 @@
 import Foundation
 import Vapor
 
+struct LogFile {
+    var remoteURL: URL
+
+    var localURL: URL
+}
+
 /// Stores an .xcactivitylog that would be processed in a later stage
 protocol LogFileRepository {
 
@@ -31,7 +37,17 @@ protocol LogFileRepository {
     /// Fetches the log from the given URL
     /// - Parameter logURL: URL of the log to fetch
     /// - Returns: A local URL to the file
-    func get(logURL: URL) throws -> URL
+    func get(logURL: URL) throws -> LogFile
+
+    func delete(log: LogFile, wasProcessed: Bool) throws
+
+}
+
+extension LogFileRepository {
+
+    func delete(log: LogFile, wasProcessed: Bool) throws {
+        try FileManager.default.removeItem(at: log.localURL)
+    }
 
 }
 
@@ -48,8 +64,19 @@ struct LocalLogFileRepository: LogFileRepository {
         return tmp.fileURL
     }
 
-    func get(logURL: URL) throws -> URL {
-        return logURL
+    func get(logURL: URL) throws -> LogFile {
+        let tmp = try TemporaryFile(creatingTempDirectoryForFilename: "\(UUID().uuidString).xcactivitylog")
+        try FileManager.default.copyItem(atPath: logURL.path, toPath: tmp.fileURL.path)
+        return LogFile(remoteURL: logURL, localURL: tmp.fileURL)
+    }
+
+    func delete(log: LogFile, wasProcessed: Bool) throws {
+        try FileManager.default.removeItem(at: log.localURL)
+
+        // Always remove local files
+        if wasProcessed {
+            try FileManager.default.removeItem(at: log.remoteURL)
+        }
     }
 
 }

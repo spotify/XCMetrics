@@ -64,7 +64,7 @@ struct LogFileS3Repository: LogFileRepository {
         return url
     }
 
-    func get(logURL: URL) throws -> URL {
+    func get(logURL: URL) throws -> LogFile {
         guard let bucket = logURL.host else {
             throw RepositoryError.unexpected(message: "URL is not an S3 url \(logURL)")
         }
@@ -79,7 +79,7 @@ struct LogFileS3Repository: LogFileRepository {
         }
         let tmp = try TemporaryFile(creatingTempDirectoryForFilename: "\(UUID().uuidString).xcactivitylog")
         try data.write(to: tmp.fileURL)
-        return tmp.fileURL
+        return LogFile(remoteURL: logURL, localURL: tmp.fileURL)
     }
 
 }

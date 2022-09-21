@@ -26,7 +26,7 @@ struct LogFileRepositoryFactory {
         if config.useGCSLogRepository {
             logger.info("Initializing GCS LogFileRepository")
             guard let gcsRepository = LogFileGCSRepository(config: config, logger: logger) else {
-                preconditionFailure("XCMETRICS_GCS_CREDENTIALS, XCMETRICS_GOOGLE_PROJECT and XCMETRICS_GCS_BUCKET are " +
+                preconditionFailure("GOOGLE_APPLICATION_CREDENTIALS, XCMETRICS_GOOGLE_PROJECT and XCMETRICS_GCS_BUCKET are " +
                     "required when XCMETRICS_USE_GCS_REPOSITORY is used")
             }
             return gcsRepository

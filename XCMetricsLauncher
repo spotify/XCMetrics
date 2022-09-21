@@ -9,6 +9,6 @@
 # One of the side effects of not using this hack is to have "Build Succeeded"
 # notifications be delayed until the post-action scheme completes, thus we recommend
 # always launching XCMetrics through this script.
-executable=$1
+executable="$1"
 shift;
-$executable "$@" <&- >&- 2>&- &
+"$executable" "$@" <&- >&- 2>&- &

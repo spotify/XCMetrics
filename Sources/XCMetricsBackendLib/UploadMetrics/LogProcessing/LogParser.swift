@@ -43,42 +43,46 @@ struct LogParser {
 
     static func parseFromURL(
         _ url: URL,
+        metricsRequest: UploadMetricsRequest,
         machineName: String,
-        projectName: String,
         userId: String,
         userIdSHA256: String,
-        isCI: Bool,
-        sleepTime: Int?
+        isCI: Bool
     ) throws -> BuildMetrics {
         let activityLog = try ActivityParser().parseActivityLogInURL(url, redacted: true, withoutBuildSpecificInformation: true)
-        let buildSteps = try ParserBuildSteps(machineName: machineName, omitWarningsDetails: false).parse(activityLog: activityLog).flatten()
+        let buildSteps = try ParserBuildSteps(machineName: machineName,
+                                              omitWarningsDetails: false,
+                                              omitNotesDetails: metricsRequest.extraInfo.skipNotes ?? false,
+                                              truncLargeIssues: metricsRequest.extraInfo.truncLargeIssues ?? false
+        )
+            .parse(activityLog: activityLog)
+            .flatten()
         return toBuildMetrics(
             buildSteps,
-            projectName: projectName,
+            metricsRequest: metricsRequest,
             userId: userId,
             userIdSHA256: userIdSHA256,
-            isCI: isCI,
-            sleepTime: sleepTime
+            isCI: isCI
         )
     }
 
     private static func toBuildMetrics(
         _ buildSteps: [BuildStep],
-        projectName: String,
+        metricsRequest: UploadMetricsRequest,
         userId: String,
         userIdSHA256: String,
-        isCI: Bool,
-        sleepTime: Int?
+        isCI: Bool
     ) -> BuildMetrics {
         let buildInfo: BuildStep = buildSteps[0]
+        let buildIdentifier = buildInfo.identifier
         var build = Build().withBuildStep(buildStep: buildInfo)
-        build.projectName = projectName
+        build.projectName = metricsRequest.extraInfo.projectName
         build.userid = userId
         build.userid256 = userIdSHA256
-        build.tag = ""
+        build.tag = metricsRequest.extraInfo.tag ?? ""
         build.isCi = isCI
 
-        if let sleepTime = sleepTime {
+        if let sleepTime = metricsRequest.extraInfo.sleepTime {
             build.wasSuspended = Int64(round(buildInfo.startTimestamp)) < sleepTime
         } else {
             build.wasSuspended = false
@@ -92,10 +96,10 @@ struct LogParser {
 
         let detailsBuild = steps.filter { $0.detailStepType != .swiftCompilation }.map {
             return Step().withBuildStep(buildStep: $0,
-                                        buildIdentifier: buildSteps[0].identifier,
+                                        buildIdentifier: buildIdentifier,
                                         targetIdentifier: $0.parentIdentifier)
         }
-        var stepsBuild = detailsBuild + parseSwiftSteps(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps)
+        var stepsBuild = detailsBuild + parseSwiftSteps(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps, buildIdentifier: buildIdentifier)
 
         // Categorize build based on all build steps in the build log except non-compilation or linking phases.
         // Some tasks are ran by Xcode always, even on noop builds, so we want to filter them out and only
@@ -134,9 +138,9 @@ struct LogParser {
             return $0.targetIdentifier > $1.targetIdentifier
         }
 
-        let warnings = parseWarnings(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps)
-        let errors = parseErrors(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps)
-        let notes = parseNotes(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps)
+        let warnings = parseWarnings(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps, buildIdentifier: buildIdentifier)
+        let errors = parseErrors(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps, buildIdentifier: buildIdentifier)
+        let notes = parseNotes(buildSteps: buildSteps, targets: targetBuildSteps, steps: steps, buildIdentifier: buildIdentifier)
 
         let functionBuildTimes = steps.compactMap { step in
             step.swiftFunctionTimes?.map {
@@ -164,18 +168,18 @@ struct LogParser {
                             notes: notes,
                             swiftFunctions: Array(functionBuildTimes),
                             swiftTypeChecks: Array(typeChecks),
-                            host: fakeHost(buildIdentifier: build.id ?? ""), // TODO
-                            xcodeVersion: nil, // TODO
-                            buildMetadata: nil) // TODO
+                            host: metricsRequest.buildHost.withBuildIdentifier(buildIdentifier),
+                            xcodeVersion: metricsRequest.xcodeVersion?.withBuildIdentifier(buildIdentifier),
+                            buildMetadata: metricsRequest.buildMetadata?.withBuildIdentifier(buildIdentifier))
                             .addDayToMetrics()
     }
 
     private static func parseSwiftSteps(
         buildSteps: [BuildStep],
         targets: [BuildStep],
-        steps: [BuildStep]
+        steps: [BuildStep],
+        buildIdentifier: String
     ) -> [Step] {
-        let buildIdentifier = buildSteps[0].identifier
         let swiftAggregatedSteps = buildSteps.filter { $0.type == .detail
             && $0.detailStepType == .swiftAggregatedCompilation }
 
@@ -260,9 +264,9 @@ struct LogParser {
     private static func parseWarnings(
         buildSteps: [BuildStep],
         targets: [BuildStep],
-        steps: [BuildStep]
+        steps: [BuildStep],
+        buildIdentifier: String
     ) -> [BuildWarning] {
-        let buildIdentifier = buildSteps[0].identifier
         let buildWarnings = buildSteps[0].warnings?.map {
             BuildWarning()
                 .withBuildIdentifier(buildIdentifier)
@@ -296,10 +300,9 @@ struct LogParser {
     private static func parseErrors(
         buildSteps: [BuildStep],
         targets: [BuildStep],
-        steps: [BuildStep]
+        steps: [BuildStep],
+        buildIdentifier: String
     ) -> [BuildError] {
-        let buildIdentifier = buildSteps[0].identifier
-
         let buildErrors = buildSteps[0].errors?.map {
             BuildError()
                 .withBuildIdentifier(buildIdentifier)
@@ -333,10 +336,9 @@ struct LogParser {
     private static func parseNotes(
         buildSteps: [BuildStep],
         targets: [BuildStep],
-        steps: [BuildStep]
+        steps: [BuildStep],
+        buildIdentifier: String
     ) -> [BuildNote] {
-        let buildIdentifier = buildSteps[0].identifier
-
         let buildNotes = buildSteps[0].notes?.map {
             BuildNote()
                 .withBuildIdentifier(buildIdentifier)
@@ -365,27 +367,5 @@ struct LogParser {
             }
         }.joined()
         return (buildNotes ?? []) + targetNotes + stepsNotes
-    }
-
-    private static func fakeHost(buildIdentifier: String) -> BuildHost {
-        let host = BuildHost()
-        host.buildIdentifier = buildIdentifier
-        host.cpuCount = 2
-        host.cpuModel = "model"
-        host.cpuSpeedGhz = 3.0
-        host.hostArchitecture = "x86"
-        host.hostModel = "model"
-        host.hostOs = "MacOS"
-        host.hostOsFamily = ""
-        host.hostOsVersion = ""
-        host.isVirtual = false
-        host.memoryFreeMb = 0.0
-        host.memoryTotalMb = 0.0
-        host.swapFreeMb = 0.0
-        host.swapTotalMb = 0.0
-        host.timezone = "CET"
-        host.uptimeSeconds = 0
-        return host
-
     }
 }

@@ -1,11 +1,31 @@
+// Copyright (c) 2021 Spotify AB.
+//
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 import Foundation
 import Vapor
+import NIO
 
 class Configuration {
 
     /// If "1", the logs will be processed Asynchronously, it will need a `REDIS_HOST` to be defined
     /// Turn it off in environments where Async processing is not available like in Cloud Run
-    lazy var useAsyncLogProcessing: Bool = {
+    lazy var useAsyncLogProcessing: Bool = {        
         return (Environment.get("XCMETRICS_USE_ASYNC_LOG_PROCESSING") ?? "1" ) == "1"
     }()
 
@@ -20,6 +40,12 @@ class Configuration {
     /// need to turn this flag off (more information in the documentation)
     lazy var startAsyncJobsInSameInstance: Bool = {
         return (Environment.get("XCMETRICS_START_JOBS_SAME_INSTANCE") ?? "1") == "1"
+    }()
+
+    /// If "1", a job for collecting and storing statistics (build count, error count etc.) from the
+    /// previous day will be scheduled to run every day at midnight
+    lazy var scheduleStatisticsJobs: Bool = {
+        return (Environment.get("XCMETRICS_SCHEDULE_STATISTICS_JOBS") ?? "0") == "1"
     }()
 
     /// Connect to CloudSQL using Sockets. This is the preferred way to connect to it when running in CloudSQL
@@ -57,6 +83,17 @@ class Configuration {
 
     lazy var redisPort: Int = {
         return Int(Environment.get("REDIS_PORT") ?? "6379") ?? 6379
+    }()
+
+    lazy var redisPassword: String? = {
+        return Environment.get("REDIS_PASSWORD")
+    }()
+
+    ///  Connection Timeout for Redis in Seconds
+    ///  Default value: 3 seconds
+    lazy var redisConnectionTimeout: TimeAmount = {
+        let seconds = Int64(Environment.get("REDIS_CONNECTION_RETRY_TIMEOUT") ?? "3") ?? 3
+        return .seconds(seconds)
     }()
 
     lazy var redactUserData: Bool = {

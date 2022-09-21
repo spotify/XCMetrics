@@ -17,12 +17,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
 import MobiusCore
 import MobiusTest
-import Utility
 import XCLogParser
 import XCTest
+import TSCBasic
+import TSCUtility
 @testable import XCMetricsClient
 
 final class CacheLogsEffectHandlerTests: XCTestCase {
@@ -31,37 +31,37 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
 
         var xcodeLogsURL: Set<URL> {
             return Set(xcodeLogs.map {
-                URL(fileURLWithPath: $0.path.asString)
+                URL(fileURLWithPath: $0.path.pathString)
             })
         }
 
         var cachedLogsURL: Set<URL> {
             return Set(cachedLogs.map {
-                URL(fileURLWithPath: $0.path.asString)
+                URL(fileURLWithPath: $0.path.pathString)
             })
         }
 
         var newlyCachedLogsURL: Set<URL> {
             return Set(newlyCachedLogs.map {
-                URL(fileURLWithPath: $0.path.asString)
+                URL(fileURLWithPath: $0.path.pathString)
             })
         }
 
         private let xcodeLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log1", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log2", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log3", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log4", suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: "log1", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log2", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log3", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log4", suffix: ".xcactivitylog")
         )
 
         private let cachedLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log20", suffix: ".xcactivitylog"),
-            try! TemporaryFile(prefix: "log30", suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log20", suffix: ".xcactivitylog"),
+            try! TemporaryFile.newFile(prefix: "log30", suffix: ".xcactivitylog")
         )
 
         private let newlyCachedLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log100", suffix: ".xcactivitylog")
+            try! TemporaryFile.newFile(prefix: "log100", suffix: ".xcactivitylog")
         )
 
         func retrieveXcodeLogs(in buildDirectory: String, timeout: Int) throws -> (currentLog: URL?, otherLogs: Set<URL>) {
@@ -101,23 +101,11 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
         }
     }
 
-    struct MockLogParser: LogParser {
-        func parseBuildSteps(_ buildSteps: [BuildStep], projectName: String, isCI: Bool, userID: String) -> UploadBuildMetricsRequest {
-            return UploadBuildMetricsRequest()
-        }
-
-        let metricsRequest = try! UploadBuildMetricsRequest(jsonString: "{}")
-        func parseLog(at logURL: URL, projectName: String, isCI: Bool, userID: String, completion: @escaping (Swift.Result<UploadBuildMetricsRequest, Error>) -> Void) {
-            completion(.success(metricsRequest))
-        }
-    }
-
     private var effectHandler: CacheLogsEffectHandler!
     private var effectCallback: EffectCallback<MetricsUploaderEvent>!
     private var send: ((MetricsUploaderEvent) -> Void)?
 
     private var mockLogManager = MockLogManager()
-    private var mockLogParser = MockLogParser()
 
     override func setUp() {
         super.setUp()
@@ -145,7 +133,7 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
     }
 
     func testCacheLogsCachesCurrentLog() {
-        let currentLogURL = try! TemporaryFile(prefix: "log1", suffix: ".xcactivitylog").url
+        let currentLogURL = try! TemporaryFile.newFile(prefix: "log1", suffix: ".xcactivitylog").url
         var receivedEvent: MetricsUploaderEvent?
         send = { receivedEvent = $0 }
 
@@ -161,7 +149,7 @@ final class CacheLogsEffectHandlerTests: XCTestCase {
     }
 
     func testCacheLogsReportsNotAlreadyCachedLog() {
-        let alreadyCachedLogURL = try! TemporaryFile(prefix: "log1", suffix: ".xcactivitylog").url
+        let alreadyCachedLogURL = try! TemporaryFile.newFile(prefix: "log1", suffix: ".xcactivitylog").url
         let uploadRequestFileURL = alreadyCachedLogURL
             .deletingLastPathComponent()
             .appendingPathComponent(LogManagerImplementation.failedRequestsDirectoryName)

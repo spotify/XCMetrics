@@ -7,7 +7,7 @@ services:
       - "6379:6379"
 
   postgresql:
-    image: postgres
+    image: postgres:12
     container_name: pg-xcmetrics
     ports:
       - "5432:5432"

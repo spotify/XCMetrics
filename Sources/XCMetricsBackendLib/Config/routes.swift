@@ -63,12 +63,19 @@ func routes(_ app: Application) throws {
                                                          metricsRepository: metricsRepository,
                                                          useAsyncProcessing: config.useAsyncLogProcessing))
     try app.register(collection: JobLogController(repository: PostgreSQLJobLogRepository(db: app.db)))
+    try app.register(collection: StatisticsController(repository: SQLStatisticsRepository(db: app.db)))
+
+    if app.environment != .testing {
+        let healthChecker = JobHealthCheckerImpl(queue: app.queues.queue)
+        try app.register(collection: HealthCheckController(healthChecker: healthChecker))
+    }
 
     // Run Job queues
     if config.useAsyncLogProcessing {
         app.queues.add(ProcessMetricsJob(logFileRepository: logFileRepository,
                                          metricsRepository: metricsRepository,
                                          redactUserData: config.redactUserData))
+        app.queues.add(HealthCheckJob())
 
         if config.startAsyncJobsInSameInstance {
             try app.queues.startInProcessJobs(on: .default)

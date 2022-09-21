@@ -71,6 +71,9 @@ struct Command {
     let timeout: Int
     let serviceURL: String
     let isCI: Bool
+    let skipNotes: Bool
+    let additionalHeaders: [String: String]
+    let truncLargeIssues: Bool
 }
 
 
@@ -103,13 +106,36 @@ public struct XCMetrics: ParsableCommand {
     @Option(name: [.customLong("isCI")], help: "If the metrics collected are coming from CI or not.")
     public var isCI: Bool = false
 
+    /// If the Notes found in log should be skipped. Useful when there are thousands of notes to
+    /// reduce the size of the Database.
+    @Option(name: [.customLong("skipNotes")], help: "Notes found in logs won't be processed")
+    public var skipNotes: Bool = false
+
+    /// An optional authorization/token header **key** to be included in the upload request. Must be used in conjunction with `authorizationValue.`
+    @Option(name: [.customLong("authorizationKey"), .customShort("k")], help: "An optional authorization header key to be included in the upload request e.g 'Authorization' or 'x-api-key' etc. Must be used in conjunction with `authorizationValue`")
+    public var authorizationKey: String?
+
+    /// An optional authorization/token header **value** to be included in the upload request. Must be used in conjunction with `authorizationKey.`
+    @Option(name: [.customLong("authorizationValue"), .customShort("a")], help: "An optional authorization header value to be included in the upload request e.g 'Basic YWxhZGRpbjpvcGVuc2VzYW1l' or `hYDqG78OIUDIWKLdwjdwhdu8` etc. Must be used in conjunction with `authorizationKey`")
+    public var authorizationValue: String?
+
+    /// If an individual task have more than a 100 issues (Warnings, Notes and/or Errors) this flag will instruct the parser to
+    /// truncate them to a 100. This is useful to fix memory issues in the backend and speed up log processing.
+    @Option(name: [.customLong("truncateLargeIssues")], help: "If a task have more than a 100 issues (Warnings, Notes and/or Errors), the parser will truncate them to a 100")
+    public var truncLargeIssues: Bool = false
+    
+    @Option(name: [.customLong("additionalHeaderJson")],
+            help: "Additional header in JSON format",
+            transform: JSONArgument.transformer)
+    public var additionalHeaderJson: [String: String] = [:]
+
     private static let loop = XCMetricsLoop()
 
     /// The default initializer for the `XCMetrics` object.
     public init() {}
 
     /// Runs XCMetrics with the provided configuration containing the optional custom plugins to be executed.
-    /// - Parameter configuration: <#configuration description#>
+    /// - Parameter configuration: `XCMetricsConfiguration`
     public func run(with configuration: XCMetricsConfiguration) {
         do {
             let command = try fetchEnvironmentVariablesParameters()
@@ -132,6 +158,8 @@ public struct XCMetrics: ParsableCommand {
         If a $BUILD_DIR environment variable is defined, you can omit --buildDir.
         The --timeout argument is optional and defaults to 5 seconds.
         The --isCI argument is optional and defaults to false.
+        The --skipNotes argument is optional and defaults to false.
+        The --authorizationKey must be used in conjunction with --authorizationValue. One cannot be used without the other.
         Type 'XCMetrics --help' for more information.
         """)
     }
@@ -160,13 +188,20 @@ public struct XCMetrics: ParsableCommand {
         } else {
             throw argumentError()
         }
+        
+        let additionalHeader: [String: String] = try AdditionalHeaderFactory.make(authorizationKey: authorizationKey,
+                                                                                  authorizationValue: authorizationValue,
+                                                                                  additionalHeader: additionalHeaderJson)
 
         let command = Command(
             buildDirectory: directoryBuild,
             projectName: name,
             timeout: timeout,
             serviceURL: serviceURLValue,
-            isCI: isCI
+            isCI: isCI,
+            skipNotes: skipNotes,
+            additionalHeaders: additionalHeader,
+            truncLargeIssues: truncLargeIssues
         )
         return command
     }

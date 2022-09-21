@@ -59,47 +59,55 @@ class ProcessMetricsJob: Job {
             defer {
                 self.semaphore.signal()
             }
-
+            let logFile: LogFile
+            let buildMetrics: BuildMetrics
             do {
                 logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] fetching log from \(payload.logURL)")
-                let localURL = try self.logFileRepository.get(logURL: payload.logURL)
-
-                logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log fetched to \(localURL)")
-                let buildMetrics = try MetricsProcessor.process(metricsRequest: payload,
-                                                                logURL: localURL,
-                                                                redactUserData: self.redactUserData)
-                let metricsWithRequestData = self.addBuildRequest(buildMetrics: buildMetrics, payload: payload)
-                logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log parsed \(payload.logURL)")
-                _ = self.metricsRepository.insertBuildMetrics(metricsWithRequestData, using: eventLoop)
-                    .flatMap { _ -> EventLoopFuture<Void> in
-                        context.logger.info("[ProcessMetricsJob] metrics inserted for \(payload.logURL)")
-                        return self.removeLocalLog(from: localURL, using: eventLoop)
-                    }
-                    .map { _ -> Void in
-                        context.logger.info("[ProcessMetricsJob] finished processing \(payload.logURL)")
-                        promise.succeed(())
-                        return ()
-                    }
+                logFile = try self.logFileRepository.get(logURL: payload.logURL)
+                logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log fetched to \(logFile.localURL)")
+                buildMetrics = try MetricsProcessor.process(metricsRequest: payload,
+                                                            logFile: logFile,
+                                                            redactUserData: self.redactUserData)
             } catch {
-                context.logger.error("[ProcessMetricsJob] error processing \(payload.logURL) \(error)")
+                context.logger.error("[ProcessMetricsJob] error processing log from \(payload.logURL): \(error)")
                 promise.fail(error)
+                return
             }
+            logWithTimestamp(context.logger, msg: "[ProcessMetricsJob] log parsed \(payload.logURL)")
+            _ = self.metricsRepository.insertBuildMetrics(buildMetrics, using: eventLoop)
+                .flatMapAlways { (result) -> EventLoopFuture<Void> in
+                    var wasProcessed: Bool = false
+                    switch result {
+                    case .failure(let error):
+                        context.logger.error("[ProcessMetricsJob] error inserting log from \(payload.logURL): \(error)")
+                        wasProcessed = false
+                        promise.fail(error)
+                    case .success:
+                        wasProcessed = true
+                        promise.succeed(())
+                    }
+                    return self.removeLocalLog(logFile,
+                                               wasProcessed: wasProcessed,
+                                               using: eventLoop, context)
+                }
+                .map { _ -> Void in
+                    context.logger.info("[ProcessMetricsJob] finished processing \(payload.logURL)")
+                    return ()
+                }
         }
         return promise.futureResult
     }
 
-    private func addBuildRequest(buildMetrics: BuildMetrics, payload: UploadMetricsRequest) -> BuildMetrics {
-        guard let buildIdentifier = buildMetrics.build.id else {
-            return buildMetrics
-        }
-        return buildMetrics.withHost(payload.buildHost.withBuildIdentifier(buildIdentifier))
-            .withBuildMetadata(payload.buildMetadata?.withBuildIdentifier(buildIdentifier))
-            .withXcodeVersion(payload.xcodeVersion?.withBuildIdentifier(buildIdentifier))
-    }
-
-    private func removeLocalLog(from url: URL, using eventLoop: EventLoop) -> EventLoopFuture<Void> {
+    private func removeLocalLog(_ log: LogFile,
+                                wasProcessed: Bool,
+                                using eventLoop: EventLoop,
+                                _ context: QueueContext) -> EventLoopFuture<Void> {
         return eventLoop.submit { () -> Void in
-            try? FileManager.default.removeItem(at: url)
+            do {
+                try self.logFileRepository.delete(log: log, wasProcessed: wasProcessed)
+            } catch {
+                context.logger.error("[ProcessMetricsJob] Error removing log from \(log.localURL): \(error)")
+            }
         }
     }
 }

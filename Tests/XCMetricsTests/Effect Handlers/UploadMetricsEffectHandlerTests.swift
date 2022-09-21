@@ -17,9 +17,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
+//import Basic
 import MobiusCore
-import Utility
+//import Utility
 import XCTest
 @testable import XCMetricsClient
 
@@ -27,8 +27,11 @@ final class MockMetricsPublisher: MetricsPublisherService {
 
     func uploadMetrics(
         serviceURL: URL,
+        additionalHeaders: [String : String],
         projectName: String,
         isCI: Bool,
+        skipNotes: Bool,
+        truncLargeIssues: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
         completion: @escaping (Set<URL>, [URL : Data]) -> Void
     ) {
@@ -72,7 +75,7 @@ final class UploadMetricsEffectHandlerTests: XCTestCase {
                 XCTFail("Expected .logsUploaded or , got: \(event)")
             }
         }
-        _ = effectHandler.handle((serviceURL: serviceURL, projectName: projectName, isCI: false, logs: uploadRequests), effectCallback)
+        _ = effectHandler.handle((serviceURL: serviceURL, additionalHeaders: additionalHeaders, projectName: projectName, isCI: false, skipNotes: false, truncLargeIssues: false, logs: uploadRequests), effectCallback)
         XCTAssertTrue(effectCallback.ended)
     }
 }

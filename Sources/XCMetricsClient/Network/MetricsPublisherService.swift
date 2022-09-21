@@ -26,14 +26,20 @@ import XCMetricsProto
 /// Defines the required methods for a publisher service.
 protocol MetricsPublisherService {
     /// Upload the given metrics and returns the result in a completion block.
-    /// - Parameter serviceURL: The URL of the backend service where the metrics wil be sent.
+    /// - Parameter serviceURL: The URL of the backend service where the metrics will be sent.
+    /// - Parameter additionalHeaders: Additional headers to be sent with the request.
     /// - Parameter uploadRequests: The upload requests to be sent to the backend service.
-    /// - Parameter completion: The result is successfull if no error occurred. The .success enum case contains the URLs of the uploaded metrics.
+    /// - Parameter completion: The result is successful if no error occurred. The .success enum case contains the URLs of the uploaded metrics.
     /// - Parameter projectName: The name of the project
+    /// - Parameter isCI: Boolean. If XCMetrics is running in CI or note
+    /// - Parameter skipNotes: Boolean. If the Notes found in the log won't be inserted in the database
     func uploadMetrics(
         serviceURL: URL,
+        additionalHeaders: [String: String],
         projectName: String,
         isCI: Bool,
+        skipNotes: Bool,
+        truncLargeIssues: Bool,
         uploadRequests: Set<MetricsUploadRequest>,
         completion: @escaping (_ successfulURLs: Set<URL>, _ failedURLs: [URL: Data]) -> Void
     )

@@ -17,10 +17,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Basic
 import MobiusCore
 import MobiusTest
-import Utility
+import TSCBasic
+import TSCUtility
 import XCTest
 @testable import XCMetricsClient
 
@@ -38,6 +38,7 @@ extension TemporaryFile: Hashable {
 
 let projectName = "Project Name"
 let serviceURL = URL(string: "https://example.com/v1/metrics")!
+let additionalHeaders = ["key": "value"]
 
 class MetricsUploaderLogicTests: XCTestCase {
 
@@ -45,9 +46,12 @@ class MetricsUploaderLogicTests: XCTestCase {
     private let initial = MetricsUploaderModel(buildDirectory: "BUILD_DIR",
                                                projectName: projectName,
                                                serviceURL: serviceURL,
+                                               additionalHeaders: additionalHeaders,
                                                timeout: 1,
                                                isCI: false,
-                                               plugins: [])
+                                               plugins: [],
+                                               skipNotes: false,
+                                               truncLargeIssues: false)
 
     func testInitiator() {
         let initEffect = MetricsUploaderEffect.findLogs(buildDirectory: initial.buildDirectory, timeout: 1)
@@ -58,9 +62,9 @@ class MetricsUploaderLogicTests: XCTestCase {
     }
 
     func testFindLogs() {
-        let currentLog = try! TemporaryFile(prefix: "log5", suffix: ".xcactivitylog").url
-        let xcodeLog = try! TemporaryFile(prefix: "log1", suffix: ".xcactivitylog").url
-        let cacheLog = try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog").url
+        let currentLog = try! TemporaryFile.newFile(prefix: "log5", suffix: ".xcactivitylog").url
+        let xcodeLog = try! TemporaryFile.newFile(prefix: "log1", suffix: ".xcactivitylog").url
+        let cacheLog = try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog").url
 
         let xcodeLogs = Set(arrayLiteral: xcodeLog)
         let cacheLogs = Set(arrayLiteral: cacheLog)
@@ -72,7 +76,7 @@ class MetricsUploaderLogicTests: XCTestCase {
     }
 
     func testCacheLogs() {
-        let cachedLog = try! TemporaryFile(prefix: "log15", suffix: ".xcactivitylog").url
+        let cachedLog = try! TemporaryFile.newFile(prefix: "log15", suffix: ".xcactivitylog").url
         let expectedModel = initial.withChanged(awaitingParsingLogResponses: 0)
         spec.given(initial)
             .when(.logsCached(currentLog: nil, previousLogs: Set(arrayLiteral: cachedLog), cachedUploadRequests: []))
@@ -81,8 +85,11 @@ class MetricsUploaderLogicTests: XCTestCase {
                 hasEffects([
                     .uploadLogs(
                         serviceURL: serviceURL,
+                        additionalHeaders: additionalHeaders,
                         projectName: projectName,
                         isCI: false,
+                        skipNotes: false,
+                        truncLargeIssues: false,
                         logs: Set([MetricsUploadRequest(fileURL: cachedLog, request: UploadBuildMetricsRequest())])
                     )
                 ])
@@ -91,8 +98,8 @@ class MetricsUploaderLogicTests: XCTestCase {
     }
 
     func testCacheLogsWithCurrentLog() {
-        let cachedCurrentLog = try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog").url
-        let cachedLog = try! TemporaryFile(prefix: "log15", suffix: ".xcactivitylog").url
+        let cachedCurrentLog = try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog").url
+        let cachedLog = try! TemporaryFile.newFile(prefix: "log15", suffix: ".xcactivitylog").url
 
         let expectedModel = initial.withChanged(awaitingParsingLogResponses: 0)
         spec.given(initial)
@@ -107,8 +114,11 @@ class MetricsUploaderLogicTests: XCTestCase {
                     ),
                     .uploadLogs(
                         serviceURL: serviceURL,
+                        additionalHeaders: additionalHeaders,
                         projectName: projectName,
                         isCI: false,
+                        skipNotes: false,
+                        truncLargeIssues: false,
                         logs: Set([
                             MetricsUploadRequest(fileURL: cachedLog, request: UploadBuildMetricsRequest())
                         ])
@@ -119,12 +129,12 @@ class MetricsUploaderLogicTests: XCTestCase {
     }
 
     func testCacheLogsWithCurrentLogAndReturnMaximumNumberOfLogs() {
-        let cachedCurrentLog = try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog").url
+        let cachedCurrentLog = try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog").url
         let cachedLogs = Set([
-            try! TemporaryFile(prefix: "log15", suffix: ".xcactivitylog").url,
-            try! TemporaryFile(prefix: "log16", suffix: ".xcactivitylog").url,
-            try! TemporaryFile(prefix: "log17", suffix: ".xcactivitylog").url,
-            try! TemporaryFile(prefix: "log18", suffix: ".xcactivitylog").url,
+            try! TemporaryFile.newFile(prefix: "log15", suffix: ".xcactivitylog").url,
+            try! TemporaryFile.newFile(prefix: "log16", suffix: ".xcactivitylog").url,
+            try! TemporaryFile.newFile(prefix: "log17", suffix: ".xcactivitylog").url,
+            try! TemporaryFile.newFile(prefix: "log18", suffix: ".xcactivitylog").url,
         ])
         let uploadRequests = Set([
             try! MetricsUploadRequest(fileURL: URL(fileURLWithPath: "1"), request: UploadBuildMetricsRequest(jsonString: "{}")),
@@ -143,7 +153,7 @@ class MetricsUploaderLogicTests: XCTestCase {
 
     func testUploadLogs() {
         let uploadedLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog").url
+            try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog").url
         )
         spec.given(initial)
             .when(.logsUploaded(logs: uploadedLogs))
@@ -152,7 +162,7 @@ class MetricsUploaderLogicTests: XCTestCase {
 
     func testTagLogsAsUploaded() {
         let taggedLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log10_UPLOADED", suffix: ".xcactivitylog").url
+            try! TemporaryFile.newFile(prefix: "log10_UPLOADED", suffix: ".xcactivitylog").url
         )
         spec.given(initial)
             .when(.logsTaggedAsUploaded(logs: taggedLogs))
@@ -163,7 +173,7 @@ class MetricsUploaderLogicTests: XCTestCase {
         // Make sure loop completes.
         expectation(forNotification: .mobiusLoopCompleted, object: nil, handler: nil)
         let cleanedUpLogs = Set(arrayLiteral:
-            try! TemporaryFile(prefix: "log10", suffix: ".xcactivitylog").url
+            try! TemporaryFile.newFile(prefix: "log10", suffix: ".xcactivitylog").url
         )
         spec.given(initial)
             .when(.cleanedUpLogs(logs: cleanedUpLogs), .savedUploadRequests)

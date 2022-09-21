@@ -76,7 +76,8 @@ extension BuildStep {
                          compilationEndTimestamp: compilationEndTimestamp ?? self.compilationEndTimestamp,
                          compilationDuration: compilationDuration ?? self.compilationDuration,
                          clangTimeTraceFile: nil,
-                         linkerStatistics: nil)
+                         linkerStatistics: nil,
+                         swiftTypeCheckTimes: nil)
     }
 }
 
