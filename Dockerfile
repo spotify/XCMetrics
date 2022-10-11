@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:5.3-bionic as build
+FROM swift:5.5-bionic as build
 WORKDIR /build
 
 # Install libraries needed
@@ -24,7 +24,7 @@ RUN swift build --enable-test-discovery --product XCMetricsBackend -c release
 # ================================
 # Run image
 # ================================
-FROM swift:5.3-bionic-slim
+FROM swift:5.5-bionic-slim
 
 # Create a vapor user and group with /app as its home directory
 RUN useradd --user-group --create-home --home-dir /app vapor
