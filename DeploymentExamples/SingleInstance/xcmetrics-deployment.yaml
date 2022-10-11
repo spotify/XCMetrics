@@ -51,7 +51,7 @@ spec:
         image: spotify/xcmetrics:latest
         command: ["./XCMetricsBackend",
                   "queues",
-                  "--scheduled"
+                  "--scheduled",
                   "--env",
                   "production"]
         env:
