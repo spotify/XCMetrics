@@ -276,8 +276,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "92646c0cdbaca076c8d3d0207891785b3379cbff",
-          "version": "0.3.1"
+          "revision": "fddd1c00396eed152c45a46bea9f47b98e59301d",
+          "version": "1.2.0"
         }
       },
       {
@@ -435,11 +435,11 @@
       },
       {
         "package": "XCLogParser",
-        "repositoryURL": "https://github.com/spotify/xclogparser",
+        "repositoryURL": "https://github.com/MobileNativeFoundation/XCLogParser",
         "state": {
           "branch": null,
-          "revision": "dc6093f866f1d239e9bafbfb3e0ad0ca75ef30b5",
-          "version": "0.2.34"
+          "revision": "2c4a36f6e8975585f87b664a4df7c38b3d7f71d7",
+          "version": "0.2.35"
         }
       },
       {

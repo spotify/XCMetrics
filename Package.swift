@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "XCMetricsUtils", targets: ["XCMetricsUtils"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/spotify/xclogparser", from: "0.2.34"),
+        .package(url: "https://github.com/MobileNativeFoundation/XCLogParser", from: "0.2.35"),
         .package(url: "https://github.com/apple/swift-tools-support-core.git", .exact("0.2.7")),
         .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.9")),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.32.3"),
@@ -24,7 +24,7 @@ let package = Package(
         .package(url: "https://github.com/Spotify/Mobius.swift", .exact("0.3.0")),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.0"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "3.0.0"),
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.1.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.65.2"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.5.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.4.0"),
@@ -37,22 +37,28 @@ let package = Package(
     targets: [
         .target(
             name: "XCMetricsClient",
-            dependencies: ["XCLogParser",
-                           "XCMetricsProto",
-                           "XCMetricsUtils",
-                           "GRPC",
-                           "NIO",
-                           "NIOHTTP2",
-                           "MobiusCore",
-                           "MobiusExtras",
-                           "CryptoSwift",
-                           "Yams",
-                           "ArgumentParser",
-                           "XCMetricsCommon"]
+            dependencies: [
+                "XCMetricsProto",
+                "XCMetricsUtils",
+                "XCMetricsCommon",
+                .product(name: "XCLogParser", package: "XCLogParser"),
+                .product(name: "GRPC", package: "grpc-swift"),
+                .product(name: "NIO", package: "swift-nio"),
+                .product(name: "NIOHTTP2", package: "swift-nio-http2"),
+                .product(name: "MobiusCore", package: "Mobius.swift"),
+                .product(name: "MobiusExtras", package: "Mobius.swift"),
+                .product(name: "CryptoSwift", package: "CryptoSwift"),
+                .product(name: "Yams", package: "Yams"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
         ),
         .target(
             name: "XCMetricsPlugins",
-            dependencies: ["XCMetricsClient", "XCMetricsUtils", "CryptoSwift"]
+            dependencies: [
+                "XCMetricsClient",
+                "XCMetricsUtils",
+                .product(name: "CryptoSwift", package: "CryptoSwift"),
+            ]
         ),
         .target(
             name: "XCMetricsUtils",
@@ -60,7 +66,11 @@ let package = Package(
         ),
         .target(
             name: "XCMetricsProto",
-            dependencies: ["GRPC", "NIO", "NIOHTTP2"]
+            dependencies: [
+                .product(name: "GRPC", package: "grpc-swift"),
+                .product(name: "NIO", package: "swift-nio"),
+                .product(name: "NIOHTTP2", package: "swift-nio-http2")
+            ]
         ),
         .target(
             name: "XCMetricsApp",
@@ -82,7 +92,7 @@ let package = Package(
                 .product(name: "XCLogParser", package: "XCLogParser"),
                 .product(name: "CryptoSwift", package: "CryptoSwift"),
                 .product(name: "GoogleCloudKit", package: "google-cloud-kit"),
-                .product(name: "S3", package: "AWSSDKSwift"),
+                .product(name: "S3", package: "soto"),
                 "XCMetricsCommon"
             ],
             swiftSettings: [
@@ -95,7 +105,12 @@ let package = Package(
         .target(name: "XCMetricsBackend", dependencies: [.target(name: "XCMetricsBackendLib")]),
         .testTarget(
             name: "XCMetricsTests",
-            dependencies: ["XCMetricsClient", "XCMetricsProto", "MobiusTest", "SwiftToolsSupport"]
+            dependencies: [
+                "XCMetricsClient",
+                "XCMetricsProto",
+                .product(name: "MobiusTest", package: "Mobius.swift"),
+                .product(name: "SwiftToolsSupport", package: "swift-tools-support-core"),
+            ]
         ),
         .testTarget(
             name: "XCMetricsPluginsTests",
