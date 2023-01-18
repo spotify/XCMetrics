@@ -6,7 +6,7 @@ You can also build your own, this repo includes a Dockerfile that you can use to
 
 ## 1. Requirements
 
-The Backend needs Redis, a PostgreSQL database and optionally a Google Cloud Storage Bucket.
+The Backend needs Redis, a PostgreSQL database (>= 12) and optionally a Google Cloud Storage Bucket.
 
 You can pass the setting of those servers as Environment Variables:
 
