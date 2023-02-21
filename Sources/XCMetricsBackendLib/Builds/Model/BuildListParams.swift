@@ -30,6 +30,8 @@ struct BuildListParams: Content {
 
     var projectName: String?
 
+    var excludeCI: Bool = false
+
     var page: Int
 
     var per: Int

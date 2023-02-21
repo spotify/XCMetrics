@@ -163,6 +163,9 @@ public struct BuildController: RouteCollection {
         let query = Build.query(on: req.db)
             .filter(\.$startTimestamp >= params.from)
             .filter(\.$startTimestamp <= params.to)
+        if params.excludeCI {
+            query.filter(\.$isCi == false)
+        }
         if let status = params.status {
             query.filter(\.$buildStatus == status)
         }
