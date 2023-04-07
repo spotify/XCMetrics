@@ -38,7 +38,7 @@ public func configure(_ app: Application) throws {
             preconditionFailure()
         }
         let socketPath = "\(dbSocketDir)/\(cloudSQLInstanceConnectionName)/.s.PGSQL.5432"
-        app.logger.notice("Connecting to \(config.databaseName) in \(socketPath) as \(config.databaseUser.count) password length \(config.databasePassword)")
+        app.logger.notice("Connecting to \(config.databaseName) in \(socketPath) as \(config.databaseUser) password length \(config.databasePassword.count)")
         let postgresConfig = PostgresConfiguration(unixDomainSocketPath: socketPath,
                                                    username: config.databaseUser,
                                                    password: config.databasePassword,
