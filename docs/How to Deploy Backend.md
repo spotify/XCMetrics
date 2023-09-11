@@ -32,7 +32,7 @@ In this case, you don't need Google Cloud Storage. The Endpoint's controller wil
 
 ![](img/deploy-single-instance.jpg)
 
-Having a single instance running limits the amount of logs that can be processed. A Job runs in an EventLoop and Vapor creates one per CPU core, aditionally each EventLoop has a Database pool. This makes the max number of logs that can be processed in parallel to be:
+Having a single instance running limits the amount of logs that can be processed. A Job runs in an EventLoop and Vapor creates one per CPU core, additionally each EventLoop has a Database pool. This makes the max number of logs that can be processed in parallel to be:
 
 **number of cores** * **connections per pool**
 
