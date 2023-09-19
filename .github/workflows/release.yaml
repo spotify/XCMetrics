@@ -6,7 +6,7 @@ on:
 jobs:
   macOS:
     name: Add macOS binaries to release
-    runs-on: macOS-latest
+    runs-on: macOS-13
     env:
       XCODE_VERSION: ${{ '14.2' }}
     steps:
