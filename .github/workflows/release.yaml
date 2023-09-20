@@ -6,9 +6,9 @@ on:
 jobs:
   macOS:
     name: Add macOS binaries to release
-    runs-on: macOS-latest
+    runs-on: macOS-13
     env:
-      XCODE_VERSION: ${{ '13.2.1' }}
+      XCODE_VERSION: ${{ '14.2' }}
     steps:
       - name: Select Xcode
         run: "sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app"
