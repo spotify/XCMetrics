@@ -22,7 +22,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.32.3"),
         .package(url: "https://github.com/apple/swift-nio-http2.git", from: "1.15.0"),
         .package(url: "https://github.com/apple/swift-nio-ssl.git", .upToNextMajor(from: "2.10.0")),
-        .package(url: "https://github.com/Spotify/Mobius.swift", exact:"0.3.0"),
+        .package(url: "https://github.com/Spotify/Mobius.swift", exact: "0.3.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.0"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "3.0.0"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0"),
