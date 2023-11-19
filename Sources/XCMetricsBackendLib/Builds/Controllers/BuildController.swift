@@ -38,6 +38,7 @@ public struct BuildController: RouteCollection {
         routes.get("v1", "build", ":id", use: build)
         routes.get("v1", "build", use: index)
         routes.get("v1", "build", "step", ":day", ":id", use: targetSteps)
+        routes.post("v1", "build", "metadata", "filter", use: metadataFilter)
     }
 
     /// Endpoint that returns the paginated list of `Build`
@@ -527,6 +528,54 @@ public struct BuildController: RouteCollection {
                 ORDER BY start_timestamp_microseconds, title
             """)
             .all(decoding: Step.self)
+    }
+
+    /// Endpoint that returns the list of `BuildMetadata`s that were added to a build
+    /// filtered by a given key-value pair.
+    /// - Method: `POST`
+    /// - Route: `/v1/build/metadata/filter`
+    /// - Request body
+    ///
+    /// ```
+    /// {
+    ///     "key": "aKey",
+    ///     "value": "value1"
+    /// }
+    ///  ```
+    ///
+    ///  - Body Parameters
+    ///     - `key`. `BuildMetadata` metadata dictionary key
+    ///     - `value`. `BuildMetadata` metadata dictionary value
+    ///
+    /// - Response:
+    ///
+    /// ```
+    /// [
+    ///     {
+    ///       "metadata": {
+    ///         "anotherKey": "42",
+    ///         "thirdKey": "Third value",
+    ///         "aKey": "value1"
+    ///       },
+    ///       "id": "C1CDF2CE-0CC2-49C3-B8A2-481E67020CB8",
+    ///       "day": "2020-11-02T00:00:00Z",
+    ///       "buildIdentifier": "MyMac_0B9294B4-7E5A-4D40-91AB-5953A5075785_1"
+    ///     },
+    ///     ...
+    /// ]
+    /// ```
+    ///
+    public func metadataFilter(req: Request) throws -> EventLoopFuture<[BuildMetadata]> {
+        let params = try req.content.decode(BuildMetadataFilterParams.self)
+        guard let sql = req.db as? SQLDatabase else {
+            throw Abort(.internalServerError)
+        }
+                
+        return sql.raw("""
+                SELECT * FROM \(raw: BuildMetadata.schema)
+                WHERE metadata ->> '\(raw: params.key)' = '\(raw: params.value)'
+            """)
+        .all(decoding: BuildMetadata.self)
     }
 
 }
