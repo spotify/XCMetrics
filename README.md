@@ -8,7 +8,6 @@ _XCMetrics is the easiest way to collect Xcode builds metrics and improve your d
 [![Build Status](https://github.com/spotify/XCMetrics/workflows/CI/badge.svg)](https://github.com/spotify/XCMetrics/workflows/CI/badge.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Docker image](https://img.shields.io/docker/pulls/spotify/xcmetrics.svg)](https://hub.docker.com/r/spotify/xcmetrics)
-[![Slack](https://slackin.spotify.com/badge.svg)](https://slackin.spotify.com)
 
 ## Overview
 
@@ -35,8 +34,6 @@ xed Package.swift
 ## Support
 
 Create a [new issue](https://github.com/spotify/XCMetrics/issues/new) with as many details as possible. It's important that you follow the issue template and include all required information in order for us to get back to you as soon as possible.
-
-Reach us at the `#xcmetrics` channel in [Slack](https://slackin.spotify.com/).
 
 ## Contributing
 
