@@ -437,8 +437,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MobileNativeFoundation/XCLogParser",
       "state" : {
-        "revision" : "e536e3009d391513a791e08b991d6fe413be0f9c",
-        "version" : "0.2.38"
+        "revision" : "62b4d62fd4ae5e2d22bd29f7423b327149bc0ecd",
+        "version" : "0.2.39"
       }
     },
     {
